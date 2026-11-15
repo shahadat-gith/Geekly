@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { setSession } from '../lib/tokens.js';
+import { setSession } from '../utils/tokens.js';
 import { useAuth } from '../context/authContext.js';
 import { AuthShell, AuthLink } from '../components/auth/AuthShell.jsx';
 import { Alert } from '../components/ui/Alert.jsx';
@@ -42,7 +42,7 @@ export default function OAuthCallback() {
   return (
     <AuthShell
       title="Sign-in failed"
-      footer={<AuthLink to="/login">Back to sign in</AuthLink>}
+      footer={<AuthLink to="/login">Sign in</AuthLink>}
     >
       <Alert>{error}</Alert>
     </AuthShell>

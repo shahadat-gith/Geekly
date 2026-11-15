@@ -11,7 +11,7 @@ export function Footer() {
     <footer className="border-t border-border-secondary">
       <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-3 px-6 py-5 text-center sm:flex-row sm:text-left">
         <p className="m-0 text-[13px] text-text-tertiary">
-          © {new Date().getFullYear()} <Brand showLink={false} showLogo={false} textClassName="text-[13px]" />. All rights reserved.
+          © {new Date().getFullYear()} <Brand showLink={false} size={13} />. All rights reserved.
         </p>
 
         <nav aria-label="Footer" className="flex flex-wrap items-center justify-center gap-5">

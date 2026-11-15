@@ -35,7 +35,7 @@ export default function ResetPassword() {
   }
 
   return (
-    <AuthShell title="Set a new password" footer={<AuthLink to="/login">Back to sign in</AuthLink>}>
+    <AuthShell title="Set a new password" footer={<AuthLink to="/login">Sign in</AuthLink>}>
       {!token ? (
         <Alert>The reset link is missing its token. Request a new one from the forgot-password page.</Alert>
       ) : done ? (

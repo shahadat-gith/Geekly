@@ -3,3 +3,4 @@
 // TanStack Query.
 export * as authApi from './auth.js';
 export * as usersApi from './users.js';
+export * as topicsApi from './topics.js';

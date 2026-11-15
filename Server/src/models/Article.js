@@ -47,6 +47,7 @@ const ArticleSchema = new mongoose.Schema(
     // Blocks live in ArticleBlock; this array only stores their ids in
     // reading order. Fetch one article with `.populate('content.blocks')`;
     // feed/list queries can skip the populate and stay light.
+    // `html` holds rich-text articles authored in the admin editor.
     content: {
       blocks: [
         {
@@ -54,7 +55,34 @@ const ArticleSchema = new mongoose.Schema(
           ref: 'ArticleBlock',
         },
       ],
+      html: {
+        type: String,
+        default: '',
+        maxlength: 500000,
+      },
+
+      // Visuals referenced by <figure data-article-media="id"> nodes in the
+      // rich-text HTML. Every visual is one generated or uploaded image,
+      // used in both themes.
+      media: [
+        {
+          _id: false,
+          id: { type: String, required: true, trim: true },
+          imagePrompt: { type: String, default: '', maxlength: 1000 },
+          imageUrl: { type: String, default: '', trim: true },
+          imageKey: { type: String, default: '', trim: true },
+          alt: { type: String, default: '', maxlength: 500 },
+          caption: { type: String, default: '', maxlength: 500 },
+        },
+      ],
     },
+
+    referenceVideos:[
+      {
+        type: String,
+        trim: true,
+      }
+    ],
 
     stats: {
       views: { type: Number, default: 0, min: 0 },

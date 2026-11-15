@@ -20,7 +20,7 @@ export function Hero() {
               </span>
             </h1>
             <p className="mt-6 max-w-[34rem] text-[16.5px] leading-relaxed text-text-secondary sm:text-[18px]">
-              “<Brand showLink={false} showLogo={false} textClassName="text-[16.5px] sm:text-[18px]" />”
+              “<Brand showLink={false} size={18} />”
               takes you from your first concept to confident engineering — plain-language
               explanations, worked examples and short practice, so you learn how to actually do the
               work, not just repeat the theory.

@@ -1,4 +1,4 @@
-import { api } from '../lib/axios.js';
+import { api } from './axios.js';
 
 // Profile endpoints for the signed-in user (/api/users).
 

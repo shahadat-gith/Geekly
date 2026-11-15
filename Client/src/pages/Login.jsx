@@ -7,7 +7,7 @@ import { Alert } from '../components/ui/Alert.jsx';
 import { Button } from '../components/ui/Button.jsx';
 import { Divider } from '../components/ui/Divider.jsx';
 import { Input } from '../components/ui/Input.jsx';
-import { apiUrl } from '../lib/axios.js';
+import { apiUrl } from '../api/axios.js';
 
 export default function Login() {
   const { login } = useAuth();
@@ -37,7 +37,7 @@ export default function Login() {
       title="Sign in"
       footer={
         <>
-          New to <Brand showLink={false} showLogo={false} textClassName="text-[13.5px]" />?{' '}
+          New to <Brand showLink={false} size={13.5} />?{' '}
           <AuthLink to="/register">Create account</AuthLink>
         </>
       }

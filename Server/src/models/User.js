@@ -38,25 +38,20 @@ const UserSchema = new mongoose.Schema(
       ],
     },
 
-    // Hashed password-reset token + expiry. The raw token is only ever
-    // sent to the account owner; only its hash is stored here.
+    // Id of the current password-reset JWT. The signed token is sent to the
+    // account owner; storing only its id makes each reset link single-use.
     passwordResetToken: {
       type: String,
       select: false,
       default: null,
     },
-    passwordResetExpires: {
-      type: Date,
-      select: false,
-      default: null,
-    },
 
-    // Opaque refresh tokens (only SHA-256 hashes stored). Each entry is one
-    // active session; refresh rotates the token, logout removes it.
+    // Active refresh-token ids. Each entry is one session; refresh rotates
+    // the id and logout removes it.
     refreshTokens: {
       type: [
         {
-          tokenHash: { type: String, required: true },
+          tokenId: { type: String, required: true },
           expiresAt: { type: Date, required: true },
           _id: false,
         },
@@ -90,7 +85,6 @@ UserSchema.set('toJSON', {
     delete ret._id;
     delete ret.passwordHash;
     delete ret.passwordResetToken;
-    delete ret.passwordResetExpires;
     delete ret.refreshTokens;
     return ret;
   },

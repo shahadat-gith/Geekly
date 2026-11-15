@@ -4,7 +4,6 @@ export const BLOCK_TYPES = [
   'heading',
   'paragraph',
   'code',
-  'mermaid',
   'callout',
   'quote',
   'image',
@@ -95,12 +94,6 @@ export const CodeBlock = blockType('Code', 'code', {
   language: { type: String, trim: true, lowercase: true, maxlength: 30 },
 });
 
-// Mermaid: diagram source (stored in `code`, rendered by the client)
-export const MermaidBlock = blockType('Mermaid', 'mermaid', {
-  code: { type: String, required: true, maxlength: 100000 },
-  caption: { type: String, trim: true, maxlength: 500 },
-});
-
 // Callout: highlighted note / warning
 export const CalloutBlock = blockType('Callout', 'callout', {
   text: { type: String, required: true, trim: true, maxlength: 20000 },
@@ -163,7 +156,6 @@ export const BLOCK_MODELS = {
   heading: HeadingBlock,
   paragraph: ParagraphBlock,
   code: CodeBlock,
-  mermaid: MermaidBlock,
   callout: CalloutBlock,
   quote: QuoteBlock,
   image: ImageBlock,

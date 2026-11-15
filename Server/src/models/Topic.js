@@ -1,6 +1,14 @@
 import mongoose from 'mongoose';
 
 // Topic: a subject (System Design, DBMS, ...) or a sub-topic under one.
+const TopicCoverImageSchema = new mongoose.Schema(
+  {
+    url: { type: String, trim: true },
+    key: { type: String, trim: true },
+  },
+  { _id: false }
+);
+
 const TopicSchema = new mongoose.Schema(
   {
     slug: {
@@ -17,10 +25,7 @@ const TopicSchema = new mongoose.Schema(
 
     icon: { type: String, trim: true },
 
-    coverImage: {
-      url: { type: String, trim: true },
-      key: { type: String, trim: true },
-    },
+    coverImage: { type: TopicCoverImageSchema, default: undefined },
 
     // 0 = subject (System Design, DBMS...), 1+ = sub-topic
     depth: { type: Number, default: 0, min: 0 },
@@ -38,18 +43,13 @@ const TopicSchema = new mongoose.Schema(
     sortOrder: { type: Number, default: 0 },
 
     articleCount: { type: Number, default: 0, min: 0 },
-
-    isActive: { type: Boolean, default: true },
   },
   { timestamps: true, versionKey: false, autoIndex: false, autoCreate: false }
 );
 
 TopicSchema.index({ parent: 1, sortOrder: 1 }, { name: 'parent_sort' });
 TopicSchema.index({ ancestors: 1 }, { name: 'ancestors' });
-TopicSchema.index(
-  { isActive: 1, depth: 1, sortOrder: 1 },
-  { name: 'active_tree' }
-);
+TopicSchema.index({ depth: 1, sortOrder: 1 }, { name: 'topic_tree' });
 
 // Consistent API shape: `id` instead of `_id`, no version key
 TopicSchema.set('toJSON', {

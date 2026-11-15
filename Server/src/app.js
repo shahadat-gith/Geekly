@@ -2,11 +2,14 @@ import express from "express"
 import cors from "cors"
 import helmet from "helmet"
 import { keys } from "./config/env.js"
-import authRoutes from "./routes/authRoutes.js"
-import oauthRoutes from "./routes/oauthRoutes.js"
-import userRoutes from "./routes/userRoutes.js"
-import adminRoutes from "./routes/adminRoutes.js"
-import { errorHandler } from "./middlewares/errorHandler.js"
+import authRoutes from "./client/routes/authRoutes.js"
+import oauthRoutes from "./client/routes/oauthRoutes.js"
+import userRoutes from "./client/routes/userRoutes.js"
+import adminRoutes from "./admin/routes/index.js"
+import { asyncHandler } from "./shared/asyncHandler.js"
+import { listParents } from "./client/controllers/topicController.js"
+import { resolve as resolveContentPath } from "./client/controllers/contentController.js"
+import { errorHandler } from "./shared/errorHandler.js"
 
 const app = express()
 
@@ -20,6 +23,7 @@ app.use(helmet({ crossOriginResourcePolicy: { policy: "cross-origin" } }))
 // origins can be allowlisted with CORS_ORIGINS (comma separated).
 const allowedOrigins = [
     keys.auth.frontendUrl,
+    keys.auth.adminUrl,
     ...(process.env.CORS_ORIGINS || "").split(",").map((o) => o.trim()),
 ].filter(Boolean)
 
@@ -33,11 +37,15 @@ app.use(cors({
         return callback(new Error("Not allowed by CORS"))
     },
 }))
-app.use(express.json({ limit: "100kb" }))
+// Rich-text article bodies are larger than a typical JSON payload.
+app.use(express.json({ limit: "1mb" }))
 
 app.get("/api/health", (req, res) => {
     res.json({ status: "ok", environment: keys.server.environment })
 })
+
+app.get("/api/topics/parents", asyncHandler(listParents))
+app.get("/api/content", asyncHandler(resolveContentPath))
 
 app.use("/api/auth", authRoutes)
 app.use("/auth", oauthRoutes)

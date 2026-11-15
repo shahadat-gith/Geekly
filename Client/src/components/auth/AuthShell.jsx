@@ -8,7 +8,7 @@ export function AuthShell({ title, children, footer }) {
   return (
     <div className="flex min-h-[calc(100svh-68px)] items-center justify-center px-4 py-10">
       <div className="w-full max-w-[360px]">
-        <Brand showLogo logoSize={44} vertical textClassName="text-[18px]" className="mb-6" />
+        <Brand size={18} inline={false} className="mb-6" />
 
         <Card className="px-6 py-8">
           <h1 className="mb-5 text-center text-[22px] font-semibold">{title}</h1>

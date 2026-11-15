@@ -1,5 +1,5 @@
 import { keys } from "./config/env.js"
-import { connectToDB } from "./lib/mongodb.js"
+import { connectToDB } from "./config/mongodb.js"
 import app from "./app.js"
 
 const port = Number(keys.server.port)

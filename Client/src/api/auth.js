@@ -1,5 +1,5 @@
-import { api, apiUrl } from '../lib/axios.js';
-import { clearSession, getRefreshToken, setSession } from '../lib/tokens.js';
+import { api, apiUrl } from './axios.js';
+import { clearSession, getRefreshToken, setSession } from '../utils/tokens.js';
 
 // Every call here talks to /api/auth and stores the token pair the backend
 // returns (access token in memory, refresh token persisted).

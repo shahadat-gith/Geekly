@@ -32,7 +32,7 @@ export default function ForgotPassword() {
       title="Reset your password"
       footer={
         <>
-          Remembered it? <AuthLink to="/login">Back to sign in</AuthLink>
+          Remembered it? <AuthLink to="/login">Sign in</AuthLink>
         </>
       }
     >

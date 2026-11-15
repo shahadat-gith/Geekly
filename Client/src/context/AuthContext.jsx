@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { renewSession } from '../lib/axios.js';
-import { getRefreshToken } from '../lib/tokens.js';
+import { renewSession } from '../api/axios.js';
+import { getRefreshToken } from '../utils/tokens.js';
 import { authApi, usersApi } from '../api/index.js';
 import { AuthContext, ME_KEY } from './authContext.js';
 

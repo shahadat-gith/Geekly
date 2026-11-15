@@ -6,7 +6,7 @@ import { Alert } from '../components/ui/Alert.jsx';
 import { Button } from '../components/ui/Button.jsx';
 import { Divider } from '../components/ui/Divider.jsx';
 import { Input } from '../components/ui/Input.jsx';
-import { apiUrl } from '../lib/axios.js';
+import { apiUrl } from '../api/axios.js';
 
 export default function Register() {
   const { register } = useAuth();

@@ -1,4 +1,4 @@
-# Noob Engineer — Design Guide
+# NOOB ENGINEER — Design Guide
 
 Rules only. Follow this for every UI change.
 
@@ -42,3 +42,13 @@ Use the primitives in `Client/src/components/ui/` directly. Do not add wrapper c
 - Code samples use `CodeBlock`; its syntax colours come from the theme tokens, so never add a third-party highlighter theme stylesheet.
 - Toast state lives in `context/ToastContext.jsx` and `context/toastContext.js` (`useToast`); the provider is mounted at the app root.
 - Form errors are inline `Alert`s, never toasts.
+
+## Navigation
+
+- Never add a back button anywhere in the app. No "Back to …" buttons or links, no `bx-arrow-back` / `bx-left-arrow` navigation controls, and no history-based back actions on any page, in either the Client or the Admin.
+- Upward and sideways movement comes from breadcrumbs, the main navigation, and in-page links only.
+
+## Motion
+
+- Every page must open with the shared entrance transition. Route changes in the Client use `animate-page` on the routed `<main>`; the Admin applies it to the routed page inside `AdminLayout`.
+- Transitions stay short (roughly 300–450ms), use the existing easing, and are disabled under `prefers-reduced-motion`.
