@@ -17,7 +17,7 @@ async function readReference(url) {
     responseType: 'text',
     headers: {
       Accept: 'text/html,application/xhtml+xml,text/plain;q=0.9,*/*;q=0.5',
-      'User-Agent': 'NoobEngineerAdmin/1.0 (+article research)',
+      'User-Agent': 'GeeklyAdmin/1.0 (+article research)',
     },
   });
 

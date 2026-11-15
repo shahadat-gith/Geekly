@@ -6,7 +6,6 @@ import { Button } from '../components/ui/Button.jsx';
 import { Input } from '../components/ui/Field.jsx';
 import { IconButton } from '../components/ui/IconButton.jsx';
 import { FullScreenLoader } from '../components/ui/Spinner.jsx';
-import { Brand } from '../components/layout/Brand.jsx';
 
 export default function Login() {
   const { admin, loading, login } = useAdminAuth();

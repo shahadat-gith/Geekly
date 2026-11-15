@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
+import { FaChevronRight } from 'react-icons/fa6';
 import { useContent, useContentPath, NotFound } from './TopicPage.jsx';
 import { useReveal } from '../hooks/useReveal.js';
 import { formatDate } from '../utils/format.js';
@@ -68,11 +69,11 @@ export default function ArticlePage() {
 
   if (isLoading) {
     return (
-      <div className="mx-auto max-w-4xl px-4 py-16 sm:px-5">
-        <div className="h-4 w-48 animate-pulse rounded bg-surface-secondary" />
-        <div className="mt-6 h-9 w-2/3 animate-pulse rounded bg-surface-secondary" />
-        <div className="mt-4 h-4 w-1/3 animate-pulse rounded bg-surface-secondary" />
-        <div className="mt-10 h-72 animate-pulse rounded-card bg-surface-secondary" />
+      <div className="mx-auto max-w-3xl px-5 py-12 sm:py-16">
+        <div className="h-3 w-40 animate-pulse rounded bg-surface-tertiary" />
+        <div className="mt-8 h-12 w-3/4 animate-pulse rounded bg-surface-tertiary" />
+        <div className="mt-4 h-4 w-1/2 animate-pulse rounded bg-surface-tertiary" />
+        <div className="mt-12 h-72 animate-pulse rounded-card bg-surface-tertiary/70" />
       </div>
     );
   }
@@ -85,51 +86,58 @@ export default function ArticlePage() {
   const { article, topic, subtopic } = data;
 
   return (
-    <article className="mx-auto max-w-4xl px-4 py-12 sm:px-5 sm:py-16">
-      <nav aria-label="Breadcrumb" className="flex flex-wrap items-center gap-1.5 text-[13px] text-text-tertiary">
-        <Link to="/" className="font-medium text-text-secondary transition hover:text-brand">
+    <article className="mx-auto max-w-3xl px-5 py-12 sm:py-16">
+      <nav
+        aria-label="Breadcrumb"
+        className="flex flex-wrap items-center gap-1.5 text-[12.5px] text-text-tertiary"
+      >
+        <Link to="/" className="transition hover:text-text">
           Home
         </Link>
-        <i aria-hidden="true" className="bx bx-chevron-right text-[15px]" />
-        <Link to={`/${topic.slug}`} className="font-medium text-text-secondary transition hover:text-brand">
+        <FaChevronRight aria-hidden="true" className="text-[11px]" />
+        <Link to={`/${topic.slug}`} className="transition hover:text-text">
           {topic.name}
         </Link>
         {subtopic && (
           <>
-            <i aria-hidden="true" className="bx bx-chevron-right text-[15px]" />
-            <span className="font-medium text-text">{subtopic.name}</span>
+            <FaChevronRight aria-hidden="true" className="text-[11px]" />
+            <span className="text-text">{subtopic.name}</span>
           </>
         )}
       </nav>
 
-      <header className="mt-6">
-        <h1 className="m-0 text-[30px] font-bold leading-tight sm:text-[38px]">{article.title}</h1>
+      <header className="mt-7 border-b border-border pb-9">
+        <h1 className="max-w-[46rem] text-balance font-heading text-[40px] font-normal leading-[1.01] tracking-[-0.025em] sm:text-[54px]">
+          {article.title}
+        </h1>
         {article.subtitle && (
-          <p className="mt-3 text-[16.5px] leading-relaxed text-text-secondary">{article.subtitle}</p>
+          <p className="mt-4 max-w-2xl text-[16px] leading-[1.7] text-text-secondary">
+            {article.subtitle}
+          </p>
         )}
-        <p className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 text-[12.5px] text-text-tertiary">
-          {article.publishedAt && <span>Published {formatDate(article.publishedAt)}</span>}
-          {article.readingTime ? <span>· {article.readingTime}</span> : null}
+        <p className="mt-5 flex flex-wrap items-center gap-x-2.5 gap-y-1 text-[12.5px] text-text-tertiary">
+          {article.publishedAt && <span>{formatDate(article.publishedAt)}</span>}
+          {article.readingTime ? <span aria-hidden="true">·</span> : null}
+          {article.readingTime ? <span>{article.readingTime}</span> : null}
         </p>
       </header>
 
-      <div className="mt-8 border-t border-border-secondary pt-8">
+      <div className="mt-9">
         <ArticleBody html={article.content?.html || ''} media={article.content?.media || []} />
       </div>
 
       {article.tags?.length > 0 && (
-        <div className="mt-10 flex flex-wrap gap-2 border-t border-border-secondary pt-6">
+        <div className="mt-12 flex flex-wrap items-center gap-2 border-t border-border pt-6">
           {article.tags.map((tag) => (
             <span
               key={tag}
-              className="rounded-full bg-surface-secondary px-3 py-1 text-[11.5px] font-medium text-text-secondary"
+              className="rounded-button border border-border-secondary px-2.5 py-1 text-[11.5px] text-text-secondary"
             >
-              #{tag}
+              {tag}
             </span>
           ))}
         </div>
       )}
-
     </article>
   );
 }

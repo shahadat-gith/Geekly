@@ -1,124 +1,63 @@
-import { useEffect, useRef } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
+import { FaChevronRight } from 'react-icons/fa6';
 import { topicsApi } from '../../api/index.js';
-import { Card } from '../ui/Card.jsx';
-import { IconButton } from '../ui/IconButton.jsx';
-import { SectionHeading } from './SectionHeading.jsx';
-
-const SCROLL_DURATION = 650;
-
-function easeInOutCubic(t) {
-  return t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2;
-}
 
 export function ParentTopics() {
-  const stripRef = useRef(null);
-  const frameRef = useRef(0);
-
   const { data: topics = [], isLoading, isError } = useQuery({
     queryKey: ['topics', 'parents'],
     queryFn: topicsApi.listParentTopicsApi,
   });
 
-  useEffect(() => () => cancelAnimationFrame(frameRef.current), []);
-
-  function scrollStrip(direction) {
-    const strip = stripRef.current;
-    if (!strip) return;
-
-    cancelAnimationFrame(frameRef.current);
-
-    const maxScroll = strip.scrollWidth - strip.clientWidth;
-    const start = strip.scrollLeft;
-    const target = Math.min(
-      Math.max(start + direction * strip.clientWidth * 0.85, 0),
-      maxScroll,
-    );
-    const distance = target - start;
-    if (Math.abs(distance) < 1) return;
-
-    const startedAt = performance.now();
-    const step = (now) => {
-      const progress = Math.min((now - startedAt) / SCROLL_DURATION, 1);
-      strip.scrollLeft = start + distance * easeInOutCubic(progress);
-      if (progress < 1) frameRef.current = requestAnimationFrame(step);
-    };
-
-    frameRef.current = requestAnimationFrame(step);
-  }
-
   return (
-    <section className="mx-auto max-w-6xl px-6 py-16 sm:py-24">
-      <div className="reveal">
-        <SectionHeading
-          title="Explore topics"
-          lead="Build your engineering foundation with clear, practical guides across the subjects that matter."
-        />
-      </div>
-
-      {isLoading ? (
-        <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {Array.from({ length: 4 }).map((_, index) => (
-            <div key={index} className="h-64 animate-pulse rounded-card bg-surface-secondary" />
-          ))}
+    <section id="topics" className="mx-auto max-w-6xl scroll-mt-24 px-6">
+      <div className="border-t border-border py-16 sm:py-20">
+        <div className="text-left">
+          <h2 className="max-w-2xl text-balance font-heading text-[34px] font-normal leading-[1.05] tracking-[-0.02em] sm:text-[42px]">
+            Start with a topic
+          </h2>
+          <p className="mt-3 max-w-xl text-[15px] leading-[1.7] text-text-secondary">{"Each topic is a set of short lessons. Read them in order, or open the one you need right now."}</p>
         </div>
-      ) : isError ? (
-        <p role="status" className="mt-8 text-center text-sm text-text-tertiary">
-          Topics are temporarily unavailable.
-        </p>
-      ) : topics.length > 0 ? (
-        <div className="relative mt-12 lg:mt-14">
-          <div
-            ref={stripRef}
-            className="no-scrollbar flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2"
-          >
-            {topics.map((topic) => (
-              <Card
-                key={topic.id}
-                as={Link}
-                to={`/${topic.slug}`}
-                interactive
-                className="w-[16.5rem] shrink-0 snap-start overflow-hidden text-inherit no-underline sm:w-[17.5rem]"
-              >
-                {topic.coverImage?.url ? (
-                  <img
-                    src={topic.coverImage.url}
-                    alt=""
-                    loading="lazy"
-                    className="h-36 w-full object-cover"
-                  />
-                ) : (
-                  <div aria-hidden="true" className="h-36 bg-gradient-to-br from-brand-soft to-surface-tertiary" />
-                )}
-                <div className="p-5">
-                  <h3 className="m-0 text-[17px] font-semibold leading-snug">{topic.name}</h3>
-                  <p className="mt-2 text-[13.5px] leading-relaxed text-text-secondary">
-                    {topic.description}
-                  </p>
-                </div>
-              </Card>
+
+        {isLoading ? (
+          <div className="mt-10 border-t border-border" aria-hidden="true">
+            {Array.from({ length: 4 }).map((_, index) => (
+              <div key={index} className="border-b border-border py-7">
+                <div className="h-5 w-48 animate-pulse rounded bg-surface-tertiary" />
+                <div className="mt-3 h-3.5 w-full max-w-lg animate-pulse rounded bg-surface-tertiary" />
+              </div>
             ))}
           </div>
-
-          <IconButton
-            label="Scroll topics left"
-            shape="round"
-            onClick={() => scrollStrip(-1)}
-            className="absolute left-0 top-1/2 z-10 -translate-x-1/2 -translate-y-1/2 border border-border bg-surface shadow-card"
-          >
-            <i aria-hidden="true" className="bx bx-chevron-left" />
-          </IconButton>
-          <IconButton
-            label="Scroll topics right"
-            shape="round"
-            onClick={() => scrollStrip(1)}
-            className="absolute right-0 top-1/2 z-10 -translate-y-1/2 translate-x-1/2 border border-border bg-surface shadow-card"
-          >
-            <i aria-hidden="true" className="bx bx-chevron-right" />
-          </IconButton>
-        </div>
-      ) : null}
+        ) : isError ? (
+          <p role="status" className="mt-10 border-t border-border py-8 text-[14px] text-text-secondary">
+            Topics are temporarily unavailable.
+          </p>
+        ) : topics.length > 0 ? (
+          <ul className="mt-10 list-none border-t border-border p-0">
+            {topics.map((topic) => (
+              <li key={topic.id} className="border-b border-border">
+                <Link
+                  to={`/${topic.slug}`}
+                  className="group -mx-4 flex items-start justify-between gap-6 rounded-button px-4 py-6 transition hover:bg-surface/70 sm:items-center sm:py-7"
+                >
+                  <div className="min-w-0">
+                    <h3 className="font-heading text-[26px] font-normal leading-none tracking-[-0.015em] transition group-hover:text-brand sm:text-[30px]">
+                      {topic.name}
+                    </h3>
+                    <p className="mt-2 max-w-2xl text-[13.5px] leading-[1.65] text-text-secondary">
+                      {topic.description}
+                    </p>
+                  </div>
+                  <FaChevronRight
+                    aria-hidden="true"
+                    className="mt-1 shrink-0 text-[16px] text-text-tertiary transition duration-300 group-hover:translate-x-1 group-hover:text-brand sm:mt-0"
+                  />
+                </Link>
+              </li>
+            ))}
+          </ul>
+        ) : null}
+      </div>
     </section>
   );
 }

@@ -1,13 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { FaMoon, FaSun } from 'react-icons/fa6';
 import { useAuth } from '../../context/authContext.js';
 import { useTheme } from '../../context/themeContext.js';
 import { Avatar } from '../ui/Avatar.jsx';
 import { Button } from '../ui/Button.jsx';
 import { IconButton } from '../ui/IconButton.jsx';
-import { Brand } from './Brand.jsx';
-
-
 
 export function Navbar() {
   const { user, logout } = useAuth();
@@ -16,13 +14,23 @@ export function Navbar() {
 
   async function onLogout() {
     await logout();
-    navigate('/login', { replace: true });
+    navigate('/auth/login', { replace: true });
   }
 
   return (
-    <header className="sticky top-0 z-50 border-b border-border-secondary/70 bg-bg/80 backdrop-blur-xl">
+    <header className="sticky top-0 z-50 border-b border-border/70 bg-bg/85 backdrop-blur-xl">
       <div className="mx-auto flex h-[68px] max-w-6xl items-center justify-between px-6">
-        <Brand size={20} />
+        <Link
+          to="/"
+          aria-label="Geekly home"
+          className="inline-flex shrink-0 items-center rounded-button focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-soft"
+        >
+          <img
+            src={theme === 'dark' ? '/brand_dark.png' : '/brand_light.png'}
+            alt="Geekly"
+            className="h-8 w-auto max-w-[160px] object-contain sm:h-9"
+          />
+        </Link>
 
         <div className="flex items-center gap-2">
           <IconButton
@@ -31,24 +39,21 @@ export function Navbar() {
             shape="round"
             onClick={toggleTheme}
           >
-            <i aria-hidden="true" className={`bx ${theme === 'dark' ? 'bx-sun' : 'bx-moon'} leading-none`} />
+            {theme === 'dark' ? <FaSun aria-hidden="true" /> : <FaMoon aria-hidden="true" />}
           </IconButton>
+
           {user ? (
             <ProfileMenu user={user} onLogout={onLogout} />
           ) : (
-            <>
-              <Button as={Link} to="/login" variant="primary" size="sm">
-                Sign in
-              </Button>
-            </>
+            <Button as={Link} to="/auth/login" size="sm">
+              Sign in
+            </Button>
           )}
         </div>
       </div>
     </header>
   );
 }
-
-
 
 function ProfileMenu({ user, onLogout }) {
   const [open, setOpen] = useState(false);
@@ -85,17 +90,17 @@ function ProfileMenu({ user, onLogout }) {
       {open && (
         <div
           role="menu"
-          className="absolute right-0 top-[calc(100%+8px)] w-64 overflow-hidden rounded-card bg-surface shadow-dropdown"
+          className="absolute right-0 top-[calc(100%+8px)] w-60 overflow-hidden rounded-card border border-border bg-surface shadow-dropdown"
         >
-          <div className="border-b border-border-secondary px-5 py-4">
-            <p className="m-0 truncate text-[14.5px] font-semibold">{user.fullname}</p>
-            <p className="m-0 mt-0.5 truncate text-[13px] text-text-secondary">{user.email}</p>
+          <div className="border-b border-border-secondary px-4 py-3.5">
+            <p className="m-0 truncate text-[13.5px] font-semibold">{user.fullname}</p>
+            <p className="m-0 mt-0.5 truncate text-[12.5px] text-text-secondary">{user.email}</p>
           </div>
           <button
             type="button"
             role="menuitem"
             onClick={onLogout}
-            className="flex w-full items-center px-5 py-3 text-left text-[14px] font-medium text-text transition hover:bg-surface-secondary"
+            className="flex w-full items-center px-4 py-2.5 text-left text-[13.5px] font-medium text-text transition hover:bg-surface-secondary"
           >
             Sign out
           </button>

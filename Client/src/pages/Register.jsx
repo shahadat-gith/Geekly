@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { FaGithub, FaGoogle } from 'react-icons/fa6';
 import { useAuth } from '../context/authContext.js';
-import { AuthShell, AuthLink } from '../components/auth/AuthShell.jsx';
+import { AuthLayout, AuthLink } from '../components/layout/AuthLayout.jsx';
 import { Alert } from '../components/ui/Alert.jsx';
 import { Button } from '../components/ui/Button.jsx';
 import { Divider } from '../components/ui/Divider.jsx';
@@ -36,20 +37,22 @@ export default function Register() {
   }
 
   return (
-    <AuthShell
+    <AuthLayout
+      card
       title="Create account"
+      description="Set up an account with your email, Google or GitHub."
       footer={
         <>
-          Already have one? <AuthLink to="/login">Sign in</AuthLink>
+          Already have an account? <AuthLink to="/auth/login">Sign in</AuthLink>
         </>
       }
     >
       <div className="grid grid-cols-2 gap-3">
         <Button as="a" href={apiUrl('/auth/google')} variant="secondary" className="w-full px-4">
-          <i aria-hidden="true" className="bx bxl-google text-[20px] leading-none" /> Google
+          <FaGoogle aria-hidden="true" className="text-[17px]" /> Google
         </Button>
         <Button as="a" href={apiUrl('/auth/github')} variant="secondary" className="w-full px-4">
-          <i aria-hidden="true" className="bx bxl-github text-[20px] leading-none" /> GitHub
+          <FaGithub aria-hidden="true" className="text-[17px]" /> GitHub
         </Button>
       </div>
       <Divider label="or" className="my-1" />
@@ -87,6 +90,6 @@ export default function Register() {
           {busy ? 'Creating…' : 'Create account'}
         </Button>
       </form>
-    </AuthShell>
+    </AuthLayout>
   );
 }

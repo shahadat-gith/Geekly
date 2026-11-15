@@ -78,7 +78,7 @@ export default function Dashboard() {
       <div>
         <PageHeader
           title="Content dashboard"
-          description="A live view of the Noob Engineer content library."
+          description="A live view of the Geekly content library."
         />
         <Alert tone="error" title="Dashboard could not load" className="mt-6">
           <p className="m-0">{error.message}</p>

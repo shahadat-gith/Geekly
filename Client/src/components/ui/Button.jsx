@@ -2,6 +2,7 @@ const VARIANTS = {
   primary: 'bg-brand text-on-brand shadow-button hover:bg-brand-hover active:bg-brand-active',
   secondary: 'border border-border bg-surface text-text hover:bg-surface-hover',
   ghost: 'text-text hover:bg-surface-secondary',
+  inverse: 'border border-ink-soft bg-transparent text-ink-text hover:bg-ink-secondary',
 };
 
 const SIZES = {

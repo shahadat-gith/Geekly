@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { FaGithub, FaGoogle } from 'react-icons/fa6';
 import { useAuth } from '../context/authContext.js';
-import { AuthShell, AuthLink } from '../components/auth/AuthShell.jsx';
-import { Brand } from '../components/common/Brand.jsx';
+import { AuthLayout, AuthLink } from '../components/layout/AuthLayout.jsx';
 import { Alert } from '../components/ui/Alert.jsx';
 import { Button } from '../components/ui/Button.jsx';
 import { Divider } from '../components/ui/Divider.jsx';
@@ -33,21 +33,22 @@ export default function Login() {
   }
 
   return (
-    <AuthShell
+    <AuthLayout
+      card
       title="Sign in"
+      description="Welcome back to Geekly."
       footer={
         <>
-          New to <Brand showLink={false} size={13.5} />?{' '}
-          <AuthLink to="/register">Create account</AuthLink>
+          New to Geekly? <AuthLink to="/auth/register">Create an account</AuthLink>
         </>
       }
     >
       <div className="grid grid-cols-2 gap-3">
         <Button as="a" href={apiUrl('/auth/google')} variant="secondary" className="w-full px-4">
-          <i aria-hidden="true" className="bx bxl-google text-[20px] leading-none" /> Google
+          <FaGoogle aria-hidden="true" className="text-[17px]" /> Google
         </Button>
         <Button as="a" href={apiUrl('/auth/github')} variant="secondary" className="w-full px-4">
-          <i aria-hidden="true" className="bx bxl-github text-[20px] leading-none" /> GitHub
+          <FaGithub aria-hidden="true" className="text-[17px]" /> GitHub
         </Button>
       </div>
       <Divider label="or" className="my-1" />
@@ -75,10 +76,10 @@ export default function Login() {
           />
           <div className="flex justify-end">
             <Link
-              to="/forgot-password"
+              to="/auth/forgot-password"
               className="text-[13px] font-medium text-brand hover:text-brand-hover"
             >
-              Forgot?
+              Forgot password?
             </Link>
           </div>
         </div>
@@ -86,6 +87,6 @@ export default function Login() {
           {busy ? 'Signing in…' : 'Sign in'}
         </Button>
       </form>
-    </AuthShell>
+    </AuthLayout>
   );
 }

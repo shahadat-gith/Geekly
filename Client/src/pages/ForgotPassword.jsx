@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useForgotPassword } from '../api/hooks.js';
-import { AuthShell, AuthLink } from '../components/auth/AuthShell.jsx';
+import { AuthLayout, AuthLink } from '../components/layout/AuthLayout.jsx';
 import { Alert } from '../components/ui/Alert.jsx';
 import { Button } from '../components/ui/Button.jsx';
 import { Input } from '../components/ui/Input.jsx';
@@ -28,11 +28,12 @@ export default function ForgotPassword() {
   }
 
   return (
-    <AuthShell
-      title="Reset your password"
+    <AuthLayout
+      title="Reset password"
+      description="Enter your account email and we will send you a reset link."
       footer={
         <>
-          Remembered it? <AuthLink to="/login">Sign in</AuthLink>
+          Remembered it? <AuthLink to="/auth/login">Sign in</AuthLink>
         </>
       }
     >
@@ -46,7 +47,7 @@ export default function ForgotPassword() {
           {devToken && (
             <Alert tone="info">
               Development only (no email service yet):{' '}
-              <Link to={`/reset-password?token=${devToken}`} className="font-semibold underline">
+              <Link to={`/auth/reset-password?token=${devToken}`} className="font-semibold underline">
                 open the reset page
               </Link>
             </Alert>
@@ -68,6 +69,6 @@ export default function ForgotPassword() {
           </Button>
         </form>
       )}
-    </AuthShell>
+    </AuthLayout>
   );
 }

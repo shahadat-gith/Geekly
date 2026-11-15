@@ -9,7 +9,7 @@ import {
 // Backend origin. The admin app calls it directly in every environment, so
 // set VITE_API_URL in .env:
 //   development: http://localhost:3000
-//   production:  https://api.noobengineer.in
+//   production: the deployed Geekly API URL
 export const API_BASE = (
   import.meta.env.VITE_API_URL || 'http://localhost:3000'
 ).replace(/\/$/, '');

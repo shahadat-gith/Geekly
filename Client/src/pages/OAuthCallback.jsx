@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { setSession } from '../utils/tokens.js';
 import { useAuth } from '../context/authContext.js';
-import { AuthShell, AuthLink } from '../components/auth/AuthShell.jsx';
+import { AuthLayout, AuthLink } from '../components/layout/AuthLayout.jsx';
 import { Alert } from '../components/ui/Alert.jsx';
 
 // Where the backend redirects after Google/GitHub consent:
@@ -33,18 +33,26 @@ export default function OAuthCallback() {
 
   if (!error) {
     return (
-      <div className="flex min-h-[calc(100svh-68px)] items-center justify-center">
-        <p className="text-text-secondary">Signing you in…</p>
-      </div>
+      <AuthLayout title="Signing you in">
+        <p className="flex items-center gap-2.5 text-[14px] text-text-secondary">
+          <span
+            role="status"
+            aria-label="Loading"
+            className="h-4 w-4 animate-spin rounded-full border-2 border-border border-t-brand"
+          />
+          Finishing sign-in…
+        </p>
+      </AuthLayout>
     );
   }
 
   return (
-    <AuthShell
+    <AuthLayout
       title="Sign-in failed"
-      footer={<AuthLink to="/login">Sign in</AuthLink>}
+      description="We could not finish signing you in. Please try again."
+      footer={<AuthLink to="/auth/login">Sign in</AuthLink>}
     >
       <Alert>{error}</Alert>
-    </AuthShell>
+    </AuthLayout>
   );
 }

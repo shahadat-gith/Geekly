@@ -1,72 +1,81 @@
 @import "tailwindcss";
 
 /* ------------------------------------------------------------------ */
-/*  Noob Engineer theme (Tailwind v4 tokens)                           */
+/*  Geekly theme (Tailwind v4 tokens)                                  */
 /*                                                                     */
-/*  The brand/surface tokens from the design brief live in @theme so   */
-/*  they are available as Tailwind utilities: bg-brand, bg-surface,    */
-/*  text-muted, border-border, shadow-card, rounded-card...            */
+/*  Editorial foundation: warm paper surfaces, ink-coloured text and   */
+/*  panels, a single indigo brand accent, serif display type.          */
 /* ------------------------------------------------------------------ */
 
 @theme {
-  --color-brand: #EA5B2A;
-  --color-brand-hover: #D94D20;
-  --color-brand-active: #BD401A;
-  --color-brand-soft: #FFF0E9;
+  --color-brand: #4057F5;
+  --color-brand-hover: #2F44DE;
+  --color-brand-active: #2537B8;
+  --color-brand-soft: #EBEEFF;
+  --color-brand-light: #AFB9FF;
   --color-on-brand: #FFFFFF;
 
-  --color-bg: #F7F7F5;
-  --color-bg-secondary: #F0F0ED;
-  --color-bg-tertiary: #EAEAE7;
+  --color-accent: #B4532A;
+  --color-accent-soft: #F8EDE5;
+
+  --color-bg: #F5F4EF;
+  --color-bg-secondary: #EDECE5;
+  --color-bg-tertiary: #E3E1D8;
 
   --color-surface: #FFFFFF;
-  --color-surface-secondary: #F7F7F5;
-  --color-surface-tertiary: #EEEEEB;
-  --color-surface-hover: #F1F1EE;
+  --color-surface-secondary: #FAF9F4;
+  --color-surface-tertiary: #F1F0E9;
+  --color-surface-hover: #F3F2EC;
 
-  --color-text: #2F2F2F;
-  --color-text-secondary: #666666;
-  --color-text-tertiary: #929292;
-  --color-text-disabled: #BDBDBD;
+  /* Ink panels: the one place the page goes dark in both themes. */
+  --color-ink: #14161C;
+  --color-ink-secondary: #1E212A;
+  --color-ink-soft: #2A2E39;
+  --color-ink-text: #F6F5F0;
+  --color-ink-muted: #9DA1AC;
 
-  --color-border: #E5E5E2;
-  --color-border-secondary: #EEEEEB;
-  --color-border-focus: #EA5B2A;
+  --color-text: #191B21;
+  --color-text-secondary: #55585F;
+  --color-text-tertiary: #8A8D94;
+  --color-text-disabled: #B8BABF;
 
-  --color-success: #25865B;
-  --color-warning: #A86B12;
-  --color-error: #D94343;
-  --color-info: #327BC0;
+  --color-border: #E2E0D8;
+  --color-border-secondary: #ECE9E1;
+  --color-border-focus: #4057F5;
 
-  --font-sans: "Plus Jakarta Sans", ui-sans-system, -apple-system, BlinkMacSystemFont,
+  --color-success: #237A52;
+  --color-warning: #96610F;
+  --color-error: #C93A3A;
+  --color-info: #2E6EA8;
+
+  --font-sans: "Plus Jakarta Sans", ui-sans-serif, -apple-system, BlinkMacSystemFont,
     "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 
-  /* Display face for large headlines only; body copy stays Plus Jakarta Sans. */
-  --font-heading: "Space Grotesk", "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  /* Display face for headlines and editorial headings. */
+  --font-heading: "Instrument Serif", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
 
-  /* Reference card pattern (light + dark):
-     - solid surface, no border, no inset edge highlight
-     - soft outer shadow only */
-  --shadow-card: 0 1px 2px 0 rgb(0 0 0 / 0.04),
-    0 12px 24px -12px rgb(0 0 0 / 0.10),
-    0 24px 48px -24px rgb(0 0 0 / 0.08);
+  /* Labels, numerals, metadata and code. */
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 
-  --shadow-card-hover: 0 2px 4px 0 rgb(0 0 0 / 0.05),
-    0 16px 32px -12px rgb(0 0 0 / 0.16),
-    0 32px 64px -24px rgb(0 0 0 / 0.14);
+  --shadow-card: 0 1px 2px 0 rgb(20 22 28 / 0.04), 0 10px 22px -16px rgb(20 22 28 / 0.16);
 
-  --shadow-button: inset 0 1px 0 0 rgb(255 255 255 / 0.25),
-    0 1px 2px rgb(0 0 0 / 0.05),
-    0 8px 20px -6px rgb(234 91 42 / 0.40);
+  --shadow-card-hover: 0 2px 4px 0 rgb(20 22 28 / 0.05),
+    0 18px 34px -18px rgb(20 22 28 / 0.22);
+
+  --shadow-note: 0 1px 2px 0 rgb(20 22 28 / 0.05), 0 16px 34px -20px rgb(20 22 28 / 0.28);
+
+  --shadow-button: 0 1px 2px 0 rgb(20 22 28 / 0.16),
+    0 10px 20px -12px rgb(64 87 245 / 0.5);
 
   --shadow-field: inset 0 1px 0 0 rgb(0 0 0 / 0.02);
 
-  --shadow-dropdown: 0 2px 6px 0 rgb(0 0 0 / 0.04),
-    0 16px 40px -12px rgb(0 0 0 / 0.18);
+  --shadow-dropdown: 0 2px 6px 0 rgb(20 22 28 / 0.05),
+    0 18px 44px -16px rgb(20 22 28 / 0.24);
 
-  --radius-button: 0.625rem;
-  --radius-card: 1.5rem;
-  --radius-field: 0.625rem;
+  --radius-button: 0.5rem;
+  --radius-card: 1rem;
+  --radius-field: 0.5rem;
+  --radius-panel: 1.25rem;
 
   --breakpoint-xs: 30rem;
 }
@@ -75,81 +84,83 @@
 [data-theme="dark"] {
   color-scheme: dark;
 
-  --color-bg: #141414;
-  --color-bg-secondary: #1B1B1B;
-  --color-bg-tertiary: #202020;
+  --color-bg: #0F1014;
+  --color-bg-secondary: #15171C;
+  --color-bg-tertiary: #1B1D23;
 
-  --color-surface: #242424;
-  --color-surface-secondary: #2C2C2C;
-  --color-surface-tertiary: #353535;
-  --color-surface-hover: #303030;
+  --color-surface: #171920;
+  --color-surface-secondary: #1D1F27;
+  --color-surface-tertiary: #252832;
+  --color-surface-hover: #22252D;
 
-  --color-text: #F5F5F5;
-  --color-text-secondary: #A3A3A3;
-  --color-text-tertiary: #737373;
-  --color-text-disabled: #555555;
+  --color-ink: #1B1E25;
+  --color-ink-secondary: #23262F;
+  --color-ink-soft: #2E323D;
+  --color-ink-text: #F4F3EE;
+  --color-ink-muted: #9DA2AE;
 
-  --color-border: #2E2E2E;
-  --color-border-secondary: #282828;
-  --color-border-focus: #FF6B3D;
+  --color-text: #EFEEE9;
+  --color-text-secondary: #A5A8B0;
+  --color-text-tertiary: #7C8089;
+  --color-text-disabled: #565A63;
 
-  --color-brand: #FF6B3D;
-  --color-brand-hover: #FF8059;
-  --color-brand-active: #E9572B;
-  --color-brand-soft: #48271E;
-  --color-on-brand: #242424;
+  --color-border: #2A2D36;
+  --color-border-secondary: #212430;
+  --color-border-focus: #98A6FF;
 
-  --color-success: #4CAF83;
-  --color-warning: #E9AD50;
-  --color-error: #EF6868;
-  --color-info: #6BA9E8;
+  --color-brand: #98A6FF;
+  --color-brand-hover: #AEBAFF;
+  --color-brand-active: #8291F7;
+  --color-brand-soft: #232A4D;
+  --color-brand-light: #AFB9FF;
+  --color-on-brand: #101114;
 
-  --shadow-card: 0 1px 2px 0 rgb(0 0 0 / 0.35),
-    0 12px 24px -12px rgb(0 0 0 / 0.5),
-    0 24px 48px -24px rgb(0 0 0 / 0.45);
+  --color-accent: #E1A07B;
+  --color-accent-soft: #2E221C;
 
-  --shadow-card-hover: 0 2px 4px 0 rgb(0 0 0 / 0.4),
-    0 16px 32px -12px rgb(0 0 0 / 0.6),
-    0 32px 64px -24px rgb(0 0 0 / 0.55);
+  --color-success: #4EB98A;
+  --color-warning: #E2AB55;
+  --color-error: #EF6F6F;
+  --color-info: #6FA9DE;
 
-  --shadow-button: inset 0 1px 0 0 rgb(255 255 255 / 0.2),
-    0 8px 20px -6px rgb(255 107 61 / 0.35);
+  --shadow-card: 0 1px 2px 0 rgb(0 0 0 / 0.4), 0 12px 26px -18px rgb(0 0 0 / 0.65);
 
-  --shadow-field: inset 0 1px 0 0 rgb(0 0 0 / 0.1);
+  --shadow-card-hover: 0 2px 6px 0 rgb(0 0 0 / 0.45), 0 20px 40px -20px rgb(0 0 0 / 0.75);
 
-  --shadow-dropdown: 0 2px 6px 0 rgb(0 0 0 / 0.4),
-    0 20px 48px -16px rgb(0 0 0 / 0.6);
+  --shadow-note: 0 2px 6px 0 rgb(0 0 0 / 0.45), 0 20px 40px -22px rgb(0 0 0 / 0.8);
+
+  --shadow-button: 0 1px 2px 0 rgb(0 0 0 / 0.3), 0 10px 22px -12px rgb(152 166 255 / 0.35);
+
+  --shadow-field: inset 0 1px 0 0 rgb(0 0 0 / 0.12);
+
+  --shadow-dropdown: 0 2px 6px 0 rgb(0 0 0 / 0.45), 0 20px 48px -16px rgb(0 0 0 / 0.7);
 }
 
 html {
   scroll-behavior: smooth;
 }
 
-button, a, [role="button"], select, input[type="button"], input[type="submit"], input[type="checkbox"], input[type="radio"] {
-  cursor: pointer;
-}
-
 body {
   background-color: var(--color-bg);
   color: var(--color-text);
   font-family: var(--font-sans);
-  letter-spacing: -0.011em;
+  letter-spacing: -0.006em;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
 
-h1, h2, h3 {
-  letter-spacing: -0.02em;
+button, a, [role="button"], select, input[type="button"], input[type="submit"], input[type="checkbox"], input[type="radio"] {
+  cursor: pointer;
 }
 
 ::selection {
-  background-color: color-mix(in srgb, var(--color-brand) 25%, transparent);
+  background-color: color-mix(in srgb, var(--color-brand) 22%, transparent);
 }
 
 /* Scroll reveal: elements start faded + lowered, then rise in. */
 .reveal {
   opacity: 0;
-  transform: translateY(24px);
+  transform: translateY(20px);
   transition:
     opacity 700ms ease,
     transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
@@ -160,17 +171,16 @@ h1, h2, h3 {
   transform: none;
 }
 
-/* Shared smooth hover treatment for home cards. */
+/* Shared smooth hover treatment for linked cards. */
 .card-hover {
   transition:
-    transform 600ms cubic-bezier(0.22, 1, 0.36, 1),
-    box-shadow 600ms ease;
-  will-change: transform, box-shadow;
+    transform 400ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 400ms ease;
 }
 
 .card-hover:hover,
 .card-hover:focus-visible {
-  transform: translateY(-4px);
+  transform: translateY(-3px);
   box-shadow: var(--shadow-card-hover);
 }
 
@@ -182,45 +192,6 @@ h1, h2, h3 {
   }
   html {
     scroll-behavior: auto;
-  }
-}
-
-/* Gentle float for the hero's decorative cards. */
-@keyframes float-slow {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-8px); }
-}
-
-.animate-float-slow {
-  animation: float-slow 6s ease-in-out infinite;
-}
-
-@keyframes float-slower {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(10px); }
-}
-
-.animate-float-slower {
-  animation: float-slower 8s ease-in-out infinite;
-}
-
-@keyframes background-drift {
-  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
-  50% { transform: translate3d(28px, -20px, 0) scale(1.06); }
-}
-
-.animate-background-drift {
-  animation: background-drift 14s ease-in-out infinite;
-}
-
-.animate-background-drift-slow {
-  animation: background-drift 20s ease-in-out infinite reverse;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .animate-float-slow, .animate-float-slower,
-  .animate-background-drift, .animate-background-drift-slow {
-    animation: none;
   }
 }
 
@@ -251,7 +222,7 @@ h1, h2, h3 {
 }
 
 .animate-page {
-  animation: page-enter 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: page-enter 380ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -266,8 +237,8 @@ h1, h2, h3 {
 
 .article-prose {
   color: var(--color-text);
-  font-size: 16px;
-  line-height: 1.8;
+  font-size: 17px;
+  line-height: 1.78;
   overflow-wrap: anywhere;
 }
 
@@ -284,25 +255,26 @@ h1, h2, h3 {
 }
 
 .article-prose h2 {
-  margin: 1.9em 0 0.55em;
+  margin: 1.9em 0 0.5em;
   font-family: var(--font-heading);
-  font-size: 1.5rem;
-  font-weight: 600;
-  line-height: 1.25;
+  font-size: 1.85rem;
+  font-weight: 400;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
 }
 
 .article-prose h3 {
-  margin: 1.6em 0 0.5em;
-  font-family: var(--font-heading);
-  font-size: 1.2rem;
-  font-weight: 600;
-  line-height: 1.3;
+  margin: 1.7em 0 0.45em;
+  font-size: 1.02rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.4;
 }
 
 .article-prose ul,
 .article-prose ol {
   margin: 0 0 1.15em;
-  padding-left: 1.5em;
+  padding-left: 1.4em;
 }
 
 .article-prose ul {
@@ -314,7 +286,8 @@ h1, h2, h3 {
 }
 
 .article-prose li {
-  margin: 0.35em 0;
+  margin: 0.4em 0;
+  padding-left: 0.15em;
 }
 
 .article-prose li::marker {
@@ -322,39 +295,41 @@ h1, h2, h3 {
 }
 
 .article-prose blockquote {
-  margin: 1.4em 0;
-  border-left: 3px solid var(--color-brand);
-  border-radius: 0 var(--radius-field) var(--radius-field) 0;
+  margin: 1.5em 0;
+  border-left: 2px solid var(--color-brand);
   background: var(--color-surface-secondary);
-  padding: 0.9em 1.2em;
+  padding: 1em 1.25em;
   color: var(--color-text-secondary);
+  font-family: var(--font-heading);
+  font-size: 1.18rem;
+  line-height: 1.5;
 }
 
 .article-prose a {
   color: var(--color-brand);
   font-weight: 600;
   text-decoration: underline;
-  text-underline-offset: 2px;
+  text-underline-offset: 3px;
 }
 
 .article-prose code {
-  border-radius: 0.35rem;
+  border-radius: 0.3rem;
   background: var(--color-surface-tertiary);
-  padding: 0.15em 0.4em;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  font-size: 0.88em;
+  padding: 0.12em 0.36em;
+  font-family: var(--font-mono);
+  font-size: 0.84em;
 }
 
 .article-prose pre {
-  margin: 1.4em 0;
+  margin: 1.5em 0;
   overflow-x: auto;
   border-radius: var(--radius-field);
-  background: var(--color-text);
-  padding: 1em 1.2em;
-  color: var(--color-bg);
-  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  font-size: 0.86em;
-  line-height: 1.7;
+  background: var(--color-ink);
+  padding: 1.1em 1.25em;
+  color: var(--color-ink-text);
+  font-family: var(--font-mono);
+  font-size: 0.82em;
+  line-height: 1.75;
 }
 
 .article-prose pre code {
@@ -368,6 +343,12 @@ h1, h2, h3 {
   max-width: 100%;
   margin: 1.5em auto;
   border-radius: var(--radius-field);
+}
+
+.article-prose hr {
+  margin: 2.2em 0;
+  border: 0;
+  border-top: 1px solid var(--color-border);
 }
 
 .article-prose-chunk {
@@ -401,15 +382,9 @@ h1, h2, h3 {
 
 .article-media figcaption {
   color: var(--color-text-tertiary);
-  font-size: 12.5px;
-  line-height: 1.6;
+  font-size: 12px;
+  line-height: 1.7;
   text-align: center;
-}
-
-.article-prose hr {
-  margin: 2em 0;
-  border: 0;
-  border-top: 1px solid var(--color-border);
 }
 
 /* Inset form fields should not get the convex treatment. */

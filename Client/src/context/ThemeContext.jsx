@@ -3,7 +3,7 @@ import { ThemeContext } from './themeContext.js';
 
 function getInitialTheme() {
   try {
-    const stored = localStorage.getItem('ne-theme');
+    const stored = localStorage.getItem('geekly-theme');
     if (stored === 'dark' || stored === 'light') return stored;
   } catch {
     // Fall back to the document theme if local storage is unavailable.
@@ -17,7 +17,7 @@ export function ThemeProvider({ children }) {
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
     try {
-      localStorage.setItem('ne-theme', theme);
+      localStorage.setItem('geekly-theme', theme);
     } catch {
       // The theme still applies for this session if storage is unavailable.
     }

@@ -1,16 +1,18 @@
-import { BrowserRouter, Route, Routes, useLocation } from 'react-router-dom';
+import { useEffect } from 'react';
+import { BrowserRouter, Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext.jsx';
 import { ThemeProvider } from './context/ThemeContext.jsx';
-import { Background } from './components/common/Background.jsx';
 import { ToastProvider } from './context/ToastContext.jsx';
-import { Navbar } from './components/common/Navbar.jsx';
-import { Footer } from './components/common/Footer.jsx';
+import { useAuth } from './context/authContext.js';
+import { getRefreshToken } from './utils/tokens.js';
+import { MainLayout } from './components/layout/MainLayout.jsx';
 import Login from './pages/Login.jsx';
 import Register from './pages/Register.jsx';
 import ForgotPassword from './pages/ForgotPassword.jsx';
 import ResetPassword from './pages/ResetPassword.jsx';
 import OAuthCallback from './pages/OAuthCallback.jsx';
 import Home from './pages/Home.jsx';
+import LegalPage from './pages/LegalPage.jsx';
 import ContentPage from './pages/ContentPage.jsx';
 
 export default function App() {
@@ -19,14 +21,7 @@ export default function App() {
       <ThemeProvider>
         <ToastProvider>
           <AuthProvider>
-            <div className="relative isolate min-h-svh">
-              <Background />
-              <div className="relative z-10 flex min-h-svh flex-col">
-                <Navbar />
-                <AnimatedRoutes />
-                <Footer />
-              </div>
-            </div>
+            <AnimatedRoutes />
           </AuthProvider>
         </ToastProvider>
       </ThemeProvider>
@@ -36,24 +31,102 @@ export default function App() {
 
 // Every route change re-mounts the page with a soft entrance transition.
 function AnimatedRoutes() {
-  const { pathname } = useLocation();
+  const { pathname, hash } = useLocation();
+
+  // Honour in-page links such as /#topics once the new page has mounted.
+  useEffect(() => {
+    if (!hash) return undefined;
+    const frame = requestAnimationFrame(() => {
+      document.getElementById(hash.slice(1))?.scrollIntoView({ block: 'start' });
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [pathname, hash]);
 
   return (
-    <main key={pathname} className="animate-page flex-1">
-      <Routes>
-        {/* Public pages */}
+    <Routes>
+      {/* Public site: header, pages and footer. */}
+      <Route element={<MainLayout />}>
         <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/reset-password" element={<ResetPassword />} />
-        <Route path="/auth/callback" element={<OAuthCallback />} />
-
+        <Route path="/terms" element={<LegalPage page="terms" />} />
+        <Route path="/privacy" element={<LegalPage page="privacy" />} />
         {/* Topics and articles share one nested content route:
             /system-design, /system-design/basics,
             /system-design/basics/caching */}
         <Route path="*" element={<ContentPage />} />
-      </Routes>
-    </main>
+      </Route>
+
+      {/* Auth screens render their own layout, without the site header.
+          Signed-in users are sent back to the app. */}
+      <Route
+        path="/auth/login"
+        element={
+          <GuestOnly>
+            <Login />
+          </GuestOnly>
+        }
+      />
+      <Route
+        path="/auth/register"
+        element={
+          <GuestOnly>
+            <Register />
+          </GuestOnly>
+        }
+      />
+      <Route
+        path="/auth/forgot-password"
+        element={
+          <GuestOnly>
+            <ForgotPassword />
+          </GuestOnly>
+        }
+      />
+      <Route
+        path="/auth/reset-password"
+        element={
+          <GuestOnly>
+            <ResetPassword />
+          </GuestOnly>
+        }
+      />
+      {/* The OAuth provider redirects here with tokens, so this route stays
+          available even when a session already exists. */}
+      <Route path="/auth/callback" element={<OAuthCallback />} />
+
+      {/* Old auth URLs keep working. */}
+      <Route path="/login" element={<RedirectTo to="/auth/login" />} />
+      <Route path="/register" element={<RedirectTo to="/auth/register" />} />
+      <Route path="/forgot-password" element={<RedirectTo to="/auth/forgot-password" />} />
+      <Route path="/reset-password" element={<RedirectTo to="/auth/reset-password" />} />
+    </Routes>
   );
+}
+
+function GuestOnly({ children }) {
+  const { user, loading } = useAuth();
+  const location = useLocation();
+  const restoring = Boolean(getRefreshToken()) && loading;
+
+  if (restoring) {
+    return (
+      <div className="flex min-h-svh items-center justify-center">
+        <span
+          role="status"
+          aria-label="Loading"
+          className="h-5 w-5 animate-spin rounded-full border-2 border-border border-t-brand"
+        />
+      </div>
+    );
+  }
+
+  if (user) {
+    return <Navigate to={location.state?.from || '/'} replace />;
+  }
+
+  return children;
+}
+
+function RedirectTo({ to }) {
+  const { search } = useLocation();
+  return <Navigate to={`${to}${search}`} replace />;
 }

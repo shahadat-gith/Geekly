@@ -1,7 +1,7 @@
 // Admin tokens are separate from the public client session. The key names are
 // deliberately different so signing into one console never inherits the other.
-const ACCESS_KEY = 'noob-admin-access-token';
-const REFRESH_KEY = 'noob-admin-refresh-token';
+const ACCESS_KEY = 'geekly-admin-access-token';
+const REFRESH_KEY = 'geekly-admin-refresh-token';
 
 function read(key) {
   try {

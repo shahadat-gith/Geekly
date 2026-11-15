@@ -3,7 +3,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAdminAuth } from '../../context/adminAuthContext.js';
 import { Avatar } from '../ui/Avatar.jsx';
 import { Button } from '../ui/Button.jsx';
-import { Brand } from './Brand.jsx';
 
 function ProfileMenu() {
   const { logout } = useAdminAuth();
@@ -37,7 +36,9 @@ export function Topbar() {
     <header className="shrink-0 border-b border-border-secondary">
       <div className="mx-auto flex min-h-[68px] w-full max-w-[1360px] items-center justify-between gap-4 px-5 py-3.5 sm:px-8 lg:px-12">
         <div className="flex min-w-0 items-center gap-3">
-          <Brand size={50}/>
+          <Link to="/" aria-label="Geekly admin dashboard" className="inline-flex shrink-0 items-center rounded-button focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-soft">
+            <img src="/brand_light.png" alt="Geekly" className="h-11 w-auto max-w-[180px] object-contain" />
+          </Link>
           <span aria-hidden="true" className="hidden h-6 w-px bg-border sm:block" />
           <span className="hidden items-center gap-2 rounded-button border border-border-secondary bg-surface-secondary/70 px-3 py-2 text-[11.5px] font-semibold text-text-secondary md:inline-flex">
             <i aria-hidden="true" className="bx bx-shield-quarter text-[15px] text-brand" />

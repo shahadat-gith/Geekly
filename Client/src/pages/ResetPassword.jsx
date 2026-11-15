@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useResetPassword } from '../api/hooks.js';
-import { AuthShell, AuthLink } from '../components/auth/AuthShell.jsx';
+import { AuthLayout, AuthLink } from '../components/layout/AuthLayout.jsx';
 import { Alert } from '../components/ui/Alert.jsx';
 import { Button } from '../components/ui/Button.jsx';
 import { Input } from '../components/ui/Input.jsx';
@@ -35,13 +35,17 @@ export default function ResetPassword() {
   }
 
   return (
-    <AuthShell title="Set a new password" footer={<AuthLink to="/login">Sign in</AuthLink>}>
+    <AuthLayout
+      title="Set a new password"
+      description="Choose a new password for your account."
+      footer={<AuthLink to="/auth/login">Sign in</AuthLink>}
+    >
       {!token ? (
         <Alert>The reset link is missing its token. Request a new one from the forgot-password page.</Alert>
       ) : done ? (
         <Alert tone="success">
           Password updated.{' '}
-          <Link to="/login" className="font-semibold underline">
+          <Link to="/auth/login" className="font-semibold underline">
             Sign in with your new password
           </Link>
         </Alert>
@@ -75,6 +79,6 @@ export default function ResetPassword() {
           </form>
         </>
       )}
-    </AuthShell>
+    </AuthLayout>
   );
 }

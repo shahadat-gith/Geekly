@@ -11,7 +11,7 @@ export const IMAGE_ENDPOINT = 'https://openrouter.ai/api/v1/images';
 const apiKey = keys.openrouter.apiKey;
 const attribution = {
   'HTTP-Referer': keys.auth.adminUrl,
-  'X-Title': 'Noob Engineer Admin',
+  'X-Title': 'Geekly Admin',
 };
 
 export function requireApiKey() {

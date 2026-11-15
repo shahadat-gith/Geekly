@@ -10,10 +10,11 @@ export default function ContentPage() {
 
   if (isLoading) {
     return (
-      <div className="mx-auto max-w-5xl px-6 py-16">
-        <div className="h-4 w-40 animate-pulse rounded bg-surface-secondary" />
-        <div className="mt-6 h-56 animate-pulse rounded-card bg-surface-secondary" />
-        <div className="mt-8 h-10 w-1/3 animate-pulse rounded bg-surface-secondary" />
+      <div className="mx-auto max-w-5xl px-6 py-12 sm:py-16">
+        <div className="h-3 w-36 animate-pulse rounded bg-surface-tertiary" />
+        <div className="mt-8 h-12 w-2/3 animate-pulse rounded bg-surface-tertiary" />
+        <div className="mt-4 h-4 w-1/2 animate-pulse rounded bg-surface-tertiary" />
+        <div className="mt-12 h-64 animate-pulse rounded-card bg-surface-tertiary/70" />
       </div>
     );
   }

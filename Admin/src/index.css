@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 /* ------------------------------------------------------------------ */
-/*  Noob Engineer admin theme                                          */
+/*  Geekly admin theme                                          */
 /*                                                                     */
 /*  Same brand language as the public site, shaped after the reference */
 /*  dashboard: a soft tinted canvas, a white rounded console shell and */
@@ -10,32 +10,32 @@
 /* ------------------------------------------------------------------ */
 
 @theme {
-  --color-brand: #ea5b2a;
-  --color-brand-hover: #d94d20;
-  --color-brand-active: #bd401a;
-  --color-brand-soft: #fff0e9;
+  --color-brand: #4057f5;
+  --color-brand-hover: #3248dd;
+  --color-brand-active: #283bb8;
+  --color-brand-soft: #eef0ff;
   --color-on-brand: #ffffff;
 
-  --color-canvas: #efedf6;
-  --color-canvas-glow: #ded9f2;
+  --color-canvas: #eef1fb;
+  --color-canvas-glow: #dce4ff;
 
-  --color-bg: #f7f7f5;
-  --color-bg-secondary: #f0f0ed;
-  --color-bg-tertiary: #eaeae7;
+  --color-bg: #f7f8fc;
+  --color-bg-secondary: #eef0f7;
+  --color-bg-tertiary: #e7eaf3;
 
   --color-surface: #ffffff;
-  --color-surface-secondary: #f7f7f8;
-  --color-surface-tertiary: #eeedf2;
-  --color-surface-hover: #f2f1f5;
+  --color-surface-secondary: #f6f7fc;
+  --color-surface-tertiary: #eceef7;
+  --color-surface-hover: #f0f2fa;
 
   --color-text: #2f2f2f;
   --color-text-secondary: #666666;
   --color-text-tertiary: #929198;
   --color-text-disabled: #bdbdbd;
 
-  --color-border: #e5e4e9;
-  --color-border-secondary: #eeeef2;
-  --color-border-focus: #ea5b2a;
+  --color-border: #e2e6f0;
+  --color-border-secondary: #edf0f7;
+  --color-border-focus: #4057f5;
 
   --color-success: #25865b;
   --color-warning: #a86b12;
@@ -56,7 +56,7 @@
   --shadow-shell: 0 2px 6px 0 rgb(47 47 47 / 0.03),
     0 40px 100px -48px rgb(47 47 47 / 0.28);
 
-  --shadow-button: 0 1px 2px rgb(0 0 0 / 0.04), 0 8px 18px -8px rgb(234 91 42 / 0.45);
+  --shadow-button: 0 1px 2px rgb(0 0 0 / 0.04), 0 8px 18px -8px rgb(64 87 245 / 0.36);
   --shadow-field: inset 0 1px 0 0 rgb(0 0 0 / 0.02);
   --shadow-dropdown: 0 2px 6px 0 rgb(0 0 0 / 0.04),
     0 20px 48px -16px rgb(0 0 0 / 0.2);
@@ -380,8 +380,8 @@ textarea:disabled {
   --color-text-tertiary: #8d8899;
   --color-border: #302e3a;
   --color-border-secondary: #262530;
-  --color-brand: #ff6b3d;
-  --color-brand-soft: #3a221a;
+  --color-brand: #9aa8ff;
+  --color-brand-soft: #252a54;
   box-shadow: var(--shadow-dropdown);
 }
 

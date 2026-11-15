@@ -1,4 +1,3 @@
-import { Brand } from '../common/Brand.jsx';
 import { Card } from '../ui/Card.jsx';
 import { useTheme } from '../../context/themeContext.js';
 
@@ -6,40 +5,28 @@ export function Hero() {
   const { theme } = useTheme();
 
   return (
-    <>
-      <section className="relative overflow-hidden pt-12 sm:pt-16 lg:pt-20">
-        <div className="mx-auto grid max-w-6xl items-center gap-10 px-6 lg:grid-cols-[1.02fr_0.98fr] lg:gap-16">
-          <div className="text-left">
-            <h1 className="m-0 font-heading text-[30px] font-medium uppercase leading-[1.06] tracking-[-0.015em] xs:text-[38px] sm:text-[44px] xl:text-[50px]">
-              <span className="block">
-                BE THE{' '}
-                <span className="font-bold text-brand">ENGINEER</span>
-              </span>
-              <span className="block">
-                WHO KNOWS <span className="font-bold text-brand">“HOW”</span>
-              </span>
-            </h1>
-            <p className="mt-6 max-w-[34rem] text-[16.5px] leading-relaxed text-text-secondary sm:text-[18px]">
-              “<Brand showLink={false} size={18} />”
-              takes you from your first concept to confident engineering — plain-language
-              explanations, worked examples and short practice, so you learn how to actually do the
-              work, not just repeat the theory.
-            </p>
-          </div>
+    <section className="mx-auto max-w-6xl px-6 pb-16 pt-14 sm:pb-24 sm:pt-24">
+      <div className="grid items-center gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.92fr)] lg:gap-16">
+        <div>
+          <h1 className="max-w-[16ch] text-balance font-heading text-[52px] font-normal leading-[0.95] tracking-[-0.025em] xs:text-[62px] sm:text-[76px] lg:text-[80px]">
+            Understand <span className="italic text-brand">“how”</span>.
+          </h1>
 
-          <Card as="figure" className="m-0 overflow-hidden p-2">
-            <img
-              src={theme === 'dark' ? '/hero_dark.webp' : '/hero_light.webp'}
-              alt="System design diagram showing a client, load balancer, application servers, cache and database"
-              className="aspect-[3/2] w-full rounded-[1.25rem] object-cover"
-            />
-          </Card>
+          <p className="mt-7 max-w-xl text-[15.5px] leading-[1.75] text-text-secondary sm:text-[16.5px]">
+            Geekly explains system design, databases, operating systems and networks in plain
+            language — with worked examples and the questions interviews actually ask. Written for
+            students and early-career engineers.
+          </p>
         </div>
-      </section>
 
-      <div className="mx-auto mt-14 max-w-6xl px-6 sm:mt-20">
-        <hr className="border-0 border-t-2 border-border" />
+        <Card className="overflow-hidden border border-border">
+          <img
+            src={theme === 'dark' ? '/hero_dark.webp' : '/hero_light.webp'}
+            alt="System design diagram showing a client, load balancer, application servers, cache, database, message queue and workers"
+            className="aspect-[3/2] w-full object-cover"
+          />
+        </Card>
       </div>
-    </>
+    </section>
   );
 }
