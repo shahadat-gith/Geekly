@@ -50,7 +50,7 @@ export function ContentMix({ breakdown = [], total = 0 }) {
           <div className="flex flex-col gap-2">
             <Button
               as={Link}
-              to="/articles/new"
+              to="/editor"
               variant="secondary"
               size="sm"
               className="justify-start bg-surface"

@@ -1,6 +1,6 @@
 const FEATURE_LABELS = {
   'article-generation': 'Article generation',
-  'image-generation': 'Image generation',
+  'diagram-image-generation': 'Diagram image generation',
 };
 
 export function featureLabel(feature) {

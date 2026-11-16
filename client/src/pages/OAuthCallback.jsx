@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { setSession } from '../utils/tokens.js';
+import { clearSession, setSession } from '../utils/tokens.js';
 import { useAuth } from '../context/authContext.js';
 import { AuthLayout, AuthLink } from '../components/layout/AuthLayout.jsx';
 import { Alert } from '../components/ui/Alert.jsx';
@@ -26,10 +26,16 @@ export default function OAuthCallback() {
     setSession({ token, refreshToken });
     syncUser()
       .then(() => navigate('/', { replace: true }))
-      .catch(() => setFailed('We could not finish signing you in.'));
+      .catch(() => {
+        clearSession();
+        setFailed('We could not finish signing you in.');
+      });
   }, [params, navigate, syncUser]);
 
-  const error = params.get('error') || failed;
+  const error =
+    params.get('error') ||
+    failed ||
+    (!params.get('token') ? 'The sign-in link is incomplete. Please try again.' : '');
 
   if (!error) {
     return (

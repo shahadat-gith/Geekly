@@ -47,6 +47,11 @@ export default function Articles() {
     setSearchParams(next, { replace: true });
   }
 
+  const topicsQuery = useQuery({
+    queryKey: ['admin', 'topics'],
+    queryFn: () => topicsApi.listTopicsApi(),
+  });
+
   const articleQuery = useQuery({
     queryKey: ['admin', 'articles', { status, topic, page, search: debouncedSearch }],
     queryFn: () =>
@@ -54,26 +59,19 @@ export default function Articles() {
     placeholderData: (previous) => previous,
   });
 
-  const topicsQuery = useQuery({
-    queryKey: ['admin', 'topics'],
-    queryFn: () => topicsApi.listTopicsApi(),
-  });
-
   const topics = useMemo(() => topicsQuery.data?.topics ?? [], [topicsQuery.data]);
+  const topicPaths = useMemo(
+    () => new Map(topics.map((item) => [item.id, item.path || item.name])),
+    [topics],
+  );
   const articles = articleQuery.data?.articles ?? [];
   const counts = articleQuery.data?.counts ?? { all: 0, draft: 0, published: 0, archived: 0 };
   const pagination = articleQuery.data?.pagination;
-
-  const topicPaths = useMemo(() => {
-    const map = new Map(topics.map((item) => [item.id, item.path]));
-    return map;
-  }, [topics]);
 
   const deleteMutation = useMutation({
     mutationFn: (id) => articlesApi.deleteArticleApi(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin', 'articles'] });
-      queryClient.invalidateQueries({ queryKey: ['admin', 'topics'] });
       queryClient.invalidateQueries({ queryKey: ['admin', 'dashboard'] });
       toast({ title: 'Article deleted', description: 'The article was removed from the library.' });
       setDeleting(null);
@@ -96,7 +94,7 @@ export default function Articles() {
     setDeleting(null);
   }
 
-  const filtersActive = Boolean(search || topic || status !== 'all');
+  const filtersActive = Boolean(search || status !== 'all' || topic);
   const start = pagination && pagination.total > 0 ? (pagination.page - 1) * pagination.limit + 1 : 0;
   const end = pagination ? Math.min(pagination.page * pagination.limit, pagination.total) : 0;
 
@@ -104,13 +102,7 @@ export default function Articles() {
     <div className="animate-rise">
       <PageHeader
         title="Articles"
-        description="Write, review and publish articles. Every article must belong to a topic."
-        actions={
-          <Button as={Link} to="/articles/new" size="sm">
-            <i aria-hidden="true" className="bx bx-edit-alt text-[16px]" />
-            Write article
-          </Button>
-        }
+        description="Review and manage articles in the library."
       />
 
       <div className="mt-5 flex flex-wrap items-center gap-1 overflow-x-auto rounded-panel bg-surface p-1.5 shadow-card">
@@ -156,7 +148,7 @@ export default function Articles() {
               type="search"
               value={search}
               onChange={(event) => setSearch(event.target.value)}
-              placeholder="Search title, tag or slug…"
+              placeholder="Search title or slug…"
               className="h-10 w-full rounded-field border border-border bg-surface pl-9 pr-9 text-[12.5px] text-text placeholder:text-text-tertiary outline-none transition-shadow focus:border-border-focus focus:ring-4 focus:ring-brand-soft"
             />
             {search && (
@@ -172,33 +164,22 @@ export default function Articles() {
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
-            <div className="relative min-w-0 flex-1 sm:w-52 sm:flex-none">
-              <i
-                aria-hidden="true"
-                className="bx bx-layer pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[15px] text-text-tertiary"
-              />
-              <label htmlFor="article-topic" className="sr-only">
-                Filter by topic
-              </label>
-              <select
-                id="article-topic"
-                value={topic}
-                onChange={(event) => setParam('topic', event.target.value)}
-                className="h-10 w-full appearance-none rounded-field border border-border bg-surface pl-8 pr-8 text-[12px] font-medium text-text-secondary outline-none transition-shadow focus:border-border-focus focus:ring-4 focus:ring-brand-soft"
-              >
-                <option value="">All topics</option>
-                {topics.map((item) => (
-                  <option key={item.id} value={item.id}>
-                    {'— '.repeat(item.depth)}
-                    {item.name}
-                  </option>
-                ))}
-              </select>
-              <i
-                aria-hidden="true"
-                className="bx bx-chevron-down pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-[16px] text-text-tertiary"
-              />
-            </div>
+            <label htmlFor="article-topic-filter" className="sr-only">
+              Filter by topic
+            </label>
+            <select
+              id="article-topic-filter"
+              value={topic}
+              onChange={(event) => setParam('topic', event.target.value)}
+              className="h-10 w-full rounded-field border border-border bg-surface px-3 text-[12px] font-medium text-text-secondary outline-none transition-shadow focus:border-border-focus focus:ring-4 focus:ring-brand-soft sm:w-auto sm:max-w-[240px]"
+            >
+              <option value="">All topics</option>
+              {topics.map((item) => (
+                <option key={item.id} value={item.id}>
+                  {item.path || item.name}
+                </option>
+              ))}
+            </select>
 
             {filtersActive && (
               <button
@@ -261,20 +242,15 @@ export default function Articles() {
             title={filtersActive ? 'No articles match these filters' : 'No articles yet'}
             description={
               filtersActive
-                ? 'Try a different search term, status or topic.'
-                : 'Write the first article and assign it to one of your topics.'
+                ? 'Try a different search term, status, or topic.'
+                : 'Articles you create will appear here.'
             }
             action={
               filtersActive ? (
                 <Button variant="secondary" size="sm" onClick={resetFilters}>
                   Clear filters
                 </Button>
-              ) : (
-                <Button as={Link} to="/articles/new" size="sm">
-                  <i aria-hidden="true" className="bx bx-edit-alt text-[16px]" />
-                  Write first article
-                </Button>
-              )
+              ) : null
             }
           />
         ) : (
@@ -309,31 +285,23 @@ export default function Articles() {
                     className="group border-b border-border-secondary/70 transition last:border-0 hover:bg-surface-secondary/40"
                   >
                     <td className="max-w-[340px] px-4 py-3.5">
-                      <Link
-                        to={`/articles/${article.id}/edit`}
-                        className="block truncate text-[13px] font-semibold text-text transition group-hover:text-brand focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-soft"
-                      >
+                      <p className="m-0 truncate text-[13px] font-semibold text-text">
                         {article.title}
-                      </Link>
+                      </p>
                       <p className="m-0 mt-0.5 truncate text-[11px] text-text-tertiary">
                         {article.subtitle || `/${article.slug}`}
                       </p>
                     </td>
-                    <td className="max-w-[200px] px-3 py-3.5">
-                      {article.topics.length > 0 ? (
-                        <div className="flex flex-wrap gap-1">
-                          {article.topics.map((item) => (
-                            <span
-                              key={item.id}
-                              className="max-w-full truncate rounded-full bg-surface-secondary px-2.5 py-1 text-[10.5px] font-medium text-text-secondary"
-                              title={topicPaths.get(item.id) || item.name}
-                            >
-                              {item.name}
-                            </span>
-                          ))}
-                        </div>
+                    <td className="max-w-[180px] px-3 py-3.5">
+                      {article.topic ? (
+                        <span
+                          title={topicPaths.get(article.topic.id) || article.topic.name}
+                          className="block truncate text-[11.5px] text-text-secondary"
+                        >
+                          {article.topic.name}
+                        </span>
                       ) : (
-                        <span className="text-[11.5px] text-text-tertiary">No topic</span>
+                        <span className="text-[11px] text-text-tertiary">No topic</span>
                       )}
                     </td>
                     <td className="px-3 py-3.5">
@@ -349,7 +317,7 @@ export default function Articles() {
                       <div className="flex items-center justify-end gap-0.5">
                         <IconButton
                           as={Link}
-                          to={`/articles/${article.id}/edit`}
+                          to={`/editor/${article.id}`}
                           label={`Edit ${article.title}`}
                           size="sm"
                           variant="plain"

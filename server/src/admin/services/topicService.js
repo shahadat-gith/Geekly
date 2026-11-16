@@ -16,14 +16,6 @@ function assertObjectId(value, message = 'Invalid topic id') {
   if (!mongoose.Types.ObjectId.isValid(value)) throw new ApiError(400, message);
 }
 
-async function countMap() {
-  const rows = await Article.aggregate([
-    { $unwind: '$topics' },
-    { $group: { _id: '$topics', count: { $sum: 1 } } },
-  ]);
-  return new Map(rows.map((row) => [String(row._id), row.count]));
-}
-
 // Direct counts plus a rolled-up total for each topic's whole subtree.
 function withCounts(documents, counts) {
   const direct = new Map(documents.map((doc) => [doc.id, counts.get(doc.id) ?? 0]));
@@ -88,6 +80,40 @@ function topicPath(item, nameById) {
   return [...item.ancestors.map((id) => nameById.get(id)).filter(Boolean), item.name].join(' / ');
 }
 
+async function directArticleCounts() {
+  const rows = await Article.aggregate([
+    { $group: { _id: '$topic', count: { $sum: 1 } } },
+  ]);
+  return new Map(
+    rows.filter((row) => row._id).map((row) => [String(row._id), row.count])
+  );
+}
+
+// Persist direct article counts, which topic deletion and admin summaries read.
+export async function recountTopics() {
+  const counts = await directArticleCounts();
+  const topics = await Topic.find().select('_id articleCount').lean();
+
+  const updates = topics
+    .map((topic) => ({
+      id: topic._id,
+      count: counts.get(String(topic._id)) ?? 0,
+      previous: topic.articleCount ?? 0,
+    }))
+    .filter((item) => item.count !== item.previous);
+
+  if (!updates.length) return;
+
+  await Topic.bulkWrite(
+    updates.map((item) => ({
+      updateOne: {
+        filter: { _id: item.id },
+        update: { $set: { articleCount: item.count } },
+      },
+    }))
+  );
+}
+
 export async function listTopics({ search = '' } = {}) {
   const filter = {};
 
@@ -99,7 +125,7 @@ export async function listTopics({ search = '' } = {}) {
 
   const [documents, counts] = await Promise.all([
     Topic.find(filter).sort({ depth: 1, sortOrder: 1, name: 1 }).lean(),
-    countMap(),
+    directArticleCounts(),
   ]);
 
   const topics = documents.map(serializeTopic);
@@ -291,12 +317,9 @@ export async function deleteTopic(id) {
     throw new ApiError(409, 'This topic has sub-topics. Move or delete them first.');
   }
 
-  const articleCount = await Article.countDocuments({ topics: topic._id });
+  const articleCount = await Article.countDocuments({ topic: topic._id });
   if (articleCount > 0) {
-    throw new ApiError(
-      409,
-      `This topic is used by ${articleCount} article${articleCount === 1 ? '' : 's'}. Move or delete them first.`
-    );
+    throw new ApiError(409, 'This topic has articles. Move or delete them first.');
   }
 
   await topic.deleteOne();
@@ -308,21 +331,4 @@ export async function deleteTopic(id) {
     }
   }
   return { id: String(topic._id) };
-}
-
-// Kept in sync after every article mutation so dashboards and topic rows
-// do not need a full aggregation on each read.
-export async function recountTopics() {
-  const counts = await countMap();
-  const topics = await Topic.find({}).select('_id');
-
-  if (topics.length === 0) return;
-  await Topic.bulkWrite(
-    topics.map((topic) => ({
-      updateOne: {
-        filter: { _id: topic._id },
-        update: { $set: { articleCount: counts.get(String(topic._id)) ?? 0 } },
-      },
-    }))
-  );
 }

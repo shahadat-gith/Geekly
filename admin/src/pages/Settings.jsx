@@ -99,7 +99,7 @@ function AiModelsSection() {
           <EmptyState
             icon="bx-cube"
             title="No AI models yet"
-            description="Add at least one text model to write articles and one image model to generate images. The first model of each type becomes its default."
+            description="Add at least one text model to write articles. The first model of each type becomes its default."
             action={
               <Button type="button" size="sm" onClick={openAdd}>
                 <i aria-hidden="true" className="bx bx-plus text-[16px]" />

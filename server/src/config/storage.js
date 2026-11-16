@@ -13,23 +13,48 @@ const client = new S3Client({
 })
 
 
-async function uploadImage({ buffer, contentType, extension, directory }) {
-  const key = `${directory}/${randomUUID()}.${extension}`;
+async function putObject({ key, buffer, contentType, cacheControl }) {
   await client.send(
     new PutObjectCommand({
       Bucket: keys.r2.bucketName,
       Key: key,
       Body: buffer,
       ContentType: contentType,
-      CacheControl: 'public, max-age=31536000, immutable',
+      CacheControl: cacheControl || 'public, max-age=31536000, immutable',
     })
   );
 
   return { key, url: `${keys.r2.publicUrl}/${key}` };
 }
 
+async function uploadImage({ buffer, contentType, extension, directory }) {
+  return putObject({
+    key: `${directory}/${randomUUID()}.${extension}`,
+    buffer,
+    contentType,
+  });
+}
+
 export function uploadArticleImage(options) {
   return uploadImage({ ...options, directory: 'article-media' });
+}
+
+// Diagram images (AI generated or manually uploaded) are grouped under their
+// article and diagram so ownership is unambiguous. Each replacement gets a new
+// key; the previous object is removed only after the article points at the new
+// one, so a failed generation never breaks the published reader.
+export function uploadArticleDiagramImage({
+  articleId,
+  diagramId,
+  buffer,
+  contentType,
+  extension,
+}) {
+  return putObject({
+    key: `articles/${articleId}/diagrams/${diagramId}-${randomUUID()}.${extension}`,
+    buffer,
+    contentType,
+  });
 }
 
 // AI generated images are kept apart from admin uploads used by articles.
@@ -53,8 +78,16 @@ async function deleteImages(keysToDelete = []) {
   );
 }
 
+export function deleteArticleAssets(keysToDelete = []) {
+  return deleteImages(
+    keysToDelete.filter(
+      (key) => key.startsWith('article-media/') || key.startsWith('articles/'),
+    ),
+  );
+}
+
 export function deleteArticleImages(keysToDelete = []) {
-  return deleteImages(keysToDelete.filter((key) => key.startsWith('article-media/')));
+  return deleteArticleAssets(keysToDelete);
 }
 
 export function deleteTopicBanner(key) {

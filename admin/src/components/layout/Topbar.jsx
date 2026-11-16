@@ -1,7 +1,6 @@
-import { useEffect, useRef, useState } from 'react';
+import { useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAdminAuth } from '../../context/adminAuthContext.js';
-import { Avatar } from '../ui/Avatar.jsx';
 import { Button } from '../ui/Button.jsx';
 
 function ProfileMenu() {
@@ -49,7 +48,7 @@ export function Topbar() {
         <div className="flex shrink-0 items-center gap-2">
 
 
-          <Button as={Link} to="/articles/new" size="sm" className="px-3 sm:px-3.5">
+          <Button as={Link} to="/editor" size="sm" className="px-3 sm:px-3.5">
             <i aria-hidden="true" className="bx bx-plus text-[17px]" />
             <span className="hidden xs:inline">New article</span>
             <span className="sr-only xs:hidden">New article</span>

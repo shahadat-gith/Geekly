@@ -1,9 +1,6 @@
 import { Card } from '../ui/Card.jsx';
-import { useTheme } from '../../context/themeContext.js';
 
 export function Hero() {
-  const { theme } = useTheme();
-
   return (
     <section className="mx-auto max-w-6xl px-6 pb-16 pt-14 sm:pb-24 sm:pt-24">
       <div className="grid items-center gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.92fr)] lg:gap-16">
@@ -21,7 +18,7 @@ export function Hero() {
 
         <Card className="overflow-hidden border border-border">
           <img
-            src={theme === 'dark' ? '/hero_dark.webp' : '/hero_light.webp'}
+            src="/hero_light.webp"
             alt="System design diagram showing a client, load balancer, application servers, cache, database, message queue and workers"
             className="aspect-[3/2] w-full object-cover"
           />

@@ -1,17 +1,12 @@
 import { Link } from 'react-router-dom';
-import { FaMoon, FaSun } from 'react-icons/fa6';
-import { useTheme } from '../../context/themeContext.js';
 import { Card } from '../ui/Card.jsx';
-import { IconButton } from '../ui/IconButton.jsx';
 import { Background } from './Background.jsx';
 
-// Shell for the auth screens: wordmark, theme control, one centred column.
+// Shell for the auth screens: wordmark and one centred column.
 // The site header and footer are not rendered here, so nothing competes with
 // the form. Shared by login, register and the reset pages so they cannot drift.
 // `card` sets the form on a surface panel (used by sign in and register).
 export function AuthLayout({ title, description, children, footer, card = false }) {
-  const { theme, toggleTheme } = useTheme();
-
   const content = (
     <>
       <h1
@@ -42,19 +37,11 @@ export function AuthLayout({ title, description, children, footer, card = false 
             className="inline-flex items-center rounded-button focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-soft"
           >
             <img
-              src={theme === 'dark' ? '/brand_dark.png' : '/brand_light.png'}
+              src="/brand_light.png"
               alt="Geekly"
               className="h-8 w-auto max-w-[150px] object-contain sm:h-9"
             />
           </Link>
-          <IconButton
-            label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
-            variant="bare"
-            shape="round"
-            onClick={toggleTheme}
-          >
-            {theme === 'dark' ? <FaSun aria-hidden="true" /> : <FaMoon aria-hidden="true" />}
-          </IconButton>
         </header>
 
         <main className="animate-page flex flex-1 items-start justify-center px-6 pb-16 pt-8 sm:items-center sm:pb-24 sm:pt-0">

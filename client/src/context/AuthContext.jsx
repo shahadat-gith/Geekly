@@ -1,4 +1,3 @@
-import { useEffect, useRef, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { renewSession } from '../api/axios.js';
 import { getRefreshToken } from '../utils/tokens.js';
@@ -12,28 +11,25 @@ import { AuthContext, ME_KEY } from './authContext.js';
 
 export function AuthProvider({ children }) {
   const queryClient = useQueryClient();
-  const [restoring, setRestoring] = useState(Boolean(getRefreshToken()));
-  const restored = useRef(false);
-
-  useEffect(() => {
-    if (restored.current || !getRefreshToken()) return;
-    restored.current = true;
-    renewSession()
-      .then((data) => queryClient.setQueryData(ME_KEY, data.user))
-      .catch(() => queryClient.removeQueries({ queryKey: ME_KEY }))
-      .finally(() => setRestoring(false));
-  }, [queryClient]);
 
   const meQuery = useQuery({
     queryKey: ME_KEY,
-    queryFn: usersApi.meApi,
-    enabled: !restoring && Boolean(getRefreshToken()),
+    queryFn: async () => {
+      // A page reload keeps only the refresh token. Exchange it for a fresh
+      // session so the user is resolved before the UI decides to sign out.
+      if (!getRefreshToken()) return null;
+      const data = await renewSession();
+      return data.user;
+    },
+    enabled: Boolean(getRefreshToken()),
     staleTime: Infinity,
     retry: false,
   });
 
   const user = meQuery.data ?? null;
-  const loading = restoring || meQuery.isPending;
+  // Disabled queries also report isPending, so only treat a pending query as
+  // loading while a refresh token exists.
+  const loading = Boolean(getRefreshToken()) && meQuery.isPending;
 
   async function login(credentials) {
     const u = await authApi.loginApi(credentials);
@@ -49,7 +45,10 @@ export function AuthProvider({ children }) {
 
   async function logout() {
     await authApi.logoutApi();
-    queryClient.removeQueries({ queryKey: ME_KEY });
+    // Removing an active query does not notify its observer, so GuestOnly
+    // would keep seeing the old user and redirect the login page back to the
+    // app. Overwrite the cached user to render the signed-out state now.
+    queryClient.setQueryData(ME_KEY, null);
   }
 
   // Re-read the signed-in user (used after an OAuth redirect, where the

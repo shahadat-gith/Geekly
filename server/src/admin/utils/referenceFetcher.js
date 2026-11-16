@@ -1,8 +1,6 @@
 import axios from 'axios';
 import { load } from 'cheerio';
 
-const MAX_TEXT_LENGTH = 12_000;
-
 async function readReference(url) {
   const parsedUrl = new URL(url);
   if (!['http:', 'https:'].includes(parsedUrl.protocol)) {
@@ -11,8 +9,6 @@ async function readReference(url) {
 
   const response = await axios.get(parsedUrl.href, {
     timeout: 12_000,
-    maxContentLength: 3_000_000,
-    maxBodyLength: 3_000_000,
     maxRedirects: 5,
     responseType: 'text',
     headers: {
@@ -31,8 +27,23 @@ async function readReference(url) {
   $('script, style, noscript, svg, nav, footer, header, aside, form, iframe').remove();
   const article = $('article').first();
   const main = $('main').first();
-  const content = article.length ? article.text() : main.length ? main.text() : $('body').text();
-  const text = content.replace(/\s+/g, ' ').trim().slice(0, MAX_TEXT_LENGTH);
+  const content = article.length ? article : main.length ? main : $('body');
+
+  // Keep document structure visible to the writer. Flattening all whitespace
+  // makes a long tutorial read like one undifferentiated summary prompt.
+  content.find('h1, h2, h3, h4, h5, h6').each((_, element) => {
+    const level = Number(element.tagName.slice(1));
+    $(element).prepend(`\n${'#'.repeat(level)} `);
+  });
+  content.find('p, li, blockquote, pre').each((_, element) => {
+    $(element).prepend('\n');
+  });
+  content.find('br').replaceWith('\n');
+
+  const text = content.text()
+    .replace(/[ \t]+\n/g, '\n')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
 
   if (!text) throw new Error('No readable article text was found');
   return {

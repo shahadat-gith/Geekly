@@ -11,7 +11,7 @@ import { modelPriceLabel } from '../../utils/aiModels.js';
 const STEPS = [
   'Reading the reference article',
   'Outlining a mentor-led explanation',
-  'Writing the sections and planning image prompts',
+  'Writing the sections and planning technical diagrams',
 ];
 
 export function AiGenerateModal({
@@ -61,7 +61,7 @@ export function AiGenerateModal({
   function onSubmit(event) {
     event.preventDefault();
     if (!topicId) {
-      setError('Choose the topic this article belongs to.');
+      setError('Choose the topic you want the draft to teach.');
       return;
     }
 
@@ -74,7 +74,7 @@ export function AiGenerateModal({
       open={open}
       onClose={handleClose}
       title="Write with AI"
-      description="Give the writer one reference article and a topic. It teaches the topic like a mentor and saves a long, detailed draft you can edit."
+      description="Give the writer one reference article and a topic. It teaches the topic like a mentor and saves a structured draft with editable diagrams."
       size="lg"
       footer={
         <>
@@ -206,11 +206,11 @@ export function AiGenerateModal({
           <ul className="m-0 mt-2 space-y-1.5 pl-1 text-[11.5px] leading-relaxed text-text-tertiary">
             <li className="flex gap-1.5">
               <i aria-hidden="true" className="bx bx-check mt-0.5 text-[13px] text-success" />
-              A title, subtitle, tags and a full article, saved automatically as a draft.
+              A title, subtitle and full article, saved automatically as a draft.
             </li>
             <li className="flex gap-1.5">
               <i aria-hidden="true" className="bx bx-check mt-0.5 text-[13px] text-success" />
-              Image placeholders, each with a prompt you can generate, approve or replace in the images panel.
+              Diagram placeholders backed by saved structure, ready to generate as a light-theme image or replace manually.
             </li>
             <li className="flex gap-1.5">
               <i aria-hidden="true" className="bx bx-check mt-0.5 text-[13px] text-success" />

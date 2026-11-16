@@ -10,6 +10,7 @@ import {
   verifyResetToken,
 } from '../../shared/jwt.js';
 import { ApiError } from '../../shared/apiError.js';
+import { sendWelcomeEmail } from '../../email/index.js';
 import {
   normalizeEmail,
   findUserByEmail,
@@ -19,6 +20,14 @@ import {
 } from './userService.js';
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+function queueWelcomeEmail(user) {
+  // A provider outage must never fail a successful signup. Delivery errors are
+  // logged for operators while the client receives its session immediately.
+  sendWelcomeEmail(user).catch((error) => {
+    console.error('Welcome email failed:', error.message);
+  });
+}
 
 export function assertOAuthConfigured(provider) {
   const providerKeys = keys.auth[provider];
@@ -121,7 +130,11 @@ export async function register({ email, password, fullname }) {
     provider: { name: 'email', id: normalized },
   });
 
-  return { user, ...(await issueTokens(user)) };
+  const tokens = await issueTokens(user);
+
+  queueWelcomeEmail(user);
+
+  return { user, ...tokens };
 }
 
 export async function login({ email, password }) {
@@ -145,9 +158,8 @@ export async function login({ email, password }) {
 
 // Always answers the same way, whether or not the email exists, so the
 // endpoint cannot be used to check which emails have accounts.
-// In development the raw token is included in the response (there is no
-// email service yet) so the flow can be tested; in production the token
-// must be delivered by email instead - see .env.example notes.
+// In development the raw token is included in the response so the flow can
+// be tested; production reset delivery still needs its email template wired.
 export async function forgotPassword({ email }) {
   if (!email) throw new ApiError(400, 'Email is required');
 
@@ -249,8 +261,10 @@ async function exchangeCode(provider, code) {
 
   const res = await fetch('https://github.com/login/oauth/access_token', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-    body: JSON.stringify({
+    // GitHub requires form-encoded parameters here. A JSON body is rejected
+    // as 400 even though the response itself is requested as JSON.
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded', Accept: 'application/json' },
+    body: new URLSearchParams({
       client_id: clientId,
       client_secret: clientSecret,
       code,
@@ -286,22 +300,23 @@ async function fetchGithubProfile(accessToken) {
   if (!userRes.ok) throw new ApiError(400, 'Could not load your GitHub profile');
   const profile = await userRes.json();
 
-  // Prefer a verified primary email; fall back to the first verified one,
-  // then to a synthetic address so the account can still be saved.
-  let email = profile.email;
-  let emailVerified = Boolean(profile.email);
-  if (!email) {
-    const emailsRes = await fetch('https://api.github.com/user/emails', { headers });
-    if (emailsRes.ok) {
-      const emails = await emailsRes.json();
-      const verified = emails.find((e) => e.verified && (e.primary || true));
-      if (verified) {
-        email = verified.email;
-        emailVerified = true;
-      }
-    }
-    if (!email) email = `${profile.id}+github@users.noreply.github.com`;
-  }
+  // `/user` only exposes a public email and does not tell us whether it is
+  // verified. Read the full list (we request user:email) and trust only a
+  // verified address, preferring the public one then the primary one.
+  const emailsRes = await fetch('https://api.github.com/user/emails', { headers });
+  const emails = emailsRes.ok ? await emailsRes.json() : [];
+  const verifiedEmails = Array.isArray(emails) ? emails.filter((e) => e.verified) : [];
+  const publicEmail = String(profile.email || '').toLowerCase();
+  const chosen =
+    verifiedEmails.find((e) => String(e.email).toLowerCase() === publicEmail) ||
+    verifiedEmails.find((e) => e.primary) ||
+    verifiedEmails[0];
+
+  // Never merge into an existing account using an unverified address. A
+  // synthetic address keeps the GitHub identity usable without claiming an
+  // email that GitHub has not confirmed.
+  const email = chosen?.email || `${profile.id}+github@users.noreply.github.com`;
+  const emailVerified = Boolean(chosen);
 
   return {
     providerId: String(profile.id),
@@ -337,13 +352,18 @@ export async function findOrCreateOAuthUser(provider, profile) {
   }
 
   // 3. Brand new account, with this provider as its single sign-in method.
-  return createUser({
+  const created = await createUser({
     email,
     fullname: profile.fullname || email.split('@')[0],
     provider: { name: provider, id: profile.providerId },
     emailVerified: profile.emailVerified,
     avatar: profile.avatarUrl ? { url: profile.avatarUrl } : undefined,
   });
+
+  // A GitHub account without a verified email gets a synthetic address that
+  // cannot receive mail, so only welcome accounts we can actually reach.
+  if (created.emailVerified) queueWelcomeEmail(created);
+  return created;
 }
 
 export async function oauthLogin(provider, code) {

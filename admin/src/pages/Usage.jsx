@@ -109,7 +109,7 @@ export default function Usage() {
     <div className="animate-rise">
       <PageHeader
         title="AI usage"
-        description="Every article and image generation, with tokens, cost and failures."
+        description="Every article generation, with tokens, cost and failures."
         actions={
           <>
             <Button type="button" size="sm" onClick={() => setModelModalOpen(true)}>
@@ -128,10 +128,6 @@ export default function Usage() {
                 className={`bx bx-refresh text-[19px] ${usageQuery.isFetching ? 'animate-admin-spin' : ''}`}
               />
             </IconButton>
-            <Button as={Link} to="/images" variant="secondary" size="sm">
-              <i aria-hidden="true" className="bx bx-image-alt text-[16px]" />
-              Image studio
-            </Button>
           </>
         }
       />
@@ -276,7 +272,7 @@ export default function Usage() {
                     Clear filters
                   </Button>
                 ) : (
-                  <Button as={Link} to="/articles/new" size="sm">
+                  <Button as={Link} to="/editor" size="sm">
                     <i aria-hidden="true" className="bx bx-magic-wand text-[16px]" />
                     Write an article
                   </Button>
@@ -285,7 +281,7 @@ export default function Usage() {
             />
           ) : (
             <div className="overflow-x-auto">
-              <table className="w-full min-w-[700px] border-collapse text-left">
+              <table className="w-full min-w-[780px] border-collapse text-left">
                 <thead>
                   <tr className="border-b border-border-secondary bg-surface-secondary/50">
                     <th className="px-4 py-2.5 text-[10px] font-semibold uppercase tracking-[0.08em] text-text-tertiary">
@@ -293,6 +289,9 @@ export default function Usage() {
                     </th>
                     <th className="px-3 py-2.5 text-[10px] font-semibold uppercase tracking-[0.08em] text-text-tertiary">
                       Feature
+                    </th>
+                    <th className="px-3 py-2.5 text-[10px] font-semibold uppercase tracking-[0.08em] text-text-tertiary">
+                      Image
                     </th>
                     <th className="px-3 py-2.5 text-[10px] font-semibold uppercase tracking-[0.08em] text-text-tertiary">
                       Model
@@ -333,6 +332,27 @@ export default function Usage() {
                           >
                             {entry.error}
                           </p>
+                        )}
+                      </td>
+                      <td className="px-3 py-3">
+                        {entry.imageUrl ? (
+                          <a
+                            href={entry.imageUrl}
+                            target="_blank"
+                            rel="noreferrer"
+                            aria-label="Open generated article image"
+                            title="Open generated article image"
+                            className="inline-flex h-9 w-14 overflow-hidden rounded border border-border bg-surface-secondary transition hover:border-brand/50"
+                          >
+                            <img
+                              src={entry.imageUrl}
+                              alt=""
+                              loading="lazy"
+                              className="h-full w-full object-contain"
+                            />
+                          </a>
+                        ) : (
+                          <span className="text-[11px] text-text-tertiary">—</span>
                         )}
                       </td>
                       <td className="max-w-[180px] px-3 py-3">

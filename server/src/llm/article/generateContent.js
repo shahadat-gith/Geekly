@@ -1,5 +1,5 @@
-import { ApiError } from '../shared/apiError.js';
-import { chatClient, requireApiKey } from './client.js';
+import { ApiError } from '../../shared/apiError.js';
+import { chatClient, requireApiKey } from '../client.js';
 
 /**
  * Ask one text model for a completion.

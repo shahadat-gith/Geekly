@@ -3,30 +3,19 @@ import {
   ARTICLE_SYSTEM_PROMPT,
   buildArticlePrompt,
   generateContent,
-  generateImage,
+  validateDiagram,
 } from '../../llm/index.js';
 import Topic from '../../models/Topic.js';
+import Diagram from '../../models/Diagram.js';
 import { ApiError } from '../../shared/apiError.js';
-import { uploadAiGeneratedImage } from '../../config/storage.js';
-import { htmlToText, sanitizeHtml } from '../utils/html.js';
-import { mediaIdsInHtml, normalizeMedia } from '../utils/media.js';
+import { sanitizeHtml } from '../utils/html.js';
+import { articleDocHasContent, htmlToArticleDoc } from '../utils/articleDoc.js';
 import { fetchReference } from '../utils/referenceFetcher.js';
-import { createArticle } from './articleService.js';
+import { createArticle, deleteArticle, getArticle } from './articleService.js';
 import { recordAiUsage } from './aiUsageService.js';
-import { recordImageGeneration } from './imageHistoryService.js';
 import { requireDefaultModel } from './aiModelService.js';
 
-const IMAGE_ASPECT_RATIOS = ['16:9', '4:3', '1:1', '3:4', '9:16'];
-
-const MAX_IMAGE_PROMPT = 1200;
-const IMAGE_EXTENSIONS = new Map([
-  ['image/png', 'png'],
-  ['image/jpeg', 'jpg'],
-  ['image/webp', 'webp'],
-  ['image/gif', 'gif'],
-  ['image/avif', 'avif'],
-  ['image/svg+xml', 'svg'],
-]);
+const DIAGRAM_KEY_PATTERN = /^[A-Za-z0-9][A-Za-z0-9_-]{0,63}$/;
 
 function reportedCost(usage) {
   const value = usage?.cost;
@@ -57,33 +46,113 @@ function cleanText(value, max) {
   return String(value ?? '').trim().slice(0, max);
 }
 
-function normalizeTags(value) {
-  const tags = Array.isArray(value) ? value : String(value ?? '').split(',');
-  return [...new Set(tags.map((tag) => String(tag).trim().toLowerCase().replace(/^#/, '')).filter(Boolean))].slice(0, 8);
+function isObject(value) {
+  return Boolean(value) && typeof value === 'object' && !Array.isArray(value);
 }
 
-// The model may wrap content inside figure placeholders; only the id matters.
+// The model may wrap diagram placeholders in other markup. The placeholder id
+// is the only part the pipeline needs.
 function normalizeFigureMarkup(html) {
-  return html.replace(
-    /<figure\b[^>]*data-article-media\s*=\s*(?:"([^"]+)"|'([^']+)')[^>]*>[\s\S]*?<\/figure>/gi,
-    (_match, doubleQuoted, singleQuoted) =>
-      `<figure data-article-media="${doubleQuoted || singleQuoted}"></figure>`
-  );
+  return String(html ?? '')
+    .replace(
+      /<figure\b[^>]*data-article-diagram\s*=\s*(?:"([^"]+)"|'([^']+)')[^>]*>[\s\S]*?<\/figure>/gi,
+      (_match, doubleQuoted, singleQuoted) =>
+        `<figure data-article-diagram="${doubleQuoted || singleQuoted}"></figure>`,
+    )
+    .replace(
+      /<figure\b[^>]*data-article-media\s*=\s*(?:"([^"]+)"|'([^']+)')[^>]*>[\s\S]*?<\/figure>/gi,
+      '',
+    );
 }
 
-function mediaForHtml(html, incoming) {
-  const media = normalizeMedia(incoming);
-  const byId = new Map(media.map((item) => [item.id, item]));
-  return [...mediaIdsInHtml(html)]
-    .map((id) => byId.get(id) || {
-      id,
-      imagePrompt: '',
-      imageUrl: '',
-      imageKey: '',
-      alt: '',
-      caption: '',
-    })
-    .slice(0, 8);
+function diagramPlaceholderNodes(doc) {
+  const nodes = [];
+  const visit = (node) => {
+    if (!node) return;
+    if (node.type === 'articleDiagram') nodes.push(node);
+    (node.content || []).forEach(visit);
+  };
+  visit(doc);
+  return nodes;
+}
+
+function prepareDiagrams(rawDiagrams) {
+  if (rawDiagrams === undefined || rawDiagrams === null) return [];
+  if (!Array.isArray(rawDiagrams)) {
+    throw new ApiError(502, 'The AI returned diagram data in an unsupported shape.');
+  }
+  const seen = new Set();
+  return rawDiagrams.map((raw, index) => {
+    if (!isObject(raw)) {
+      throw new ApiError(502, 'The AI returned an invalid diagram entry.');
+    }
+
+    const key = cleanText(raw.id, 64) || `viz-${index + 1}`;
+    if (!DIAGRAM_KEY_PATTERN.test(key)) {
+      throw new ApiError(502, `The AI returned an invalid diagram id "${key}".`);
+    }
+    if (seen.has(key)) {
+      throw new ApiError(502, `The AI returned duplicate diagram id "${key}".`);
+    }
+    seen.add(key);
+
+    let data;
+    try {
+      data = validateDiagram({
+        title: raw.title,
+        caption: raw.caption,
+        direction: raw.direction,
+        nodes: raw.nodes,
+        edges: raw.edges,
+        groups: raw.groups,
+      });
+    } catch (error) {
+      throw new ApiError(
+        502,
+        `The AI returned invalid data for diagram "${key}": ${error.message}`,
+      );
+    }
+
+    return {
+      key,
+      data,
+      objectId: new mongoose.Types.ObjectId(),
+    };
+  });
+}
+
+function attachDiagramIds(doc, diagrams) {
+  if (!diagrams.length) {
+    if (diagramPlaceholderNodes(doc).length) {
+      throw new ApiError(502, 'The AI inserted diagram placeholders without matching diagram data.');
+    }
+    return;
+  }
+
+  const byKey = new Map(diagrams.map((diagram) => [diagram.key, diagram]));
+  const nodes = diagramPlaceholderNodes(doc);
+  const seen = new Set();
+
+  for (const node of nodes) {
+    const key = String(node.attrs?.diagramId || '');
+    const diagram = byKey.get(key);
+    if (!diagram) {
+      throw new ApiError(502, `The AI inserted a placeholder for unknown diagram "${key}".`);
+    }
+    if (seen.has(key)) {
+      throw new ApiError(502, `The AI inserted the diagram "${key}" placeholder more than once.`);
+    }
+    seen.add(key);
+    node.attrs.diagramId = String(diagram.objectId);
+    node.attrs.alt = diagram.data.title;
+    node.attrs.caption = diagram.data.caption || diagram.data.title;
+  }
+
+  for (const diagram of diagrams) {
+    if (!seen.has(diagram.key)) {
+      throw new ApiError(502, `The AI returned diagram "${diagram.key}" without an article placeholder.`);
+    }
+  }
 }
 
 async function getTopic(topicId) {
@@ -108,7 +177,7 @@ async function getTopic(topicId) {
   };
 }
 
-/** Write a full article draft with the default text model. */
+/** Write a full article draft and its structured diagrams with the text model. */
 export async function generateArticle(payload = {}) {
   const startedAt = Date.now();
   const selectedModel = await requireDefaultModel('text');
@@ -118,6 +187,7 @@ export async function generateArticle(payload = {}) {
   let usage = null;
   let model = modelId;
   let attempted = false;
+  let createdArticleId = null;
 
   try {
     const topic = await getTopic(payload.topicId ?? payload.topic);
@@ -140,19 +210,41 @@ export async function generateArticle(payload = {}) {
 
     const parsed = parseJson(generated.content);
     const html = normalizeFigureMarkup(sanitizeHtml(parsed.html));
-    if (!htmlToText(html) && mediaIdsInHtml(html).size === 0) {
+    const doc = htmlToArticleDoc(html);
+    if (!doc || !articleDocHasContent(doc)) {
       throw new ApiError(502, 'The AI returned no usable article content. Try again.');
     }
+
+    const diagrams = prepareDiagrams(parsed.diagrams);
+    attachDiagramIds(doc, diagrams);
 
     const article = await createArticle({
       title: cleanText(parsed.title, 200) || topic.name,
       subtitle: cleanText(parsed.subtitle, 300),
       topicId: topic.id,
-      tags: normalizeTags(parsed.tags),
-      contentHtml: html,
-      media: mediaForHtml(html, parsed.media),
+      contentJson: doc,
       status: 'draft',
     });
+    createdArticleId = article.id;
+
+    if (diagrams.length) {
+      await Diagram.insertMany(
+        diagrams.map((diagram, index) => ({
+          _id: diagram.objectId,
+          article: article.id,
+          title: diagram.data.title,
+          caption: diagram.data.caption || diagram.data.title,
+          direction: diagram.data.direction,
+          nodes: diagram.data.nodes,
+          edges: diagram.data.edges,
+          groups: diagram.data.groups,
+          order: index,
+        })),
+      );
+    }
+
+    const savedArticle = await getArticle(article.id);
+    createdArticleId = null;
 
     await recordAiUsage({
       user: 'admin',
@@ -165,7 +257,11 @@ export async function generateArticle(payload = {}) {
     });
 
     return {
-      article,
+      article: savedArticle,
+      diagrams: diagrams.map((diagram) => ({
+        id: String(diagram.objectId),
+        title: diagram.data.title,
+      })),
       reference: reference
         ? { url: reference.url, title: reference.title, characters: reference.text.length }
         : null,
@@ -174,6 +270,14 @@ export async function generateArticle(payload = {}) {
       usage,
     };
   } catch (error) {
+    if (createdArticleId) {
+      try {
+        await deleteArticle(createdArticleId);
+      } catch (cleanupError) {
+        console.error('Failed to clean up an incomplete AI article:', cleanupError.message);
+      }
+    }
+
     if (attempted) {
       await recordAiUsage({
         user: 'admin',
@@ -189,118 +293,5 @@ export async function generateArticle(payload = {}) {
 
     if (error instanceof ApiError) throw error;
     throw new ApiError(error.status || 502, error.message || 'The AI provider failed to generate the article.');
-  }
-}
-
-/** Generate one article image with the default image model and keep its details. */
-export async function generateArticleImage(payload = {}) {
-  const prompt = cleanText(payload.prompt, MAX_IMAGE_PROMPT);
-  if (!prompt) throw new ApiError(400, 'Write a prompt before generating an image.');
-
-  const selectedModel = await requireDefaultModel('image');
-
-  const aspectRatio = IMAGE_ASPECT_RATIOS.includes(payload.aspectRatio)
-    ? payload.aspectRatio
-    : '16:9';
-
-  const articleId = payload.articleId ?? null;
-  const mediaId = cleanText(payload.mediaId, 64);
-  const startedAt = Date.now();
-  let generated = null;
-
-  try {
-    generated = await generateImage({
-      prompt,
-      aspectRatio,
-      model: selectedModel.modelId,
-    });
-
-    const contentType = generated.contentType || 'image/png';
-    const buffer = generated.buffer;
-    const uploaded = await uploadAiGeneratedImage({
-      buffer,
-      contentType,
-      extension: IMAGE_EXTENSIONS.get(contentType) || 'png',
-    });
-
-    const cost = reportedCost(generated.usage);
-
-    const record = await recordImageGeneration({
-      prompt,
-      model: generated.model || selectedModel.modelId,
-      aspectRatio,
-      url: uploaded.url,
-      key: uploaded.key,
-      contentType,
-      bytes: buffer.length,
-      cost,
-      durationMs: Date.now() - startedAt,
-      status: 'success',
-      articleId,
-      mediaId,
-    });
-
-    await recordAiUsage({
-      user: 'admin',
-      feature: 'image-generation',
-      model: generated.model || selectedModel.modelId,
-      status: 'success',
-      promptTokens: generated.usage?.prompt_tokens,
-      completionTokens: generated.usage?.completion_tokens,
-      cost,
-      durationMs: Date.now() - startedAt,
-    });
-
-    return {
-      image: record || {
-        id: '',
-        prompt,
-        model: generated.model || selectedModel.modelId,
-        aspectRatio,
-        url: uploaded.url,
-        key: uploaded.key,
-        contentType,
-        bytes: buffer.length,
-        cost,
-        durationMs: Date.now() - startedAt,
-        status: 'success',
-      },
-      usage: generated.usage
-        ? {
-            promptTokens: generated.usage.prompt_tokens ?? 0,
-            completionTokens: generated.usage.completion_tokens ?? 0,
-            totalTokens: generated.usage.total_tokens ?? 0,
-            cost: reportedCost(generated.usage),
-          }
-        : null,
-    };
-  } catch (error) {
-    const durationMs = Date.now() - startedAt;
-
-    await recordImageGeneration({
-      prompt,
-      model: selectedModel.modelId,
-      aspectRatio,
-      durationMs,
-      status: 'error',
-      error: error.message,
-      articleId,
-      mediaId,
-    });
-
-    await recordAiUsage({
-      user: 'admin',
-      feature: 'image-generation',
-      model: selectedModel.modelId,
-      status: 'error',
-      promptTokens: generated?.usage?.prompt_tokens,
-      completionTokens: generated?.usage?.completion_tokens,
-      cost: reportedCost(generated?.usage),
-      durationMs,
-      error: error.message,
-    });
-
-    if (error instanceof ApiError) throw error;
-    throw new ApiError(error.status || 502, error.message || 'The image could not be generated.');
   }
 }

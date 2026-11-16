@@ -1,4 +1,4 @@
-// Decorative page texture: fine dot grid on warm paper, faded below the
+// Decorative page texture: fine dot grid on a cool canvas, faded below the
 // fold, with the container's vertical margins drawn in.
 const gridStyle = {
   backgroundImage:

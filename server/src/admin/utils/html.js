@@ -2,15 +2,11 @@ const BLOCKED_TAGS = /<(script|style|iframe|object|embed|link|meta|base|form|inp
 const BLOCKED_VOID_TAGS = /<(script|style|iframe|object|embed|link|meta|base|form|input)\b[^>]*\/?>/gi;
 const EVENT_ATTRS = /\son[a-z]+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/gi;
 const SCRIPT_URL = /\b(href|src)\s*=\s*(?:"|')?\s*javascript:[^"'\s>]*/gi;
-export const MAX_HTML_LENGTH = 500_000;
-
 // The admin is a trusted, single-user area, and the editor only emits a
 // small set of formatting tags. This is a defence-in-depth pass that removes
 // executable markup before anything is stored or rendered.
 export function sanitizeHtml(value) {
-  let html = String(value ?? '')
-    .replace(/\u0000/g, '')
-    .slice(0, MAX_HTML_LENGTH);
+  let html = String(value ?? '').replace(/\u0000/g, '');
 
   html = html.replace(/<!--[\s\S]*?-->/g, '');
   html = html.replace(BLOCKED_TAGS, '');

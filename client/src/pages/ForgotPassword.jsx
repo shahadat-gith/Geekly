@@ -46,7 +46,7 @@ export default function ForgotPassword() {
           </Alert>
           {devToken && (
             <Alert tone="info">
-              Development only (no email service yet):{' '}
+              Development only (reset email not sent yet):{' '}
               <Link to={`/auth/reset-password?token=${devToken}`} className="font-semibold underline">
                 open the reset page
               </Link>

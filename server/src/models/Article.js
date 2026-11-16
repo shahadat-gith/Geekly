@@ -1,9 +1,9 @@
+
 import mongoose from 'mongoose';
 
 export const ARTICLE_STATUSES = ['draft', 'published', 'archived'];
 
-// Article: metadata + stats + the ordered list of its ArticleBlock ids.
-// Block content itself lives in the ArticleBlock collection.
+// Article: metadata, stats, and one canonical Tiptap document.
 const ArticleSchema = new mongoose.Schema(
   {
     slug: {
@@ -27,68 +27,53 @@ const ArticleSchema = new mongoose.Schema(
       maxlength: 300,
     },
 
-    // Subject classification
-    topics: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Topic',
-      },
-    ],
-
-    tags: [
-      {
-        type: String,
-        lowercase: true,
-        trim: true,
-        maxlength: 40,
-      },
-    ],
-
-    // Blocks live in ArticleBlock; this array only stores their ids in
-    // reading order. Fetch one article with `.populate('content.blocks')`;
-    // feed/list queries can skip the populate and stay light.
-    // `html` holds rich-text articles authored in the admin editor.
-    content: {
-      blocks: [
-        {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: 'ArticleBlock',
-        },
-      ],
-      html: {
-        type: String,
-        default: '',
-        maxlength: 500000,
-      },
-
-      // Visuals referenced by <figure data-article-media="id"> nodes in the
-      // rich-text HTML. Every visual is one generated or uploaded image,
-      // used in both themes.
-      media: [
-        {
-          _id: false,
-          id: { type: String, required: true, trim: true },
-          imagePrompt: { type: String, default: '', maxlength: 1000 },
-          imageUrl: { type: String, default: '', trim: true },
-          imageKey: { type: String, default: '', trim: true },
-          alt: { type: String, default: '', maxlength: 500 },
-          caption: { type: String, default: '', maxlength: 500 },
-        },
-      ],
+    // One article belongs to exactly one topic. A topic can own many articles.
+    topic: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Topic',
+      required: true,
+      index: true,
     },
 
-    referenceVideos:[
+    // Canonical Tiptap/ProseMirror JSON document.
+    // Includes article content, annotations, image references,
+    // and diagram references.
+    content: {
+      type: mongoose.Schema.Types.Mixed,
+      default: null,
+    },
+
+    referenceVideos: [
       {
         type: String,
         trim: true,
-      }
+      },
     ],
 
     stats: {
-      views: { type: Number, default: 0, min: 0 },
-      reactions: { type: Number, default: 0, min: 0 },
-      comments: { type: Number, default: 0, min: 0 },
-      bookmarks: { type: Number, default: 0, min: 0 },
+      views: {
+        type: Number,
+        default: 0,
+        min: 0,
+      },
+
+      reactions: {
+        type: Number,
+        default: 0,
+        min: 0,
+      },
+
+      comments: {
+        type: Number,
+        default: 0,
+        min: 0,
+      },
+
+      bookmarks: {
+        type: Number,
+        default: 0,
+        min: 0,
+      },
     },
 
     status: {
@@ -98,53 +83,83 @@ const ArticleSchema = new mongoose.Schema(
       index: true,
     },
 
-    publishedAt: { type: Date, default: null },
-    lastEditedAt: { type: Date, default: null },
+    publishedAt: {
+      type: Date,
+      default: null,
+    },
+
+    lastEditedAt: {
+      type: Date,
+      default: null,
+    },
   },
-  { timestamps: true, versionKey: false, autoIndex: false, autoCreate: false }
+  {
+    timestamps: true,
+    versionKey: false,
+    autoIndex: false,
+    autoCreate: false,
+  }
 );
 
-// Published article feed
+// Published article feed.
 ArticleSchema.index(
   { publishedAt: -1 },
-  { name: 'feed_published', partialFilterExpression: { status: 'published' } }
+  {
+    name: 'feed_published',
+    partialFilterExpression: { status: 'published' },
+  }
 );
 
-// Topic-specific article feed
+// Topic-specific published feed.
 ArticleSchema.index(
-  { topics: 1, publishedAt: -1 },
-  { name: 'topic_feed', partialFilterExpression: { status: 'published' } }
+  { topic: 1, publishedAt: -1 },
+  {
+    name: 'topic_feed',
+    partialFilterExpression: { status: 'published' },
+  }
 );
 
-// Tag filtering
-ArticleSchema.index({ tags: 1 }, { name: 'tags' });
-
-// Full-text search (block text is indexed on ArticleBlock instead)
+// Full-text search covers article metadata.
 ArticleSchema.index(
   { title: 'text', subtitle: 'text' },
-  { name: 'article_text', weights: { title: 10, subtitle: 5 } }
+  {
+    name: 'article_text',
+    weights: {
+      title: 10,
+      subtitle: 5,
+    },
+  }
 );
 
 ArticleSchema.virtual('isPublished').get(function () {
   return this.status === 'published' && this.publishedAt != null;
 });
 
-// Keep lastEditedAt fresh on every change to the content
+// Keep lastEditedAt fresh whenever article content changes.
 ArticleSchema.pre('save', function () {
-  if (this.isModified('content')) this.lastEditedAt = new Date();
+  if (this.isModified('content')) {
+    this.lastEditedAt = new Date();
+  }
 });
 
-// Consistent API shape: `id` instead of `_id`, no version key
+// Consistent API shape: id instead of _id.
 ArticleSchema.set('toJSON', {
   virtuals: true,
   versionKey: false,
+
   transform(_doc, ret) {
-    if (ret._id) ret.id = ret._id.toString();
+    if (ret._id) {
+      ret.id = ret._id.toString();
+    }
+
     delete ret._id;
     return ret;
   },
 });
-ArticleSchema.set('toObject', { virtuals: true });
+
+ArticleSchema.set('toObject', {
+  virtuals: true,
+});
 
 const { model, models } = mongoose;
 

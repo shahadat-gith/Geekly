@@ -32,7 +32,6 @@ function countByMonth(documents, field, months) {
 }
 
 function serializeRecentArticle(article) {
-  const topic = article.topics?.find((item) => item && item.name);
   return {
     id: String(article._id),
     title: article.title,
@@ -40,8 +39,12 @@ function serializeRecentArticle(article) {
     status: article.status,
     updatedAt: article.updatedAt,
     publishedAt: article.publishedAt,
-    topic: topic
-      ? { id: String(topic._id), name: topic.name, slug: topic.slug }
+    topic: article.topic?.name
+      ? {
+          id: String(article.topic._id),
+          name: article.topic.name,
+          slug: article.topic.slug,
+        }
       : null,
     views: article.stats?.views ?? 0,
   };
@@ -55,6 +58,7 @@ export async function getDashboard() {
 
   const [
     statusRows,
+    topicRows,
     totalTopics,
     newTopicsThisMonth,
     statsRows,
@@ -62,9 +66,14 @@ export async function getDashboard() {
     recentTopicDocs,
     createdDocs,
     publishedDocs,
-    topicRows,
   ] = await Promise.all([
     Article.aggregate([{ $group: { _id: '$status', count: { $sum: 1 } } }]),
+    Article.aggregate([
+      { $match: { topic: mongoose.trusted({ $ne: null }) } },
+      { $group: { _id: '$topic', count: { $sum: 1 } } },
+      { $sort: { count: -1 } },
+      { $limit: 5 },
+    ]),
     Topic.countDocuments({}),
     // sanitizeFilter is on globally, so operator objects must be trusted.
     Topic.countDocuments({ createdAt: mongoose.trusted({ $gte: startOfMonth }) }),
@@ -81,9 +90,9 @@ export async function getDashboard() {
     ]),
     Article.find()
       .select('-content')
+      .populate('topic', 'name slug')
       .sort({ updatedAt: -1 })
       .limit(5)
-      .populate('topics', 'name slug')
       .lean(),
     Topic.find()
       .select('name slug depth createdAt')
@@ -96,22 +105,6 @@ export async function getDashboard() {
     Article.find({ publishedAt: mongoose.trusted({ $gte: sixMonthsAgo }) })
       .select('publishedAt')
       .lean(),
-    Article.aggregate([
-      { $unwind: '$topics' },
-      { $group: { _id: '$topics', count: { $sum: 1 } } },
-      { $sort: { count: -1 } },
-      { $limit: 5 },
-      {
-        $lookup: {
-          from: 'topics',
-          localField: '_id',
-          foreignField: '_id',
-          as: 'topic',
-        },
-      },
-      { $unwind: '$topic' },
-      { $project: { _id: 0, count: 1, topic: 1 } },
-    ]),
   ]);
 
   const counts = { draft: 0, published: 0, archived: 0 };
@@ -121,6 +114,16 @@ export async function getDashboard() {
   const totalArticles = counts.draft + counts.published + counts.archived;
 
   const totals = statsRows[0] || { views: 0, reactions: 0, comments: 0, bookmarks: 0 };
+
+  const topTopicIds = topicRows.map((row) => row._id).filter(Boolean);
+  const topTopicDocs = topTopicIds.length
+    ? await Topic.find({ _id: mongoose.trusted({ $in: topTopicIds }) })
+        .select('name slug')
+        .lean()
+    : [];
+  const topTopicById = new Map(
+    topTopicDocs.map((topic) => [String(topic._id), topic])
+  );
 
   const months = buildMonths(now);
   countByMonth(createdDocs, 'createdAt', months);
@@ -158,13 +161,15 @@ export async function getDashboard() {
       { status: 'draft', label: 'Drafts', count: counts.draft },
       { status: 'archived', label: 'Archived', count: counts.archived },
     ],
-    topTopics: topicRows.map((row) => ({
-      id: String(row.topic._id),
-      name: row.topic.name,
-      slug: row.topic.slug,
-      depth: row.topic.depth || 0,
-      count: row.count,
-    })),
+    topTopics: topicRows.map((row) => {
+      const topic = topTopicById.get(String(row._id));
+      return {
+        id: String(row._id),
+        name: topic?.name || 'Unknown topic',
+        slug: topic?.slug || '',
+        count: row.count,
+      };
+    }),
     recentArticles: recentArticleDocs.map(serializeRecentArticle),
     recentTopics: recentTopicDocs.map((topic) => ({
       id: String(topic._id),

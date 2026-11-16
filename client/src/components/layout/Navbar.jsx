@@ -1,15 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { FaMoon, FaSun } from 'react-icons/fa6';
 import { useAuth } from '../../context/authContext.js';
-import { useTheme } from '../../context/themeContext.js';
 import { Avatar } from '../ui/Avatar.jsx';
 import { Button } from '../ui/Button.jsx';
 import { IconButton } from '../ui/IconButton.jsx';
 
 export function Navbar() {
-  const { user, logout } = useAuth();
-  const { theme, toggleTheme } = useTheme();
+  const { user, loading, logout } = useAuth();
   const navigate = useNavigate();
 
   async function onLogout() {
@@ -26,23 +23,20 @@ export function Navbar() {
           className="inline-flex shrink-0 items-center rounded-button focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-soft"
         >
           <img
-            src={theme === 'dark' ? '/brand_dark.png' : '/brand_light.png'}
+            src="/brand_light.png"
             alt="Geekly"
             className="h-8 w-auto max-w-[160px] object-contain sm:h-9"
           />
         </Link>
 
         <div className="flex items-center gap-2">
-          <IconButton
-            label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
-            variant="bare"
-            shape="round"
-            onClick={toggleTheme}
-          >
-            {theme === 'dark' ? <FaSun aria-hidden="true" /> : <FaMoon aria-hidden="true" />}
-          </IconButton>
-
-          {user ? (
+          {loading ? (
+            <div
+              role="status"
+              aria-label="Restoring your session"
+              className="h-9 w-9 animate-pulse rounded-full bg-surface-secondary"
+            />
+          ) : user ? (
             <ProfileMenu user={user} onLogout={onLogout} />
           ) : (
             <Button as={Link} to="/auth/login" size="sm">

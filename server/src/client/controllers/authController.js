@@ -1,7 +1,44 @@
+import { randomBytes } from 'node:crypto';
 import { keys } from '../../config/env.js';
 import { signState, verifyState } from '../../shared/jwt.js';
 import { ApiError } from '../../shared/apiError.js';
 import * as authService from '../services/authService.js';
+
+const OAUTH_STATE_COOKIE = 'geekly_oauth_state';
+const OAUTH_STATE_PATH = '/auth';
+
+function oauthStateCookieOptions() {
+  return {
+    httpOnly: true,
+    sameSite: 'lax',
+    secure: keys.server.environment === 'production',
+    path: OAUTH_STATE_PATH,
+    maxAge: 10 * 60 * 1000,
+  };
+}
+
+function clearOAuthStateCookie(res) {
+  const options = oauthStateCookieOptions();
+  delete options.maxAge;
+  res.clearCookie(OAUTH_STATE_COOKIE, options);
+}
+
+function readCookie(req, name) {
+  const header = req.headers.cookie;
+  if (!header) return null;
+
+  for (const part of header.split(';')) {
+    const separator = part.indexOf('=');
+    if (separator === -1) continue;
+    if (part.slice(0, separator).trim() !== name) continue;
+    try {
+      return decodeURIComponent(part.slice(separator + 1).trim());
+    } catch {
+      return null;
+    }
+  }
+  return null;
+}
 
 // Controllers only translate HTTP <-> services. All business logic,
 // validation and DB work lives in the services.
@@ -42,7 +79,9 @@ export async function resetPassword(req, res) {
 
 function oauthStart(provider) {
   return (req, res) => {
-    const state = signState({ provider });
+    const nonce = randomBytes(32).toString('hex');
+    const state = signState({ provider, nonce });
+    res.cookie(OAUTH_STATE_COOKIE, nonce, oauthStateCookieOptions());
     const url = authService.buildAuthorizeUrl(provider);
     res.redirect(`${url}&state=${encodeURIComponent(state)}`);
   };
@@ -51,6 +90,9 @@ function oauthStart(provider) {
 function oauthCallback(provider) {
   return async (req, res) => {
     const { code, state, error } = req.query;
+    const expectedNonce = readCookie(req, OAUTH_STATE_COOKIE);
+    // The state is single-use, so clear it before any response path.
+    clearOAuthStateCookie(res);
 
     // Provider-side failure (user denied access, etc.) - never crash the flow.
     if (error) {
@@ -64,7 +106,13 @@ function oauthCallback(provider) {
 
     try {
       const payload = verifyState(state);
-      if (payload.provider !== provider) throw new Error('provider mismatch');
+      if (
+        payload.provider !== provider ||
+        !expectedNonce ||
+        payload.nonce !== expectedNonce
+      ) {
+        throw new Error('provider or nonce mismatch');
+      }
     } catch {
       if (keys.auth.frontendUrl) {
         return res.redirect(`${keys.auth.frontendUrl}/auth/callback?error=invalid_state`);

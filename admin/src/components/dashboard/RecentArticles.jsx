@@ -31,7 +31,7 @@ export function RecentArticles({ articles = [] }) {
           description="Your first article will appear here after you write it."
           action={
             <Link
-              to="/articles/new"
+              to="/editor"
               className="mt-1 inline-flex items-center gap-1 text-[11.5px] font-semibold text-brand"
             >
               Write an article
@@ -66,7 +66,7 @@ export function RecentArticles({ articles = [] }) {
                 >
                   <td className="max-w-[240px] py-3 pr-3">
                     <Link
-                      to={`/articles/${article.id}/edit`}
+                      to={`/editor/${article.id}`}
                       className="block truncate text-[12.5px] font-semibold text-text transition group-hover:text-brand"
                     >
                       {article.title}

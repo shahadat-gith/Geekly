@@ -1,256 +1,301 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
+import { EditorContent, useEditor, useEditorState } from '@tiptap/react';
+import { BubbleMenu } from '@tiptap/react/menus';
 import { readingTime } from '../../utils/format.js';
+import { AnnotationDialog } from './annotations/AnnotationDialog.jsx';
+import { AnnotationLayer } from './annotations/AnnotationLayer.jsx';
+import { EditorToolbar } from './toolbar/EditorToolbar.jsx';
+import {
+  annotationInRange,
+  createAnnotationId,
+} from './tiptap/articleDocument.js';
+import { createEditorExtensions } from './tiptap/articleExtensions.jsx';
+import { createDiagramStore } from './tiptap/diagramStore.js';
 
-function ToolbarButton({ active, onClick, label, children }) {
-  return (
-    <button
-      type="button"
-      onMouseDown={(event) => event.preventDefault()}
-      onClick={onClick}
-      aria-label={label}
-      title={label}
-      aria-pressed={active || undefined}
-      className={`inline-flex h-8 min-w-8 items-center justify-center rounded-button px-1.5 text-[12px] font-semibold transition focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-soft ${
-        active
-          ? 'bg-brand-soft text-brand'
-          : 'text-text-secondary hover:bg-surface hover:text-text'
-      }`}
-    >
-      {children}
-    </button>
-  );
+function selectionDetails(editor) {
+  if (!editor) return null;
+  const { from, to, empty, $from, $to } = editor.state.selection;
+  const annotation = empty ? null : annotationInRange(editor.state.doc, from, to);
+  const contained = Boolean(annotation && from >= annotation.from && to <= annotation.to);
+
+  return {
+    from,
+    to,
+    empty,
+    text: empty ? '' : editor.state.doc.textBetween(from, to, ' '),
+    annotation,
+    canCreate:
+      !empty &&
+      $from.sameParent($to) &&
+      $from.parent.type.name !== 'codeBlock' &&
+      !annotation,
+    canEdit: contained,
+    overlaps: Boolean(annotation) && !contained,
+  };
 }
 
 export function RichTextEditor({
-  value = '',
+  value = null,
+  html = '',
+  diagrams = [],
   onChange,
-  placeholder = 'Start writing the article…',
+  onUploadImage,
+  onGenerateDiagramImage,
+  onUploadDiagramImage,
   minHeight = '440px',
 }) {
-  const editorRef = useRef(null);
-  const lastValue = useRef(null);
-  const [active, setActive] = useState({});
+  const [initialContent] = useState(() => value || '');
+  const [diagramStore] = useState(() => createDiagramStore(diagrams));
+  const [dialog, setDialog] = useState(null);
+  const imageActions = useMemo(
+    () => ({
+      upload: onUploadImage ? (file) => onUploadImage(file) : undefined,
+    }),
+    [onUploadImage],
+  );
+  const diagramActions = useMemo(
+    () => ({
+      generate: onGenerateDiagramImage
+        ? (diagramId) => onGenerateDiagramImage(diagramId)
+        : undefined,
+      upload: onUploadDiagramImage
+        ? (diagramId, file) => onUploadDiagramImage(diagramId, file)
+        : undefined,
+    }),
+    [onGenerateDiagramImage, onUploadDiagramImage],
+  );
+  const extensions = useMemo(
+    () => createEditorExtensions(diagramStore, imageActions, diagramActions),
+    [diagramStore, imageActions, diagramActions],
+  );
 
-  // Only write into the DOM when the value changes from the outside (article
-  // load, reset). Typing already leaves the DOM as the source of truth, so
-  // the caret never jumps.
+  const editor = useEditor({
+    extensions,
+    content: initialContent,
+    editable: true,
+    editorProps: {
+      attributes: {
+        class: 'rte-content px-4 py-5 outline-none sm:px-5',
+        style: `min-height: ${minHeight}`,
+        role: 'textbox',
+        'aria-multiline': 'true',
+        'aria-label': 'Article content',
+      },
+    },
+    onUpdate: ({ editor: current }) => {
+      onChange?.({
+        doc: current.getJSON(),
+        html: current.isEmpty ? '' : current.getHTML(),
+      });
+    },
+  });
+
   useEffect(() => {
-    const editor = editorRef.current;
+    diagramStore.set(diagrams);
+  }, [diagrams, diagramStore]);
+
+  const active = useEditorState({
+    editor,
+    selector: ({ editor: current }) => {
+      if (!current) return {};
+      const selection = selectionDetails(current);
+      const headingLevel = current.isActive('heading') ? current.getAttributes('heading').level : null;
+      const alignLeft = current.isActive({ textAlign: 'left' });
+      const alignCenter = current.isActive({ textAlign: 'center' });
+      const alignRight = current.isActive({ textAlign: 'right' });
+      const alignJustify = current.isActive({ textAlign: 'justify' });
+
+      return {
+        bold: current.isActive('bold'),
+        italic: current.isActive('italic'),
+        underline: current.isActive('underline'),
+        strike: current.isActive('strike'),
+        highlight: current.isActive('highlight'),
+        code: current.isActive('code'),
+        link: current.isActive('link'),
+        headingLevel,
+        paragraph: current.isActive('paragraph'),
+        bulletList: current.isActive('bulletList'),
+        orderedList: current.isActive('orderedList'),
+        blockquote: current.isActive('blockquote'),
+        codeBlock: current.isActive('codeBlock'),
+        codeLanguage: current.getAttributes('codeBlock').language || 'plaintext',
+        table: current.isActive('table'),
+        alignLeft: alignLeft || (!alignCenter && !alignRight && !alignJustify),
+        alignCenter,
+        alignRight,
+        alignJustify,
+        canUndo: current.can().undo(),
+        canRedo: current.can().redo(),
+        words: current.getText().trim()
+          ? current.getText().trim().split(/\s+/).length
+          : 0,
+        selection,
+      };
+    },
+  });
+
+  const startAnnotation = useCallback(() => {
     if (!editor) return;
+    const selection = selectionDetails(editor);
 
-    if (value !== lastValue.current) {
-      if (editor.innerHTML !== value) editor.innerHTML = value || '';
-      lastValue.current = value;
+    if (selection.canEdit && selection.annotation) {
+      setDialog({
+        mode: 'edit',
+        id: selection.annotation.id,
+        from: selection.annotation.from,
+        to: selection.annotation.to,
+        text: editor.state.doc.textBetween(selection.annotation.from, selection.annotation.to, ' '),
+        kind: selection.annotation.kind,
+        content: selection.annotation.content,
+        error: '',
+      });
+      return;
     }
-  }, [value]);
 
-  const refreshActive = useCallback(() => {
-    if (!editorRef.current) return;
+    if (!selection.canCreate) return;
+    setDialog({
+      mode: 'create',
+      from: selection.from,
+      to: selection.to,
+      text: selection.text,
+      kind: 'explanation',
+      content: '',
+      error: '',
+    });
+  }, [editor]);
 
-    const state = {};
-    for (const command of ['bold', 'italic', 'underline', 'strikeThrough', 'insertUnorderedList', 'insertOrderedList']) {
-      try {
-        state[command] = document.queryCommandState(command);
-      } catch {
-        state[command] = false;
+  function saveAnnotation({ kind, content }) {
+    if (!editor || !dialog) return;
+
+    if (dialog.mode === 'create') {
+      const currentText = editor.state.doc.textBetween(dialog.from, dialog.to, ' ');
+      if (currentText !== dialog.text) {
+        setDialog((current) => ({
+          ...current,
+          error: 'The selected text changed. Select it again and retry.',
+        }));
+        return;
+      }
+      const applied = editor
+        .chain()
+        .focus()
+        .setTextSelection({ from: dialog.from, to: dialog.to })
+        .addAnnotation({ id: createAnnotationId(), kind, content })
+        .run();
+      if (!applied) {
+        setDialog((current) => ({
+          ...current,
+          error: 'That selection overlaps an existing annotation. Choose different text.',
+        }));
+        return;
+      }
+    } else {
+      const applied = editor.chain().focus().updateAnnotation(dialog.id, { kind, content }).run();
+      if (!applied) {
+        setDialog((current) => ({ ...current, error: 'This annotation could not be updated.' }));
+        return;
       }
     }
 
-    let block;
-    try {
-      block = String(document.queryCommandValue('formatBlock') || '').toLowerCase();
-    } catch {
-      block = '';
-    }
-    state.block = block.replace(/[<>]/g, '');
-
-    setActive(state);
-  }, []);
-
-  function emitChange() {
-    const editor = editorRef.current;
-    if (!editor) return;
-    const html = editor.innerHTML;
-    lastValue.current = html;
-    onChange?.(html);
-    refreshActive();
+    setDialog(null);
+    editor.commands.focus();
   }
 
-  function run(command, argument = null) {
-    const editor = editorRef.current;
-    if (!editor) return;
-    editor.focus();
-    document.execCommand('styleWithCSS', false, false);
-    document.execCommand(command, false, argument);
-    emitChange();
+  function insertImage() {
+    editor
+      ?.chain()
+      .focus()
+      .insertContent({
+        type: 'articleImage',
+        attrs: {
+          assetKey: null,
+          assetUrl: null,
+          alt: '',
+          caption: '',
+          align: 'center',
+        },
+      })
+      .run();
   }
 
-  function addLink() {
-    const url = window.prompt('Link URL', 'https://');
-    if (!url || url === 'https://') return;
-    run('createLink', url);
-  }
-
-  function addImage() {
-    const url = window.prompt('Image URL', 'https://');
-    if (!url || url === 'https://') return;
-    run('insertImage', url);
-  }
-
-  function addInlineCode() {
-    const selection = window.getSelection();
-    const text = selection?.toString();
-    if (!text) return;
-    const escaped = text
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;');
-    run('insertHTML', `<code>${escaped}</code>`);
-  }
-
-  function clearFormatting() {
-    run('removeFormat');
-    run('formatBlock', 'p');
-  }
-
-  function handleBlur() {
-    const editor = editorRef.current;
-    if (!editor) return;
-    if (!editor.textContent.trim() && !editor.querySelector('img, figure')) {
-      editor.innerHTML = '';
-      lastValue.current = '';
-      onChange?.('');
-    }
-  }
-
-  const { words } = readingTime(value);
+  const words = active?.words ?? readingTime(html).words;
+  const selection = active?.selection;
+  const annotationLabel = selection?.canEdit ? 'Edit annotation' : 'Annotate selection';
+  const annotationDisabled = !selection?.canCreate && !selection?.canEdit;
 
   return (
-    <div className="overflow-hidden rounded-field border border-border bg-surface transition-shadow focus-within:border-border-focus focus-within:ring-4 focus-within:ring-brand-soft">
-      <div
-        role="toolbar"
-        aria-label="Article formatting"
-        className="flex flex-wrap items-center gap-0.5 border-b border-border-secondary bg-surface-secondary/60 px-2 py-2"
-      >
-        <ToolbarButton active={active.bold} onClick={() => run('bold')} label="Bold">
-          <i aria-hidden="true" className="bx bx-bold text-[16px]" />
-        </ToolbarButton>
-        <ToolbarButton active={active.italic} onClick={() => run('italic')} label="Italic">
-          <i aria-hidden="true" className="bx bx-italic text-[16px]" />
-        </ToolbarButton>
-        <ToolbarButton active={active.underline} onClick={() => run('underline')} label="Underline">
-          <i aria-hidden="true" className="bx bx-underline text-[16px]" />
-        </ToolbarButton>
-        <ToolbarButton
-          active={active.strikeThrough}
-          onClick={() => run('strikeThrough')}
-          label="Strikethrough"
-        >
-          <i aria-hidden="true" className="bx bx-strikethrough text-[16px]" />
-        </ToolbarButton>
-
-        <span aria-hidden="true" className="mx-1 h-5 w-px bg-border" />
-
-        <ToolbarButton
-          active={active.block === 'h2'}
-          onClick={() => run('formatBlock', 'h2')}
-          label="Heading 2"
-        >
-          <span className="text-[11.5px] font-bold">H2</span>
-        </ToolbarButton>
-        <ToolbarButton
-          active={active.block === 'h3'}
-          onClick={() => run('formatBlock', 'h3')}
-          label="Heading 3"
-        >
-          <span className="text-[11.5px] font-bold">H3</span>
-        </ToolbarButton>
-        <ToolbarButton
-          active={active.block === 'p'}
-          onClick={() => run('formatBlock', 'p')}
-          label="Paragraph"
-        >
-          <span className="text-[11.5px] font-bold">P</span>
-        </ToolbarButton>
-
-        <span aria-hidden="true" className="mx-1 h-5 w-px bg-border" />
-
-        <ToolbarButton
-          active={active.insertUnorderedList}
-          onClick={() => run('insertUnorderedList')}
-          label="Bullet list"
-        >
-          <i aria-hidden="true" className="bx bx-list-ul text-[17px]" />
-        </ToolbarButton>
-        <ToolbarButton
-          active={active.insertOrderedList}
-          onClick={() => run('insertOrderedList')}
-          label="Numbered list"
-        >
-          <i aria-hidden="true" className="bx bx-list-ol text-[17px]" />
-        </ToolbarButton>
-        <ToolbarButton
-          active={active.block === 'blockquote'}
-          onClick={() => run('formatBlock', 'blockquote')}
-          label="Quote"
-        >
-          <i aria-hidden="true" className="bx bxs-quote-alt-left text-[16px]" />
-        </ToolbarButton>
-        <ToolbarButton
-          active={active.block === 'pre'}
-          onClick={() => run('formatBlock', 'pre')}
-          label="Code block"
-        >
-          <i aria-hidden="true" className="bx bx-code-block text-[17px]" />
-        </ToolbarButton>
-
-        <span aria-hidden="true" className="mx-1 h-5 w-px bg-border" />
-
-        <ToolbarButton onClick={addLink} label="Add link">
-          <i aria-hidden="true" className="bx bx-link-alt text-[17px]" />
-        </ToolbarButton>
-        <ToolbarButton onClick={addImage} label="Insert image from URL">
-          <i aria-hidden="true" className="bx bx-image-add text-[17px]" />
-        </ToolbarButton>
-        <ToolbarButton onClick={addInlineCode} label="Inline code">
-          <i aria-hidden="true" className="bx bx-code-alt text-[17px]" />
-        </ToolbarButton>
-
-        <span aria-hidden="true" className="mx-1 h-5 w-px bg-border" />
-
-        <ToolbarButton onClick={() => run('undo')} label="Undo">
-          <i aria-hidden="true" className="bx bx-undo text-[17px]" />
-        </ToolbarButton>
-        <ToolbarButton onClick={() => run('redo')} label="Redo">
-          <i aria-hidden="true" className="bx bx-redo text-[17px]" />
-        </ToolbarButton>
-        <ToolbarButton onClick={clearFormatting} label="Clear formatting">
-          <i aria-hidden="true" className="bx bx-eraser text-[17px]" />
-        </ToolbarButton>
-      </div>
-
-      <div
-        ref={editorRef}
-        role="textbox"
-        aria-multiline="true"
-        aria-label="Article content"
-        contentEditable
-        suppressContentEditableWarning
-        data-placeholder={placeholder}
-        onInput={emitChange}
-        onKeyUp={refreshActive}
-        onMouseUp={refreshActive}
-        onBlur={handleBlur}
-        className="rte-content px-4 py-5 outline-none sm:px-5"
-        style={{ minHeight }}
+    <div
+      className="overflow-hidden rounded-field border border-border bg-surface transition-shadow focus-within:border-border-focus focus-within:ring-4 focus-within:ring-brand-soft"
+      onKeyDown={(event) => {
+        if ((event.metaKey || event.ctrlKey) && event.shiftKey && event.key.toLowerCase() === 'e') {
+          event.preventDefault();
+          startAnnotation();
+        }
+      }}
+    >
+      <EditorToolbar
+        editor={editor}
+        active={active || {}}
+        selection={selection}
+        onAnnotate={startAnnotation}
+        onInsertImage={insertImage}
       />
+
+      {editor && (
+        <BubbleMenu
+          editor={editor}
+          pluginKey="article-annotation-menu"
+          appendTo={() => document.body}
+          options={{ placement: 'top', offset: 8, flip: true, shift: true }}
+          shouldShow={({ editor: current, from, to }) => {
+            if (from === to) return false;
+            const { $from, $to } = current.state.selection;
+            return $from.sameParent($to) && $from.parent.type.name !== 'codeBlock';
+          }}
+          className="flex items-center gap-1 rounded-button border border-border bg-surface p-1 shadow-dropdown"
+        >
+          <button
+            type="button"
+            onMouseDown={(event) => event.preventDefault()}
+            onClick={startAnnotation}
+            disabled={annotationDisabled}
+            title={selection?.overlaps ? 'This selection crosses an existing annotation.' : annotationLabel}
+            className="inline-flex min-h-[30px] items-center gap-1.5 rounded-[0.45rem] bg-accent-soft px-2.5 text-[11.5px] font-semibold text-accent transition hover:bg-accent/15 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-soft disabled:cursor-not-allowed disabled:opacity-45"
+          >
+            <i aria-hidden="true" className="bx bx-comment-detail text-[15px]" />
+            {annotationLabel}
+          </button>
+        </BubbleMenu>
+      )}
+
+      <AnnotationLayer editor={editor} editable>
+        <EditorContent editor={editor} />
+      </AnnotationLayer>
 
       <div className="flex items-center justify-between gap-3 border-t border-border-secondary bg-surface-secondary/40 px-4 py-2 text-[10.5px] text-text-tertiary">
         <span>{words} word{words === 1 ? '' : 's'}</span>
         <span className="hidden sm:inline">
-          Select text to format it · Ctrl/Cmd + B, I and U work too
+          Select text to format it · Ctrl/Cmd + B, I, U and Shift + E work too
         </span>
       </div>
+
+      <AnnotationDialog
+        key={dialog ? `${dialog.mode}:${dialog.id || `${dialog.from}-${dialog.to}`}` : 'closed'}
+        open={Boolean(dialog)}
+        mode={dialog?.mode}
+        selectedText={dialog?.text || ''}
+        initialKind={dialog?.kind || 'explanation'}
+        initialContent={dialog?.content || ''}
+        error={dialog?.error || ''}
+        onClose={() => setDialog(null)}
+        onSave={saveAnnotation}
+      />
     </div>
   );
 }

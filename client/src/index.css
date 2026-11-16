@@ -3,50 +3,50 @@
 /* ------------------------------------------------------------------ */
 /*  Geekly theme (Tailwind v4 tokens)                                  */
 /*                                                                     */
-/*  Editorial foundation: warm paper surfaces, ink-coloured text and   */
-/*  panels, a single indigo brand accent, serif display type.          */
+/*  Editorial foundation: cool paper surfaces, ink-coloured text and   */
+/*  panels, a bright blue brand accent, serif display type.            */
 /* ------------------------------------------------------------------ */
 
 @theme {
-  --color-brand: #4057F5;
-  --color-brand-hover: #2F44DE;
-  --color-brand-active: #2537B8;
-  --color-brand-soft: #EBEEFF;
-  --color-brand-light: #AFB9FF;
+  --color-brand: #2F80ED;
+  --color-brand-hover: #2470D8;
+  --color-brand-active: #1B5DB8;
+  --color-brand-soft: #EAF3FD;
+  --color-brand-light: #8BBCFF;
   --color-on-brand: #FFFFFF;
 
-  --color-accent: #B4532A;
-  --color-accent-soft: #F8EDE5;
+  --color-accent: #E5664B;
+  --color-accent-soft: #FCEBE6;
 
-  --color-bg: #F5F4EF;
-  --color-bg-secondary: #EDECE5;
-  --color-bg-tertiary: #E3E1D8;
+  --color-bg: #F3F5F8;
+  --color-bg-secondary: #EDF0F4;
+  --color-bg-tertiary: #E4E8EE;
 
   --color-surface: #FFFFFF;
-  --color-surface-secondary: #FAF9F4;
-  --color-surface-tertiary: #F1F0E9;
-  --color-surface-hover: #F3F2EC;
+  --color-surface-secondary: #F8F9FB;
+  --color-surface-tertiary: #EFF2F6;
+  --color-surface-hover: #F2F5F8;
 
   /* Ink panels: the one place the page goes dark in both themes. */
-  --color-ink: #14161C;
-  --color-ink-secondary: #1E212A;
-  --color-ink-soft: #2A2E39;
-  --color-ink-text: #F6F5F0;
-  --color-ink-muted: #9DA1AC;
+  --color-ink: #141B2A;
+  --color-ink-secondary: #1D2638;
+  --color-ink-soft: #2A3548;
+  --color-ink-text: #F5F7FA;
+  --color-ink-muted: #9AA4B4;
 
-  --color-text: #191B21;
-  --color-text-secondary: #55585F;
-  --color-text-tertiary: #8A8D94;
-  --color-text-disabled: #B8BABF;
+  --color-text: #1C2433;
+  --color-text-secondary: #5F6877;
+  --color-text-tertiary: #8C94A2;
+  --color-text-disabled: #B9C0CB;
 
-  --color-border: #E2E0D8;
-  --color-border-secondary: #ECE9E1;
-  --color-border-focus: #4057F5;
+  --color-border: #E2E6EC;
+  --color-border-secondary: #EDF0F4;
+  --color-border-focus: #2F80ED;
 
-  --color-success: #237A52;
-  --color-warning: #96610F;
-  --color-error: #C93A3A;
-  --color-info: #2E6EA8;
+  --color-success: #2B8A63;
+  --color-warning: #A97712;
+  --color-error: #CC4444;
+  --color-info: #2F76C8;
 
   --font-sans: "Plus Jakarta Sans", ui-sans-serif, -apple-system, BlinkMacSystemFont,
     "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -57,86 +57,31 @@
   /* Labels, numerals, metadata and code. */
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 
-  --shadow-card: 0 1px 2px 0 rgb(20 22 28 / 0.04), 0 10px 22px -16px rgb(20 22 28 / 0.16);
+  --shadow-card: 0 1px 2px 0 rgb(28 34 48 / 0.03), 0 16px 34px -24px rgb(28 34 48 / 0.16);
 
-  --shadow-card-hover: 0 2px 4px 0 rgb(20 22 28 / 0.05),
-    0 18px 34px -18px rgb(20 22 28 / 0.22);
+  --shadow-card-hover: 0 2px 5px 0 rgb(28 34 48 / 0.05),
+    0 22px 42px -24px rgb(28 34 48 / 0.22);
 
-  --shadow-note: 0 1px 2px 0 rgb(20 22 28 / 0.05), 0 16px 34px -20px rgb(20 22 28 / 0.28);
+  --shadow-note: 0 1px 2px 0 rgb(28 34 48 / 0.05), 0 18px 38px -22px rgb(28 34 48 / 0.26);
 
-  --shadow-button: 0 1px 2px 0 rgb(20 22 28 / 0.16),
-    0 10px 20px -12px rgb(64 87 245 / 0.5);
+  --shadow-button: 0 1px 2px 0 rgb(20 22 28 / 0.12),
+    0 10px 20px -12px rgb(47 128 237 / 0.5);
 
   --shadow-field: inset 0 1px 0 0 rgb(0 0 0 / 0.02);
 
-  --shadow-dropdown: 0 2px 6px 0 rgb(20 22 28 / 0.05),
-    0 18px 44px -16px rgb(20 22 28 / 0.24);
+  --shadow-dropdown: 0 2px 6px 0 rgb(28 34 48 / 0.05),
+    0 18px 44px -16px rgb(28 34 48 / 0.22);
 
-  --radius-button: 0.5rem;
-  --radius-card: 1rem;
-  --radius-field: 0.5rem;
+  --radius-button: 0.625rem;
+  --radius-card: 1.25rem;
+  --radius-field: 0.75rem;
   --radius-panel: 1.25rem;
 
   --breakpoint-xs: 30rem;
 }
 
-/* Dark mode values. Light stays the default (see data-theme on <html>). */
-[data-theme="dark"] {
-  color-scheme: dark;
-
-  --color-bg: #0F1014;
-  --color-bg-secondary: #15171C;
-  --color-bg-tertiary: #1B1D23;
-
-  --color-surface: #171920;
-  --color-surface-secondary: #1D1F27;
-  --color-surface-tertiary: #252832;
-  --color-surface-hover: #22252D;
-
-  --color-ink: #1B1E25;
-  --color-ink-secondary: #23262F;
-  --color-ink-soft: #2E323D;
-  --color-ink-text: #F4F3EE;
-  --color-ink-muted: #9DA2AE;
-
-  --color-text: #EFEEE9;
-  --color-text-secondary: #A5A8B0;
-  --color-text-tertiary: #7C8089;
-  --color-text-disabled: #565A63;
-
-  --color-border: #2A2D36;
-  --color-border-secondary: #212430;
-  --color-border-focus: #98A6FF;
-
-  --color-brand: #98A6FF;
-  --color-brand-hover: #AEBAFF;
-  --color-brand-active: #8291F7;
-  --color-brand-soft: #232A4D;
-  --color-brand-light: #AFB9FF;
-  --color-on-brand: #101114;
-
-  --color-accent: #E1A07B;
-  --color-accent-soft: #2E221C;
-
-  --color-success: #4EB98A;
-  --color-warning: #E2AB55;
-  --color-error: #EF6F6F;
-  --color-info: #6FA9DE;
-
-  --shadow-card: 0 1px 2px 0 rgb(0 0 0 / 0.4), 0 12px 26px -18px rgb(0 0 0 / 0.65);
-
-  --shadow-card-hover: 0 2px 6px 0 rgb(0 0 0 / 0.45), 0 20px 40px -20px rgb(0 0 0 / 0.75);
-
-  --shadow-note: 0 2px 6px 0 rgb(0 0 0 / 0.45), 0 20px 40px -22px rgb(0 0 0 / 0.8);
-
-  --shadow-button: 0 1px 2px 0 rgb(0 0 0 / 0.3), 0 10px 22px -12px rgb(152 166 255 / 0.35);
-
-  --shadow-field: inset 0 1px 0 0 rgb(0 0 0 / 0.12);
-
-  --shadow-dropdown: 0 2px 6px 0 rgb(0 0 0 / 0.45), 0 20px 48px -16px rgb(0 0 0 / 0.7);
-}
-
 html {
+  color-scheme: light;
   scroll-behavior: smooth;
 }
 
@@ -263,12 +208,46 @@ button, a, [role="button"], select, input[type="button"], input[type="submit"], 
   letter-spacing: -0.01em;
 }
 
+.article-prose h1 {
+  margin: 1.9em 0 0.55em;
+  font-family: var(--font-heading);
+  font-size: 2.15rem;
+  font-weight: 400;
+  line-height: 1.15;
+  letter-spacing: -0.015em;
+}
+
 .article-prose h3 {
   margin: 1.7em 0 0.45em;
   font-size: 1.02rem;
   font-weight: 700;
   letter-spacing: -0.01em;
   line-height: 1.4;
+}
+
+.article-prose h4 {
+  margin: 1.65em 0 0.42em;
+  font-size: 0.98rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.45;
+}
+
+.article-prose h5 {
+  margin: 1.55em 0 0.4em;
+  font-size: 0.9rem;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.article-prose h6 {
+  margin: 1.5em 0 0.4em;
+  color: var(--color-text-secondary);
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  line-height: 1.5;
+  text-transform: uppercase;
 }
 
 .article-prose ul,
@@ -288,6 +267,14 @@ button, a, [role="button"], select, input[type="button"], input[type="submit"], 
 .article-prose li {
   margin: 0.4em 0;
   padding-left: 0.15em;
+}
+
+.article-prose li p {
+  margin: 0 0 0.35em;
+}
+
+.article-prose li p:last-child {
+  margin-bottom: 0;
 }
 
 .article-prose li::marker {
@@ -338,6 +325,69 @@ button, a, [role="button"], select, input[type="button"], input[type="submit"], 
   color: inherit;
 }
 
+.article-prose mark {
+  border-radius: 0.15rem;
+  background: color-mix(in srgb, var(--color-warning) 26%, transparent);
+  padding: 0 0.08em;
+  color: inherit;
+}
+
+/* Tables */
+.article-prose table {
+  width: 100%;
+  margin: 1.7em 0;
+  border-collapse: collapse;
+  table-layout: fixed;
+  font-size: 0.88em;
+}
+
+.article-prose th,
+.article-prose td {
+  border: 1px solid var(--color-border);
+  padding: 0.6em 0.75em;
+  vertical-align: top;
+  text-align: left;
+}
+
+.article-prose th {
+  background: var(--color-surface-secondary);
+  font-weight: 700;
+}
+
+.article-prose th p,
+.article-prose td p {
+  margin: 0;
+}
+
+/* Callouts */
+.article-callout {
+  --callout-color: var(--color-info);
+  margin: 1.65em 0;
+  border: 1px solid color-mix(in srgb, var(--callout-color) 26%, var(--color-border));
+  border-left: 3px solid var(--callout-color);
+  border-radius: 0 var(--radius-field) var(--radius-field) 0;
+  background: color-mix(in srgb, var(--callout-color) 6%, var(--color-surface));
+  padding: 0.95em 1.15em;
+}
+
+.article-callout-info { --callout-color: var(--color-info); }
+.article-callout-warning { --callout-color: var(--color-warning); }
+.article-callout-success { --callout-color: var(--color-success); }
+.article-callout-error { --callout-color: var(--color-error); }
+
+.article-prose .article-callout-label {
+  margin: 0 0 0.35em;
+  color: var(--callout-color);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+
+.article-prose .article-callout > *:last-child { margin-bottom: 0; }
+
 .article-prose img {
   display: block;
   max-width: 100%;
@@ -349,6 +399,26 @@ button, a, [role="button"], select, input[type="button"], input[type="submit"], 
   margin: 2.2em 0;
   border: 0;
   border-top: 1px solid var(--color-border);
+}
+
+/* Inline annotations: a dotted accent underline, quiet until hovered. */
+.article-annotation {
+  border-radius: 0.2rem;
+  background: color-mix(in srgb, var(--color-accent-soft) 42%, transparent);
+  padding: 0 0.08em;
+  text-decoration-line: underline;
+  text-decoration-style: dotted;
+  text-decoration-color: color-mix(in srgb, var(--color-accent) 72%, transparent);
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 0.18em;
+  cursor: pointer;
+}
+
+.article-annotation:hover,
+.article-annotation:focus-visible {
+  background: var(--color-accent-soft);
+  outline: 2px solid color-mix(in srgb, var(--color-accent) 34%, transparent);
+  outline-offset: 2px;
 }
 
 .article-prose-chunk {
@@ -368,6 +438,73 @@ button, a, [role="button"], select, input[type="button"], input[type="submit"], 
   flex-direction: column;
   gap: 0.7rem;
   margin: 1.9em 0;
+}
+
+.article-media-align-left {
+  width: min(78%, 38rem);
+  margin-right: auto;
+}
+
+.article-media-align-center {
+  width: min(100%, 46rem);
+  margin-inline: auto;
+}
+
+.article-media-align-right {
+  width: min(78%, 38rem);
+  margin-left: auto;
+}
+
+.article-diagram {
+  position: relative;
+}
+
+.article-diagram-open {
+  position: absolute;
+  top: 0.7rem;
+  right: 0.7rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--color-surface) 92%, transparent);
+  padding: 0.4rem 0.65rem;
+  color: var(--color-text-secondary);
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1;
+  box-shadow: 0 8px 20px -14px rgb(28 34 48 / 0.45);
+  backdrop-filter: blur(8px);
+  cursor: pointer;
+  transition: color 160ms ease, border-color 160ms ease, background 160ms ease;
+}
+
+.article-diagram-open svg {
+  width: 14px;
+  height: 14px;
+}
+
+.article-diagram-open:hover {
+  border-color: color-mix(in srgb, var(--color-accent) 45%, var(--color-border));
+  background: var(--color-surface);
+  color: var(--color-accent);
+}
+
+.article-diagram-open:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--color-accent) 45%, transparent);
+  outline-offset: 2px;
+}
+
+@media (max-width: 40rem) {
+  .article-diagram-open span {
+    display: none;
+  }
+
+  .article-diagram-open {
+    padding: 0.45rem;
+  }
 }
 
 .article-media-image {

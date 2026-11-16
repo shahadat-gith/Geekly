@@ -3,8 +3,8 @@ import { NavLink } from 'react-router-dom';
 const TABS = [
   { to: '/', label: 'Dashboard', icon: 'bx-grid-alt', end: true },
   { to: '/topics', label: 'Topics', icon: 'bx-layer' },
+  { to: '/editor', label: 'Editor', icon: 'bx-edit-alt' },
   { to: '/articles', label: 'Articles', icon: 'bx-file-blank' },
-  { to: '/images', label: 'Image studio', icon: 'bx-image-alt' },
   { to: '/usage', label: 'AI usage', icon: 'bx-bar-chart-alt-2' },
   { to: '/settings', label: 'Settings', icon: 'bx-cog' },
 ];

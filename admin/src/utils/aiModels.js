@@ -4,7 +4,7 @@ import { formatImagePrice, formatPerMillion } from './aiUsage.js';
 // from the database, never from this file.
 export const MODEL_TYPES = [
   { value: 'text', label: 'Text', icon: 'bx-text', hint: 'Articles and other written output.' },
-  { value: 'image', label: 'Image', icon: 'bx-image-alt', hint: 'Article images and the image studio.' },
+  { value: 'image', label: 'Image', icon: 'bx-image-alt', hint: 'Generates light-theme diagram images from saved diagram data.' },
   { value: 'video', label: 'Video', icon: 'bx-video', hint: 'Reserved for video generation.' },
   { value: 'audio', label: 'Audio', icon: 'bx-microphone', hint: 'Reserved for audio generation.' },
   { value: 'embedding', label: 'Embedding', icon: 'bx-layer', hint: 'Vector embeddings for search and similarity.' },

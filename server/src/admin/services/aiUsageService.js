@@ -31,6 +31,7 @@ export async function recordAiUsage({
   cost = null,
   durationMs = 0,
   error = '',
+  imageUrl = '',
 } = {}) {
   const prompt = tokenCount(promptTokens);
   const completion = tokenCount(completionTokens);
@@ -47,6 +48,7 @@ export async function recordAiUsage({
       durationMs: tokenCount(durationMs),
       cost: costAmount(cost),
       error: String(error ?? '').trim().slice(0, 500),
+      imageUrl: String(imageUrl ?? '').trim().slice(0, 2048),
     });
   } catch (logError) {
     console.error('Could not record AI usage:', logError.message);
@@ -85,6 +87,7 @@ function serializeRecord(entry) {
     durationMs: entry.durationMs || 0,
     createdAt: entry.createdAt,
     error: entry.error || '',
+    imageUrl: entry.imageUrl || '',
   };
 }
 
@@ -162,7 +165,7 @@ export async function getAiUsageDashboard({ page = 1, limit = PAGE_SIZE, feature
       .sort({ createdAt: -1 })
       .skip((safePage - 1) * safeLimit)
       .limit(safeLimit)
-      .select('user feature model status totalTokens cost durationMs createdAt error')
+      .select('user feature model status totalTokens cost durationMs createdAt error imageUrl')
       .lean(),
     AiUsage.countDocuments(filter),
   ]);

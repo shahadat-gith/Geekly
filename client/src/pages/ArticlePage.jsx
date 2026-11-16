@@ -1,66 +1,9 @@
-import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { FaChevronRight } from 'react-icons/fa6';
 import { useContent, useContentPath, NotFound } from './TopicPage.jsx';
 import { useReveal } from '../hooks/useReveal.js';
 import { formatDate } from '../utils/format.js';
-
-const FIGURE_PATTERN =
-  /<figure\b[^>]*data-article-media\s*=\s*(?:"([^"]+)"|'([^']+)')[^>]*>[\s\S]*?<\/figure>/gi;
-
-// Article HTML keeps an empty <figure data-article-media="viz-1"> where each
-// image belongs; the media list holds the approved image for that id.
-function splitHtml(html) {
-  const source = String(html ?? '');
-  const segments = [];
-  let lastIndex = 0;
-  const pattern = new RegExp(FIGURE_PATTERN.source, 'gi');
-  let match;
-
-  while ((match = pattern.exec(source)) !== null) {
-    if (match.index > lastIndex) segments.push({ type: 'html', html: source.slice(lastIndex, match.index) });
-    segments.push({ type: 'media', id: match[1] || match[2] });
-    lastIndex = match.index + match[0].length;
-  }
-  if (lastIndex < source.length) segments.push({ type: 'html', html: source.slice(lastIndex) });
-  return segments;
-}
-
-function ArticleBody({ html, media = [] }) {
-  const segments = useMemo(() => splitHtml(html), [html]);
-  const mediaById = new Map(media.map((item) => [item.id, item]));
-
-  return (
-    <div className="article-prose">
-      {segments.map((segment, index) => {
-        if (segment.type === 'media') {
-          const item = mediaById.get(segment.id);
-          if (!item?.imageUrl) return null;
-
-          return (
-            <figure key={`media-${segment.id}-${index}`} className="article-media">
-              <img
-                src={item.imageUrl}
-                alt={item.alt || ''}
-                loading="lazy"
-                className="article-media-image"
-              />
-              {item.caption && <figcaption>{item.caption}</figcaption>}
-            </figure>
-          );
-        }
-
-        return (
-          <div
-            key={`html-${index}`}
-            className="article-prose-chunk"
-            dangerouslySetInnerHTML={{ __html: segment.html }}
-          />
-        );
-      })}
-    </div>
-  );
-}
+import { ArticleBody } from '../components/article/ArticleBody.jsx';
 
 export default function ArticlePage() {
   const path = useContentPath();
@@ -123,21 +66,9 @@ export default function ArticlePage() {
       </header>
 
       <div className="mt-9">
-        <ArticleBody html={article.content?.html || ''} media={article.content?.media || []} />
+        <ArticleBody doc={article.content || null} />
       </div>
 
-      {article.tags?.length > 0 && (
-        <div className="mt-12 flex flex-wrap items-center gap-2 border-t border-border pt-6">
-          {article.tags.map((tag) => (
-            <span
-              key={tag}
-              className="rounded-button border border-border-secondary px-2.5 py-1 text-[11.5px] text-text-secondary"
-            >
-              {tag}
-            </span>
-          ))}
-        </div>
-      )}
     </article>
   );
 }

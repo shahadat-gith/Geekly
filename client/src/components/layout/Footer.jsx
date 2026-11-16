@@ -1,5 +1,4 @@
 import { Link } from 'react-router-dom';
-import { useTheme } from '../../context/themeContext.js';
 
 const LEGAL = [
   { label: 'Terms and conditions', to: '/terms' },
@@ -14,15 +13,13 @@ const CONTACT = [
 ];
 
 export function Footer() {
-  const { theme } = useTheme();
-
   return (
     <footer className="mt-auto border-t border-border bg-bg-secondary">
       <div className="mx-auto max-w-6xl px-6 py-12">
         <div className="flex flex-col gap-10 sm:flex-row sm:justify-between">
           <div className="max-w-xs">
             <img
-              src={theme === 'dark' ? '/brand_dark.png' : '/brand_light.png'}
+              src="/brand_light.png"
               alt="Geekly"
               className="h-8 w-auto max-w-[150px] object-contain"
             />

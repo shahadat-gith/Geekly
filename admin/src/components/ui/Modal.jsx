@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { IconButton } from './IconButton.jsx';
 
@@ -18,20 +18,55 @@ export function Modal({
   footer,
   size = 'md',
 }) {
+  const dialogRef = useRef(null);
+
   useEffect(() => {
     if (!open) return undefined;
 
+    const previouslyFocused = document.activeElement;
     const onKeyDown = (event) => {
-      if (event.key === 'Escape') onClose?.();
+      if (event.key === 'Escape') {
+        onClose?.();
+        return;
+      }
+      if (event.key !== 'Tab' || !dialogRef.current) return;
+
+      const focusables = [...dialogRef.current.querySelectorAll(
+        'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])',
+      )].filter((element) => element.getClientRects().length > 0);
+      if (!focusables.length) return;
+
+      const first = focusables[0];
+      const last = focusables[focusables.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
     };
 
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
     document.addEventListener('keydown', onKeyDown);
 
+    const frame = window.requestAnimationFrame(() => {
+      const target =
+        dialogRef.current?.querySelector('[data-autofocus], [autofocus]') ||
+        dialogRef.current?.querySelector(
+          'button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled])',
+        );
+      target?.focus({ preventScroll: true });
+    });
+
     return () => {
+      window.cancelAnimationFrame(frame);
       document.body.style.overflow = previousOverflow;
       document.removeEventListener('keydown', onKeyDown);
+      if (previouslyFocused instanceof HTMLElement && previouslyFocused.isConnected) {
+        previouslyFocused.focus({ preventScroll: true });
+      }
     };
   }, [open, onClose]);
 
@@ -46,9 +81,11 @@ export function Modal({
         className="absolute inset-0 cursor-default bg-text/35 backdrop-blur-[2px]"
       />
       <div
+        ref={dialogRef}
         role="dialog"
         aria-modal="true"
         aria-label={typeof title === 'string' ? title : undefined}
+        tabIndex={-1}
         className={`animate-rise relative flex max-h-[92svh] w-full flex-col overflow-hidden rounded-t-card bg-surface shadow-dropdown sm:rounded-card ${SIZES[size] ?? SIZES.md}`}
       >
         {(title || description) && (

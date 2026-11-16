@@ -1,6 +1,5 @@
-import { generateArticle, generateArticleImage } from '../services/aiService.js';
+import { generateArticle } from '../services/aiService.js';
 import { getAiUsageDashboard } from '../services/aiUsageService.js';
-import { listImageGenerations } from '../services/imageHistoryService.js';
 import {
   AI_MODEL_TYPES,
   createModel,
@@ -30,21 +29,6 @@ export async function deleteModelHandler(req, res) {
 
 export async function generate(req, res) {
   res.json(await generateArticle(req.body));
-}
-
-export async function generateImage(req, res) {
-  res.status(201).json(await generateArticleImage(req.body));
-}
-
-export async function images(req, res) {
-  res.json(
-    await listImageGenerations({
-      page: req.query.page,
-      limit: req.query.limit,
-      model: req.query.model,
-      status: req.query.status,
-    })
-  );
 }
 
 export async function usage(req, res) {

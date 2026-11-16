@@ -2,11 +2,8 @@ import OpenAI from 'openai';
 import { keys } from '../config/env.js';
 import { ApiError } from '../shared/apiError.js';
 
-// Provider configuration for every LLM call. Text models use OpenRouter's
-// OpenAI-compatible chat endpoint; image models use OpenRouter's Image API.
-// Model ids come from the admin-managed model table, never from this module.
-
-export const IMAGE_ENDPOINT = 'https://openrouter.ai/api/v1/images';
+// Provider configuration for every text LLM call. Model ids come from the
+// admin-managed model table, never from this module.
 
 const apiKey = keys.openrouter.apiKey;
 const attribution = {
@@ -31,11 +28,3 @@ export const chatClient = apiKey
       defaultHeaders: attribution,
     })
   : null;
-
-export function imageHeaders() {
-  return {
-    ...attribution,
-    Authorization: `Bearer ${apiKey || ''}`,
-    'Content-Type': 'application/json',
-  };
-}

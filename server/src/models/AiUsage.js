@@ -12,6 +12,7 @@ const AiUsageSchema = new mongoose.Schema(
     durationMs: { type: Number, default: 0, min: 0 },
     cost: { type: Number, default: null, min: 0 },
     error: { type: String, default: '', maxlength: 500 },
+    imageUrl: { type: String, default: '', trim: true, maxlength: 2048 },
   },
   { timestamps: true, versionKey: false, autoIndex: false, autoCreate: false }
 );
