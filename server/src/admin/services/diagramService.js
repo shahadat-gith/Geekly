@@ -4,7 +4,6 @@ import Diagram from '../../models/Diagram.js';
 import { ApiError } from '../../shared/apiError.js';
 import {
   buildDiagramImagePrompt,
-  diagramImageAspectRatio,
   generateImage,
   validateDiagram,
 } from '../../llm/index.js';
@@ -26,13 +25,11 @@ function serializeDiagram(diagram) {
     articleId: String(diagram.article),
     title: diagram.title,
     caption: diagram.caption || '',
-    direction: diagram.direction,
     nodes: (diagram.nodes || []).map((node) => ({
       id: node.id,
       type: node.type,
       label: node.label,
       description: node.description || '',
-      group: node.group || null,
     })),
     edges: (diagram.edges || []).map((edge) => ({
       id: edge.id,
@@ -40,11 +37,6 @@ function serializeDiagram(diagram) {
       target: edge.target,
       label: edge.label || '',
       type: edge.type,
-    })),
-    groups: (diagram.groups || []).map((group) => ({
-      id: group.id,
-      label: group.label,
-      nodeIds: [...(group.nodeIds || [])],
     })),
     order: diagram.order || 0,
     createdAt: diagram.createdAt,
@@ -182,7 +174,6 @@ export async function generateArticleDiagramImage(articleId, diagramId) {
     const generated = await generateImage({
       model: modelId,
       prompt: buildDiagramImagePrompt(validateDiagram(data)),
-      aspectRatio: diagramImageAspectRatio(data),
     });
     usage = generated.usage;
     model = generated.model || model;

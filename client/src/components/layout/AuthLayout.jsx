@@ -1,58 +1,81 @@
 import { Link } from 'react-router-dom';
-import { Card } from '../ui/Card.jsx';
 import { Background } from './Background.jsx';
 
-// Shell for the auth screens: wordmark and one centred column.
-// The site header and footer are not rendered here, so nothing competes with
-// the form. Shared by login, register and the reset pages so they cannot drift.
-// `card` sets the form on a surface panel (used by sign in and register).
-export function AuthLayout({ title, description, children, footer, card = false }) {
-  const content = (
-    <>
-      <h1
-        className={`font-heading font-normal leading-[1.02] tracking-[-0.02em] ${
-          card ? 'text-[34px]' : 'text-[42px]'
-        }`}
-      >
-        {title}
-      </h1>
-      {description && (
-        <p className="mt-2.5 text-[14px] leading-[1.65] text-text-secondary">{description}</p>
-      )}
+const SUBJECTS = ['Backend & APIs', 'Databases', 'Operating systems', 'Networking', 'System design'];
 
-      <div className={card ? 'mt-7' : 'mt-8'}>{children}</div>
-
-      {footer && <div className="mt-6 text-[13px] text-text-secondary">{footer}</div>}
-    </>
+function Wordmark() {
+  return (
+    <Link
+      to="/"
+      aria-label="Geekly home"
+      className="inline-flex w-fit rounded-button focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-soft"
+    >
+      <img
+        src="/brand_light.png"
+        alt="Geekly"
+        className="h-8 w-auto max-w-[150px] object-contain sm:h-9"
+      />
+    </Link>
   );
+}
 
+// Shell for the auth screens. On wide screens a quiet editorial column carries
+// the brand and the form sits alone on the right; on small screens only the
+// wordmark and the form remain. There is no site header or footer here.
+export function AuthLayout({ title, description, children, footer }) {
   return (
     <div className="relative isolate min-h-svh">
       <Background />
-      <div className="relative z-10 flex min-h-svh flex-col">
-        <header className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-5">
-          <Link
-            to="/"
-            aria-label="Geekly home"
-            className="inline-flex items-center rounded-button focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-soft"
-          >
-            <img
-              src="/brand_light.png"
-              alt="Geekly"
-              className="h-8 w-auto max-w-[150px] object-contain sm:h-9"
-            />
-          </Link>
-        </header>
 
-        <main className="animate-page flex flex-1 items-start justify-center px-6 pb-16 pt-8 sm:items-center sm:pb-24 sm:pt-0">
-          <div className="w-full max-w-[368px]">
-            {card ? (
-              <Card className="border border-border px-6 py-7">{content}</Card>
-            ) : (
-              content
-            )}
+      <div className="relative z-10 mx-auto flex min-h-svh max-w-6xl flex-col lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,0.9fr)]">
+        <aside className="hidden flex-col justify-between border-r border-border px-10 py-10 lg:flex">
+          <Wordmark />
+
+          <div className="py-10">
+            <p className="max-w-sm text-balance font-heading text-[30px] font-semibold leading-[1.2] tracking-[-0.03em]">
+              Learn the systems behind the software you build.
+            </p>
+            <ul className="mt-8 list-none border-t border-border p-0">
+              {SUBJECTS.map((subject) => (
+                <li
+                  key={subject}
+                  className="border-b border-border py-2.5 text-[13px] text-text-secondary"
+                >
+                  {subject}
+                </li>
+              ))}
+            </ul>
           </div>
-        </main>
+
+          <p className="max-w-xs text-[12.5px] leading-relaxed text-text-tertiary">
+            Plain language, worked examples and diagrams. Reading is open to everyone.
+          </p>
+        </aside>
+
+        <div className="flex min-h-svh flex-col">
+          <header className="flex px-6 py-5 lg:hidden">
+            <Wordmark />
+          </header>
+
+          <main className="animate-page flex flex-1 items-center justify-center px-6 pb-16 pt-4 sm:pb-20">
+            <div className="w-full max-w-[380px]">
+              <h1 className="text-balance font-heading text-[28px] font-semibold leading-[1.15] tracking-[-0.03em]">
+                {title}
+              </h1>
+              {description && (
+                <p className="mt-3 text-[14px] leading-[1.65] text-text-secondary">{description}</p>
+              )}
+
+              <div className="mt-8">{children}</div>
+
+              {footer && (
+                <div className="mt-7 border-t border-border pt-5 text-[13px] text-text-secondary">
+                  {footer}
+                </div>
+              )}
+            </div>
+          </main>
+        </div>
       </div>
     </div>
   );
@@ -60,7 +83,7 @@ export function AuthLayout({ title, description, children, footer, card = false 
 
 export function AuthLink({ to, children }) {
   return (
-    <Link to={to} className="font-medium text-brand hover:text-brand-hover">
+    <Link to={to} className="font-medium text-brand transition hover:text-brand-hover">
       {children}
     </Link>
   );

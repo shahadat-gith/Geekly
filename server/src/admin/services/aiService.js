@@ -101,10 +101,8 @@ function prepareDiagrams(rawDiagrams) {
       data = validateDiagram({
         title: raw.title,
         caption: raw.caption,
-        direction: raw.direction,
         nodes: raw.nodes,
         edges: raw.edges,
-        groups: raw.groups,
       });
     } catch (error) {
       throw new ApiError(
@@ -234,10 +232,8 @@ export async function generateArticle(payload = {}) {
           article: article.id,
           title: diagram.data.title,
           caption: diagram.data.caption || diagram.data.title,
-          direction: diagram.data.direction,
           nodes: diagram.data.nodes,
           edges: diagram.data.edges,
-          groups: diagram.data.groups,
           order: index,
         })),
       );

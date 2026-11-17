@@ -2,13 +2,11 @@ import express from "express"
 import cors from "cors"
 import helmet from "helmet"
 import { keys } from "./config/env.js"
-import authRoutes from "./client/routes/authRoutes.js"
-import oauthRoutes from "./client/routes/oauthRoutes.js"
+import authRoutes, { oauthRouter } from "./client/routes/authRoutes.js"
 import userRoutes from "./client/routes/userRoutes.js"
+import topicRoutes from "./client/routes/topicRoutes.js"
+import articleRoutes from "./client/routes/articleRoutes.js"
 import adminRoutes from "./admin/routes/index.js"
-import { asyncHandler } from "./shared/asyncHandler.js"
-import { listParents } from "./client/controllers/topicController.js"
-import { resolve as resolveContentPath } from "./client/controllers/contentController.js"
 import { errorHandler } from "./shared/errorHandler.js"
 
 const app = express()
@@ -44,12 +42,14 @@ app.get("/api/health", (req, res) => {
     res.json({ status: "ok", environment: keys.server.environment })
 })
 
-app.get("/api/topics/parents", asyncHandler(listParents))
-app.get("/api/content", asyncHandler(resolveContentPath))
-
 app.use("/api/auth", authRoutes)
-app.use("/auth", oauthRoutes)
+// OAuth start/callback endpoints are reached directly by the browser, and the
+// provider consoles have these callback URLs registered, so they also live at
+// /auth/* outside the JSON API mount.
+app.use("/auth", oauthRouter)
 app.use("/api/users", userRoutes)
+app.use("/api/topics", topicRoutes)
+app.use("/api/articles", articleRoutes)
 app.use("/api/admin", adminRoutes)
 
 // 404 for unknown routes

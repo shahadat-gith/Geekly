@@ -1,7 +1,42 @@
-import { useRef, useState, useSyncExternalStore } from 'react';
+import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import { NodeViewWrapper } from '@tiptap/react';
 
 const ACCEPTED_IMAGES = 'image/jpeg,image/png,image/webp,image/gif,image/avif';
+
+function diagramImagePrompt(diagram) {
+  const data = JSON.stringify(
+    {
+      id: diagram.id,
+      title: diagram.title,
+      caption: diagram.caption || '',
+      nodes: diagram.nodes || [],
+      edges: diagram.edges || [],
+    },
+    null,
+    2,
+  );
+
+  return `Generate a technical diagram image for a software engineering article.\n\nUse the JSON below as the source of truth. Draw every node as a clearly labelled box, connect the edges with arrows, and use the exact node labels and descriptions. Choose the clearest layout and visual grouping yourself. Do not invent extra components, connections or text.\n\nStyle:\n- Light theme.\n- Clean, modern technical illustration.\n- Flat and readable: no gradients, 3D effects, drop shadows, photographs or decorative scenery.\n- Use a real product logo only when a product is named in a node label; otherwise use a simple icon that matches the node type.\n- Do not render the caption inside the image; it is shown below the diagram on the site.\n- Wide 16:9 composition, no watermark.\n\nDiagram data (JSON):\n${data}`;
+}
+
+async function copyText(text) {
+  if (navigator.clipboard?.writeText) {
+    await navigator.clipboard.writeText(text);
+    return;
+  }
+
+  // Fallback for non-secure contexts where the Clipboard API is unavailable.
+  const area = document.createElement('textarea');
+  area.value = text;
+  area.setAttribute('readonly', '');
+  area.style.position = 'fixed';
+  area.style.opacity = '0';
+  document.body.appendChild(area);
+  area.select();
+  const copied = document.execCommand('copy');
+  document.body.removeChild(area);
+  if (!copied) throw new Error('Copy failed');
+}
 
 export function ArticleDiagramNodeView({
   node,
@@ -15,9 +50,13 @@ export function ArticleDiagramNodeView({
   const meta = diagrams.find((diagram) => diagram.id === node.attrs.diagramId);
   const editable = editor.isEditable;
   const fileRef = useRef(null);
+  const copyTimer = useRef(null);
   const [generating, setGenerating] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [copied, setCopied] = useState(false);
   const [error, setError] = useState('');
+
+  useEffect(() => () => clearTimeout(copyTimer.current), []);
 
   const hasAsset = Boolean(node.attrs.assetUrl);
   const busy = generating || uploading;
@@ -68,6 +107,19 @@ export function ArticleDiagramNodeView({
       setError(uploadError.message || 'The image could not be uploaded.');
     } finally {
       setUploading(false);
+    }
+  }
+
+  async function copyImagePrompt() {
+    if (!meta) return;
+    setError('');
+    try {
+      await copyText(diagramImagePrompt(meta));
+      setCopied(true);
+      clearTimeout(copyTimer.current);
+      copyTimer.current = setTimeout(() => setCopied(false), 2000);
+    } catch {
+      setError('The diagram prompt could not be copied. Try again.');
     }
   }
 
@@ -137,6 +189,23 @@ export function ArticleDiagramNodeView({
                   />
                   {uploading ? 'Uploading…' : 'Upload Image'}
                 </button>
+                {meta && (
+                  <button
+                    type="button"
+                    onClick={copyImagePrompt}
+                    title="Copy an image-generation prompt with the diagram JSON"
+                    className="inline-flex min-h-[32px] items-center gap-1.5 rounded-button border border-border bg-surface px-3 text-[11.5px] font-semibold text-text-secondary transition hover:border-brand/40 hover:text-brand disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    <i
+                      aria-hidden="true"
+                      className={`bx ${copied ? 'bx-check' : 'bx-copy'} text-[15px]`}
+                    />
+                    {copied ? 'Copied' : 'Copy prompt'}
+                  </button>
+                )}
+                <span role="status" className="sr-only">
+                  {copied ? 'Diagram image prompt copied to the clipboard.' : ''}
+                </span>
               </div>
             )}
           </div>
@@ -215,7 +284,6 @@ export function ArticleDiagramNodeView({
           </summary>
           <p className="m-0 mt-2 text-[11px] leading-relaxed text-text-tertiary">
             {meta.nodes?.length || 0} nodes · {meta.edges?.length || 0} connections
-            {meta.direction ? ` · ${meta.direction.toLowerCase()}` : ''}
           </p>
           <label className="mt-2 grid gap-1 text-[10.5px] font-medium text-text-tertiary">
             Caption

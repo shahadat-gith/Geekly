@@ -5,11 +5,9 @@ export async function listParentTopicsApi() {
   return data.topics;
 }
 
-// Resolves a nested content path (system-design, system-design/basics,
-// system-design/basics/caching) to a topic page or a single article.
-export async function getContentApi(path) {
-  const { data } = await api.get('/api/content', {
-    params: { path },
-  });
+// A topic page in one request: the sidebar (subtopics with article links) and
+// the article the topic opens on.
+export async function getTopicApi(slug) {
+  const { data } = await api.get(`/api/topics/${encodeURIComponent(slug)}`);
   return data;
 }

@@ -34,7 +34,7 @@
   --color-ink-text: #F5F7FA;
   --color-ink-muted: #9AA4B4;
 
-  --color-text: #1C2433;
+  --color-text: #191B21;
   --color-text-secondary: #5F6877;
   --color-text-tertiary: #8C94A2;
   --color-text-disabled: #B9C0CB;
@@ -48,16 +48,18 @@
   --color-error: #CC4444;
   --color-info: #2F76C8;
 
-  --font-sans: "Plus Jakarta Sans", ui-sans-serif, -apple-system, BlinkMacSystemFont,
-    "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-sans: "Inter", ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
 
-  /* Display face for headlines and editorial headings. */
-  --font-heading: "Instrument Serif", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+  /* Headings use the same sans, just heavier and tighter. */
+  --font-heading: "Inter", ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
 
-  /* Labels, numerals, metadata and code. */
-  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  /* Code and small labels. System mono, so nothing extra to download. */
+  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono",
+    monospace;
 
-  --shadow-card: 0 1px 2px 0 rgb(28 34 48 / 0.03), 0 16px 34px -24px rgb(28 34 48 / 0.16);
+  --shadow-card: 0 1px 2px 0 rgb(28 34 48 / 0.04), 0 18px 40px -28px rgb(28 34 48 / 0.2);
 
   --shadow-card-hover: 0 2px 5px 0 rgb(28 34 48 / 0.05),
     0 22px 42px -24px rgb(28 34 48 / 0.22);
@@ -183,8 +185,14 @@ button, a, [role="button"], select, input[type="button"], input[type="submit"], 
 .article-prose {
   color: var(--color-text);
   font-size: 17px;
-  line-height: 1.78;
+  line-height: 1.8;
   overflow-wrap: anywhere;
+}
+
+.article-prose h2,
+.article-prose h3,
+.article-prose h4 {
+  scroll-margin-top: 6rem;
 }
 
 .article-prose > *:first-child {
@@ -202,19 +210,19 @@ button, a, [role="button"], select, input[type="button"], input[type="submit"], 
 .article-prose h2 {
   margin: 1.9em 0 0.5em;
   font-family: var(--font-heading);
-  font-size: 1.85rem;
-  font-weight: 400;
-  line-height: 1.2;
-  letter-spacing: -0.01em;
+  font-size: 1.7rem;
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
 }
 
 .article-prose h1 {
   margin: 1.9em 0 0.55em;
   font-family: var(--font-heading);
-  font-size: 2.15rem;
-  font-weight: 400;
-  line-height: 1.15;
-  letter-spacing: -0.015em;
+  font-size: 1.95rem;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
 }
 
 .article-prose h3 {
@@ -282,14 +290,14 @@ button, a, [role="button"], select, input[type="button"], input[type="submit"], 
 }
 
 .article-prose blockquote {
-  margin: 1.5em 0;
-  border-left: 2px solid var(--color-brand);
+  margin: 1.7em 0;
+  border-left: 3px solid var(--color-brand);
+  border-radius: 0 var(--radius-field) var(--radius-field) 0;
   background: var(--color-surface-secondary);
-  padding: 1em 1.25em;
+  padding: 1.1em 1.35em;
   color: var(--color-text-secondary);
-  font-family: var(--font-heading);
-  font-size: 1.18rem;
-  line-height: 1.5;
+  font-size: 1.02rem;
+  line-height: 1.75;
 }
 
 .article-prose a {
@@ -392,7 +400,9 @@ button, a, [role="button"], select, input[type="button"], input[type="submit"], 
   display: block;
   max-width: 100%;
   margin: 1.5em auto;
+  border: 1px solid var(--color-border-secondary);
   border-radius: var(--radius-field);
+  background: var(--color-surface-secondary);
 }
 
 .article-prose hr {

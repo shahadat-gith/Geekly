@@ -15,7 +15,17 @@ node_modules/
 !.env.sample
 .dev.vars
 
+# Local and deployment tooling, not runtime code.
+.aws-sam
+scripts
+template.yaml
+samconfig.toml
+.tmp-*
+node_modules
+
+
 # Build output
+.aws-sam/
 dist/
 build/
 out/

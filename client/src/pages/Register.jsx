@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { FaGithub, FaGoogle } from 'react-icons/fa6';
 import { useAuth } from '../context/authContext.js';
 import { AuthLayout, AuthLink } from '../components/layout/AuthLayout.jsx';
@@ -38,7 +38,6 @@ export default function Register() {
 
   return (
     <AuthLayout
-      card
       title="Create account"
       description="Set up an account with your email, Google or GitHub."
       footer={
@@ -89,6 +88,17 @@ export default function Register() {
         <Button type="submit" disabled={busy} className="w-full">
           {busy ? 'Creating…' : 'Create account'}
         </Button>
+        <p className="m-0 text-center text-[12px] leading-relaxed text-text-tertiary">
+          By creating an account you agree to our{' '}
+          <Link to="/terms" className="text-text-secondary underline underline-offset-2">
+            terms
+          </Link>{' '}
+          and{' '}
+          <Link to="/privacy" className="text-text-secondary underline underline-offset-2">
+            privacy policy
+          </Link>
+          .
+        </p>
       </form>
     </AuthLayout>
   );

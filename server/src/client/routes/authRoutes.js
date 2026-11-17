@@ -13,6 +13,17 @@ import {
   githubCallback,
 } from '../controllers/authController.js';
 
+// OAuth - start redirects to the provider, callback swaps the code for a token.
+// These live in their own router because the provider consoles have
+// /auth/<provider>/callback registered, so they are mounted at /auth as well
+// as under the JSON API.
+export const oauthRouter = Router();
+
+oauthRouter.get('/google', googleStart);
+oauthRouter.get('/google/callback', asyncHandler(googleCallback));
+oauthRouter.get('/github', githubStart);
+oauthRouter.get('/github/callback', asyncHandler(githubCallback));
+
 const router = Router();
 
 // Email + password
@@ -23,10 +34,7 @@ router.post('/logout', asyncHandler(logout));
 router.post('/forgot-password', asyncHandler(forgotPassword));
 router.post('/reset-password', asyncHandler(resetPassword));
 
-// OAuth - start redirects to the provider, callback swaps the code for a token
-router.get('/google', googleStart);
-router.get('/google/callback', asyncHandler(googleCallback));
-router.get('/github', githubStart);
-router.get('/github/callback', asyncHandler(githubCallback));
+// OAuth, also reachable under the API mount.
+router.use(oauthRouter);
 
 export default router;

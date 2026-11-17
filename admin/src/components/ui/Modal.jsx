@@ -19,6 +19,14 @@ export function Modal({
   size = 'md',
 }) {
   const dialogRef = useRef(null);
+  // Keep the latest handler in a ref: a parent that passes an inline onClose
+  // must not re-run the focus effect on every render (which would steal focus
+  // back to the first field while the user is typing).
+  const onCloseRef = useRef(onClose);
+
+  useEffect(() => {
+    onCloseRef.current = onClose;
+  }, [onClose]);
 
   useEffect(() => {
     if (!open) return undefined;
@@ -26,7 +34,7 @@ export function Modal({
     const previouslyFocused = document.activeElement;
     const onKeyDown = (event) => {
       if (event.key === 'Escape') {
-        onClose?.();
+        onCloseRef.current?.();
         return;
       }
       if (event.key !== 'Tab' || !dialogRef.current) return;
@@ -68,7 +76,7 @@ export function Modal({
         previouslyFocused.focus({ preventScroll: true });
       }
     };
-  }, [open, onClose]);
+  }, [open]);
 
   if (!open) return null;
 

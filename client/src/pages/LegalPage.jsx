@@ -90,21 +90,23 @@ export default function LegalPage({ page }) {
 
   return (
     <article className="mx-auto max-w-3xl px-6 py-14 sm:py-20">
-      <h1 className="font-heading text-[40px] font-normal leading-[1.02] tracking-[-0.025em] sm:text-[52px]">
-        {doc.title}
-      </h1>
-      <p className="mt-3 text-[12.5px] text-text-tertiary">{doc.updated}</p>
+      <header className="border-b border-border pb-7">
+        <h1 className="text-balance font-heading text-[32px] font-semibold leading-[1.12] tracking-[-0.03em] sm:text-[40px]">
+          {doc.title}
+        </h1>
+        <p className="mt-3 text-[12.5px] text-text-tertiary">{doc.updated}</p>
+      </header>
 
-      <div className="mt-10 space-y-8 border-t border-border pt-8">
+      <div className="mt-9 space-y-9">
         {doc.sections.map((section) => (
           <section key={section.heading}>
-            <h2 className="m-0 text-[16px] font-semibold leading-snug tracking-[-0.01em]">
+            <h2 className="m-0 font-heading text-[19px] font-semibold leading-snug tracking-[-0.02em]">
               {section.heading}
             </h2>
             {section.paragraphs.map((paragraph) => (
               <p
                 key={paragraph}
-                className="mt-2 text-[14.5px] leading-[1.75] text-text-secondary"
+                className="mt-2.5 text-[14.5px] leading-[1.78] text-text-secondary"
               >
                 {paragraph}
               </p>

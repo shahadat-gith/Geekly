@@ -34,7 +34,6 @@ export default function Login() {
 
   return (
     <AuthLayout
-      card
       title="Sign in"
       description="Welcome back to Geekly."
       footer={

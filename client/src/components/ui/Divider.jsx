@@ -7,7 +7,7 @@ export function Divider({ label, className = '' }) {
   return (
     <div
       aria-hidden="true"
-      className={`flex items-center gap-3 text-[12px] font-medium uppercase tracking-wider text-text-tertiary ${className}`}
+      className={`flex items-center gap-3 text-[12.5px] text-text-tertiary ${className}`}
     >
       <span className="h-px flex-1 bg-border" />
       {label}

@@ -245,19 +245,14 @@ export async function createArticle(payload = {}) {
 
 export async function updateArticle(id, payload = {}) {
   const article = await getDocument(id);
+  const previousTitle = article.title;
+  const previousStatus = article.status;
 
   if (payload.title !== undefined) article.title = cleanTitle(payload.title);
   if (payload.subtitle !== undefined) article.subtitle = cleanSubtitle(payload.subtitle);
 
   if (payload.topicId !== undefined || payload.topic !== undefined) {
     article.topic = await resolveTopic(payload);
-  }
-
-  if (payload.slug !== undefined) {
-    const base = slugify(payload.slug);
-    if (base && base !== article.slug) {
-      article.slug = await uniqueSlug(Article, base, article._id);
-    }
   }
 
   if (payload.referenceVideos !== undefined) {
@@ -294,6 +289,21 @@ export async function updateArticle(id, payload = {}) {
       throw new ApiError(400, 'Write some article content before publishing');
     }
     article.status = status;
+  }
+
+  // The URL slug follows the title that is actually being saved, not the one
+  // the AI suggested for the first draft. Explicit slugs (API clients) win;
+  // otherwise regenerate when the title changes or the article is published.
+  const explicitSlug = payload.slug !== undefined ? slugify(payload.slug) : '';
+  const titleChanged = article.title !== previousTitle;
+  const isBeingPublished = article.status === 'published' && previousStatus !== 'published';
+
+  if (explicitSlug) {
+    if (explicitSlug !== article.slug) {
+      article.slug = await uniqueSlug(Article, explicitSlug, article._id);
+    }
+  } else if (titleChanged || isBeingPublished) {
+    article.slug = await uniqueSlug(Article, slugify(article.title), article._id);
   }
 
   article.lastEditedAt = new Date();

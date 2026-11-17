@@ -1,11 +1,3 @@
-
-const DIRECTION_TEXT = {
-  RIGHT: 'left to right',
-  LEFT: 'right to left',
-  DOWN: 'top to bottom',
-  UP: 'bottom to top',
-};
-
 const EDGE_TEXT = {
   sync: 'solid blue',
   async: 'dashed blue',
@@ -22,23 +14,12 @@ function clean(value, max = 200) {
 }
 
 export function buildDiagramImagePrompt(diagram) {
-  const direction =
-    DIRECTION_TEXT[diagram.direction] || 'left to right';
-
-  const groups = (diagram.groups || []).map(
-    (g) =>
-      `- ${clean(g.label, 100)}: ${(g.nodeIds || []).join(', ')}`
-  );
-
   const nodes = (diagram.nodes || []).map((n) =>
     `- ID: ${clean(n.id, 64)} | ` +
     `LABEL: "${clean(n.label, 100)}" | ` +
     `TYPE: ${clean(n.type, 64)}` +
     (n.description
       ? ` | DESCRIPTION: "${clean(n.description)}"`
-      : '') +
-    (n.group
-      ? ` | GROUP: ${clean(n.group, 64)}`
       : '')
   );
 
@@ -106,11 +87,9 @@ Never generate standalone icons, icon galleries,
 technology showcases, logo collections or decorative symbols.
 
 LAYOUT:
-Arrange the architecture ${direction}.
+Choose the clearest, most readable arrangement for the supplied
+components and connections.
 
-- Preserve the specified group membership.
-- Use subtle tinted rounded group containers.
-- DO NOT display group headings or group names.
 - Keep component cards consistently sized.
 - Use an icon on the left and text on the right.
 - Align related components naturally.
@@ -138,18 +117,18 @@ CONNECTION COLORS:
 - data: Solid teal arrow.
 - dependency: Dotted violet arrow.
 
-Preserve exact source, target, direction and optional labels.
+Preserve exact source, target and optional labels.
 
 TEXT:
 - Preserve all supplied labels and descriptions exactly.
 - Keep text horizontal and readable.
 - Do not rename, abbreviate or invent text.
 - Display only node labels, descriptions and edge labels.
-- No group names, headings, titles or captions.
+- No headings, titles or captions.
 
 STRICT CANVAS RULE:
 Show ONLY the specified architecture:
-components, subtle group boundaries, connections and labels.
+components, connections and labels.
 
 No standalone icons, extra components, legends, footers,
 watermarks, decorative artwork or additional content.
@@ -159,7 +138,6 @@ The supplied specification is authoritative.
 
 - Include every node exactly once.
 - Include every edge exactly once.
-- Preserve all node identities and group membership.
 - Preserve every source-target relationship.
 - Never add, remove, reverse or duplicate connections.
 - Never invent infrastructure or relationships.
@@ -173,11 +151,6 @@ PRIORITY:
 
 ARCHITECTURE SPECIFICATION
 
-DIRECTION: ${direction}
-
-GROUPS:
-${groups.length ? groups.join('\n') : 'None'}
-
 NODES:
 ${nodes.length ? nodes.join('\n') : 'None'}
 
@@ -187,11 +160,4 @@ ${edges.length ? edges.join('\n') : 'None'}
 Generate one complete, polished technical architecture
 diagram. Do not add anything outside this specification.
 `;
-}
-
-export function diagramImageAspectRatio(diagram) {
-  return diagram.direction === 'DOWN' ||
-    diagram.direction === 'UP'
-    ? '3:4'
-    : '16:9';
 }

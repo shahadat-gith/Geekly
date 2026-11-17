@@ -1,9 +1,8 @@
-import { DIAGRAM_DIRECTIONS, DIAGRAM_EDGE_TYPES } from '../../models/Diagram.js';
+import { DIAGRAM_EDGE_TYPES } from '../../models/Diagram.js';
 import { ApiError } from '../../shared/apiError.js';
 
 const ID_PATTERN = /^[A-Za-z0-9][A-Za-z0-9_-]{0,63}$/;
 const EDGE_TYPES = new Set(DIAGRAM_EDGE_TYPES);
-const DIRECTIONS = new Set(DIAGRAM_DIRECTIONS);
 
 // Layout and presentation are backend concerns. Reject model output that tries
 // to supply coordinates, markup or rendering instructions instead of semantic
@@ -67,12 +66,6 @@ export function validateDiagram(input) {
 
   const title = text(input.title, 'title', { max: 200 });
   const caption = text(input.caption, 'caption', { required: false, max: 300 });
-  const direction = input.direction === undefined
-    ? 'RIGHT'
-    : String(input.direction).trim().toUpperCase();
-  if (!DIRECTIONS.has(direction)) {
-    fail(`direction must be one of ${DIAGRAM_DIRECTIONS.join(', ')}`);
-  }
 
   const rawNodes = array(input.nodes, 'nodes');
   if (rawNodes.length === 0) fail('at least one node is required');
@@ -96,59 +89,9 @@ export function validateDiagram(input) {
       required: false,
       max: 300,
     });
-    const group = node.group === undefined || node.group === null || node.group === ''
-      ? null
-      : identifier(node.group, `node "${id}" group`);
 
-    return { id, type, label, description, group };
+    return { id, type, label, description };
   });
-
-  const rawGroups = array(input.groups, 'groups');
-  const groupIds = new Set();
-  const membership = new Map();
-  const groups = rawGroups.map((group, index) => {
-    if (!isObject(group)) fail(`groups[${index}] must be an object`);
-    for (const key of FORBIDDEN_LAYOUT_KEYS) {
-      if (key in group) fail(`group "${group.id || index}" cannot include "${key}"`);
-    }
-
-    const id = identifier(group.id, `groups[${index}].id`);
-    if (groupIds.has(id)) fail(`duplicate group id "${id}"`);
-    if (nodeIds.has(id)) fail(`group id "${id}" clashes with a node id`);
-    if (usedIds.has(id)) fail(`group id "${id}" is not unique in the diagram`);
-    groupIds.add(id);
-    usedIds.add(id);
-
-    const label = text(group.label, `group "${id}" label`, { max: 100 });
-    const rawNodeIds = array(group.nodeIds, `group "${id}" nodeIds`);
-    const memberIds = new Set();
-
-    for (const value of rawNodeIds) {
-      const nodeId = identifier(value, `group "${id}" nodeIds entry`);
-      if (!nodeIds.has(nodeId)) fail(`group "${id}" references unknown node "${nodeId}"`);
-      if (memberIds.has(nodeId)) fail(`group "${id}" lists node "${nodeId}" twice`);
-      if (membership.has(nodeId)) {
-        fail(`node "${nodeId}" belongs to more than one group`);
-      }
-      membership.set(nodeId, id);
-      memberIds.add(nodeId);
-    }
-
-    if (memberIds.size === 0) fail(`group "${id}" must contain at least one node`);
-    return { id, label, nodeIds: [...memberIds] };
-  });
-
-  for (const node of nodes) {
-    if (!node.group) continue;
-    if (!groupIds.has(node.group)) fail(`node "${node.id}" references unknown group "${node.group}"`);
-    const memberOf = membership.get(node.id);
-    if (memberOf && memberOf !== node.group) {
-      fail(`node "${node.id}" group does not match the group's nodeIds`);
-    }
-    if (!memberOf) {
-      fail(`group "${node.group}" must list node "${node.id}" in nodeIds`);
-    }
-  }
 
   const rawEdges = array(input.edges, 'edges');
   const edgeIds = new Set();
@@ -180,5 +123,5 @@ export function validateDiagram(input) {
     return { id, source, target, label, type };
   });
 
-  return { title, caption, direction, nodes, edges, groups };
+  return { title, caption, nodes, edges };
 }

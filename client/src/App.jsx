@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { BrowserRouter, Navigate, Route, Routes, useLocation } from 'react-router-dom';
+import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext.jsx';
 import { ToastProvider } from './context/ToastContext.jsx';
 import { useAuth } from './context/authContext.js';
@@ -12,17 +12,21 @@ import ResetPassword from './pages/ResetPassword.jsx';
 import OAuthCallback from './pages/OAuthCallback.jsx';
 import Home from './pages/Home.jsx';
 import LegalPage from './pages/LegalPage.jsx';
-import ContentPage from './pages/ContentPage.jsx';
+import Article from './pages/Article.jsx';
 
 export default function App() {
+  const location = useLocation()
+
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [location.pathname])
+
   return (
-    <BrowserRouter>
-      <ToastProvider>
-        <AuthProvider>
-          <AnimatedRoutes />
-        </AuthProvider>
-      </ToastProvider>
-    </BrowserRouter>
+    <ToastProvider>
+      <AuthProvider>
+        <AnimatedRoutes />
+      </AuthProvider>
+    </ToastProvider>
   );
 }
 
@@ -49,7 +53,7 @@ function AnimatedRoutes() {
         {/* Topics and articles share one nested content route:
             /system-design, /system-design/basics,
             /system-design/basics/caching */}
-        <Route path="*" element={<ContentPage />} />
+        <Route path="*" element={<Article />} />
       </Route>
 
       {/* Auth screens render their own layout, without the site header.

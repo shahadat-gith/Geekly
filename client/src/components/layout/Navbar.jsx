@@ -15,8 +15,8 @@ export function Navbar() {
   }
 
   return (
-    <header className="sticky top-0 z-50 border-b border-border/70 bg-bg/85 backdrop-blur-xl">
-      <div className="mx-auto flex h-[68px] max-w-6xl items-center justify-between px-6">
+    <header className="sticky top-0 z-50 border-b border-border/70 bg-bg/80 backdrop-blur-xl">
+      <div className="mx-auto flex h-[72px] max-w-6xl items-center justify-between px-6">
         <Link
           to="/"
           aria-label="Geekly home"
@@ -25,7 +25,7 @@ export function Navbar() {
           <img
             src="/brand_light.png"
             alt="Geekly"
-            className="h-8 w-auto max-w-[160px] object-contain sm:h-9"
+            className="h-8 w-auto max-w-[160px] object-contain transition-opacity hover:opacity-80 sm:h-9"
           />
         </Link>
 
