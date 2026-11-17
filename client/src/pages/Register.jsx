@@ -7,7 +7,7 @@ import { Alert } from '../components/ui/Alert.jsx';
 import { Button } from '../components/ui/Button.jsx';
 import { Divider } from '../components/ui/Divider.jsx';
 import { Input } from '../components/ui/Input.jsx';
-import { apiUrl } from '../api/axios.js';
+import { githubOAuthUrl, googleOAuthUrl } from '../api/auth.js';
 
 export default function Register() {
   const { register } = useAuth();
@@ -47,10 +47,10 @@ export default function Register() {
       }
     >
       <div className="grid grid-cols-2 gap-3">
-        <Button as="a" href={apiUrl('/auth/google')} variant="secondary" className="w-full px-4">
+        <Button as="a" href={googleOAuthUrl} variant="secondary" className="w-full px-4">
           <FaGoogle aria-hidden="true" className="text-[17px]" /> Google
         </Button>
-        <Button as="a" href={apiUrl('/auth/github')} variant="secondary" className="w-full px-4">
+        <Button as="a" href={githubOAuthUrl} variant="secondary" className="w-full px-4">
           <FaGithub aria-hidden="true" className="text-[17px]" /> GitHub
         </Button>
       </div>

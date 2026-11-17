@@ -2,7 +2,7 @@ import express from "express"
 import cors from "cors"
 import helmet from "helmet"
 import { keys } from "./config/env.js"
-import authRoutes, { oauthRouter } from "./client/routes/authRoutes.js"
+import authRoutes from "./client/routes/authRoutes.js"
 import userRoutes from "./client/routes/userRoutes.js"
 import topicRoutes from "./client/routes/topicRoutes.js"
 import articleRoutes from "./client/routes/articleRoutes.js"
@@ -43,10 +43,6 @@ app.get("/api/health", (req, res) => {
 })
 
 app.use("/api/auth", authRoutes)
-// OAuth start/callback endpoints are reached directly by the browser, and the
-// provider consoles have these callback URLs registered, so they also live at
-// /auth/* outside the JSON API mount.
-app.use("/auth", oauthRouter)
 app.use("/api/users", userRoutes)
 app.use("/api/topics", topicRoutes)
 app.use("/api/articles", articleRoutes)

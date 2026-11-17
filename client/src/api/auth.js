@@ -36,8 +36,8 @@ export async function resetPasswordApi({ token, password }) {
   return data;
 }
 
-// OAuth start endpoints live at /auth/* (not /api/auth/*). These links are
-// plain navigations: the browser goes to the API, which redirects to the
-// provider and back to /auth/callback here.
-export const googleOAuthUrl = apiUrl('/auth/google');
-export const githubOAuthUrl = apiUrl('/auth/github');
+// OAuth start endpoints share the /api/auth mount. These links are plain
+// navigations: the browser goes to the API, which redirects to the provider and
+// back to /api/auth/<provider>/callback.
+export const googleOAuthUrl = apiUrl('/api/auth/google');
+export const githubOAuthUrl = apiUrl('/api/auth/github');
