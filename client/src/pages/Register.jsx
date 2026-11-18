@@ -1,6 +1,8 @@
+
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FaGithub, FaGoogle } from 'react-icons/fa6';
+
 import { useAuth } from '../context/authContext.js';
 import { AuthLayout, AuthLink } from '../components/layout/AuthLayout.jsx';
 import { Alert } from '../components/ui/Alert.jsx';
@@ -12,6 +14,7 @@ import { githubOAuthUrl, googleOAuthUrl } from '../api/auth.js';
 export default function Register() {
   const { register } = useAuth();
   const navigate = useNavigate();
+
   const [fullname, setFullname] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -21,11 +24,14 @@ export default function Register() {
   async function onSubmit(e) {
     e.preventDefault();
     setError('');
+
     if (password.length < 8) {
       setError('Password must be at least 8 characters.');
       return;
     }
+
     setBusy(true);
+
     try {
       await register({ fullname, email, password });
       navigate('/', { replace: true });
@@ -38,24 +44,42 @@ export default function Register() {
 
   return (
     <AuthLayout
-      title="Create account"
-      description="Set up an account with your email, Google or GitHub."
+      title="Create your account"
+      description="Join Geekly and start building your engineering skills."
       footer={
         <>
-          Already have an account? <AuthLink to="/auth/login">Sign in</AuthLink>
+          Already have an account?{' '}
+          <AuthLink to="/auth/login">Sign in</AuthLink>
         </>
       }
     >
+      {/* Social registration */}
       <div className="grid grid-cols-2 gap-3">
-        <Button as="a" href={googleOAuthUrl} variant="secondary" className="w-full px-4">
-          <FaGoogle aria-hidden="true" className="text-[17px]" /> Google
+        <Button
+          as="a"
+          href={googleOAuthUrl}
+          variant="secondary"
+          className="w-full gap-2.5"
+        >
+          <FaGoogle aria-hidden="true" className="text-[16px]" />
+          Google
         </Button>
-        <Button as="a" href={githubOAuthUrl} variant="secondary" className="w-full px-4">
-          <FaGithub aria-hidden="true" className="text-[17px]" /> GitHub
+
+        <Button
+          as="a"
+          href={githubOAuthUrl}
+          variant="secondary"
+          className="w-full gap-2.5"
+        >
+          <FaGithub aria-hidden="true" className="text-[17px]" />
+          GitHub
         </Button>
       </div>
-      <Divider label="or" className="my-1" />
+
+      <Divider label="or sign up with email" className="my-1" />
+
       {error && <Alert>{error}</Alert>}
+
       <form onSubmit={onSubmit} className="flex flex-col gap-4">
         <Input
           label="Full name"
@@ -64,10 +88,11 @@ export default function Register() {
           required
           value={fullname}
           onChange={(e) => setFullname(e.target.value)}
-          placeholder="Your name"
+          placeholder="Enter your full name"
         />
+
         <Input
-          label="Email"
+          label="Email address"
           type="email"
           autoComplete="email"
           required
@@ -75,6 +100,7 @@ export default function Register() {
           onChange={(e) => setEmail(e.target.value)}
           placeholder="you@example.com"
         />
+
         <Input
           label="Password"
           type="password"
@@ -85,17 +111,29 @@ export default function Register() {
           onChange={(e) => setPassword(e.target.value)}
           placeholder="At least 8 characters"
         />
-        <Button type="submit" disabled={busy} className="w-full">
-          {busy ? 'Creating…' : 'Create account'}
+
+        <Button
+          type="submit"
+          disabled={busy}
+          className="mt-1 w-full"
+        >
+          {busy ? 'Creating account…' : 'Create account'}
         </Button>
-        <p className="m-0 text-center text-[12px] leading-relaxed text-text-tertiary">
-          By creating an account you agree to our{' '}
-          <Link to="/terms" className="text-text-secondary underline underline-offset-2">
-            terms
+
+        <p className="m-0 px-1 text-center text-[11.5px] leading-[1.8] text-text-tertiary">
+          By creating an account, you agree to our{' '}
+          <Link
+            to="/terms"
+            className="font-medium text-[#527C42] underline underline-offset-2 transition-colors hover:text-[#365D2B]"
+          >
+            Terms of Service
           </Link>{' '}
           and{' '}
-          <Link to="/privacy" className="text-text-secondary underline underline-offset-2">
-            privacy policy
+          <Link
+            to="/privacy"
+            className="font-medium text-[#527C42] underline underline-offset-2 transition-colors hover:text-[#365D2B]"
+          >
+            Privacy Policy
           </Link>
           .
         </p>

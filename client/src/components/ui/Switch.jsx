@@ -1,8 +1,16 @@
+
 /**
- * Accessible on/off switch. `label` becomes the control's accessible name, so
- * pair it with the visible label text that sits beside it.
+ * Accessible on/off switch.
+ * `label` provides the control's accessible name.
+ * Pair it with the visible label text that sits beside the switch.
  */
-export function Switch({ checked = false, onChange, label, disabled = false, className = '' }) {
+export function Switch({
+  checked = false,
+  onChange,
+  label,
+  disabled = false,
+  className = '',
+}) {
   return (
     <button
       type="button"
@@ -10,16 +18,27 @@ export function Switch({ checked = false, onChange, label, disabled = false, cla
       aria-checked={checked}
       aria-label={label}
       disabled={disabled}
-      onClick={() => onChange(!checked)}
-      className={`relative h-6 w-11 shrink-0 rounded-full transition-colors focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-soft disabled:cursor-not-allowed disabled:opacity-55 ${
-        checked ? 'bg-brand' : 'bg-surface-tertiary'
-      } ${className}`}
+      onClick={() => onChange?.(!checked)}
+      className={[
+        'relative inline-flex h-6 w-11 shrink-0 items-center rounded-full',
+        'transition-colors duration-200',
+        'focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-soft',
+        'disabled:cursor-not-allowed disabled:opacity-55',
+        'motion-reduce:transition-none',
+        checked ? 'bg-brand-active' : 'bg-surface-tertiary',
+        className,
+      ]
+        .filter(Boolean)
+        .join(' ')}
     >
       <span
         aria-hidden="true"
-        className={`absolute top-1 h-4 w-4 rounded-full bg-surface shadow transition-all ${
-          checked ? 'left-6' : 'left-1'
-        }`}
+        className={[
+          'pointer-events-none absolute left-1 h-4 w-4 rounded-full',
+          'bg-white shadow-sm transition-transform duration-200',
+          checked ? 'translate-x-5' : 'translate-x-0',
+          'motion-reduce:transition-none',
+        ].join(' ')}
       />
     </button>
   );

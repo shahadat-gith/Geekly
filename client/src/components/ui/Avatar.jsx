@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 
 const SIZES = {
@@ -8,10 +9,11 @@ const SIZES = {
 
 function getInitials(name) {
   const initials = name
-    .split(' ')
-    .map((part) => part[0])
+    .trim()
+    .split(/\s+/)
     .filter(Boolean)
     .slice(0, 2)
+    .map((part) => part[0])
     .join('')
     .toUpperCase();
 
@@ -23,9 +25,17 @@ function getInitials(name) {
  * Pass `alt=""` (the default) when the avatar sits inside an already-labelled
  * control such as the profile button.
  */
-export function Avatar({ src, name = '', size = 'md', alt = '', className = '' }) {
+export function Avatar({
+  src,
+  name = '',
+  size = 'md',
+  alt = '',
+  className = '',
+}) {
   const [failedSrc, setFailedSrc] = useState(null);
   const sizeClass = SIZES[size] ?? SIZES.md;
+
+  const baseClass = `shrink-0 rounded-full ${sizeClass} ${className}`;
 
   if (src && failedSrc !== src) {
     return (
@@ -34,7 +44,7 @@ export function Avatar({ src, name = '', size = 'md', alt = '', className = '' }
         alt={alt}
         referrerPolicy="no-referrer"
         onError={() => setFailedSrc(src)}
-        className={`shrink-0 rounded-full object-cover ${sizeClass} ${className}`}
+        className={`${baseClass} object-cover`}
       />
     );
   }
@@ -42,7 +52,7 @@ export function Avatar({ src, name = '', size = 'md', alt = '', className = '' }
   return (
     <span
       aria-hidden="true"
-      className={`flex shrink-0 items-center justify-center rounded-full bg-brand-soft font-bold text-brand ${sizeClass} ${className}`}
+      className={`flex items-center justify-center ${baseClass} bg-brand-soft font-semibold text-[#527C42]`}
     >
       {getInitials(name)}
     </span>

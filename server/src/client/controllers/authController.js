@@ -5,7 +5,9 @@ import { ApiError } from '../../shared/apiError.js';
 import * as authService from '../services/authService.js';
 
 const OAUTH_STATE_COOKIE = 'geekly_oauth_state';
-const OAUTH_STATE_PATH = '/auth';
+// OAuth callbacks are mounted at /api/auth/<provider>/callback. The cookie
+// path must cover that API path or the browser drops it before the callback.
+const OAUTH_STATE_PATH = '/api/auth';
 
 function oauthStateCookieOptions() {
   return {

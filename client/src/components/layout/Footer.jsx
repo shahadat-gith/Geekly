@@ -1,43 +1,68 @@
+
 import { Link } from 'react-router-dom';
 
-const READ = [{ label: 'Start with a topic', to: '/#topics' }];
+const EXPLORE = [
+  { label: 'Interview preparation', to: '/#topics' },
+  { label: 'System design', to: '/#topics' },
+  { label: 'CS fundamentals', to: '/#topics' },
+];
+
+const CAREER = [
+  { label: 'Resume analysis', to: '/resume' },
+];
 
 const LEGAL = [
-  { label: 'Terms and conditions', to: '/terms' },
+  { label: 'Terms of service', to: '/terms' },
   { label: 'Privacy policy', to: '/privacy' },
 ];
 
 export function Footer() {
   return (
-    <footer className="mt-auto border-t border-border bg-bg-secondary">
-      <div className="mx-auto max-w-6xl px-6 pb-8 pt-12">
-        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[minmax(0,1.8fr)_minmax(0,1fr)_minmax(0,1fr)] lg:gap-14">
+    <footer className="relative mt-auto border-t border-border/70 bg-surface">
+      <div className="mx-auto max-w-7xl px-5 pb-8 pt-14 sm:px-8 lg:px-10">
+
+        {/* Main footer */}
+        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[1.8fr_1fr_1fr_1fr] lg:gap-12">
+
+          {/* Brand */}
           <div className="max-w-sm">
             <Link
               to="/"
               aria-label="Geekly home"
-              className="inline-flex rounded-button focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-soft"
+              className="inline-flex rounded-button transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-soft"
             >
               <img
-                src="/brand_light.png"
+                src="/logo.png"
                 alt="Geekly"
                 className="h-8 w-auto max-w-[150px] object-contain"
               />
             </Link>
-            <p className="mt-4 text-[13.5px] leading-[1.7] text-text-secondary">
-              Geekly helps engineers understand the systems, tools and trade-offs behind the
-              software they work on. Built on the belief that understanding beats memorising.
+
+            <p className="mt-5 text-sm leading-7 text-text-secondary">
+              A platform for engineers to sharpen their skills, prepare
+              for technical interviews, and grow their careers.
             </p>
+
+            <div className="mt-5 inline-flex items-center gap-2 rounded-full border border-border bg-surface-secondary px-3 py-1.5">
+              <span className="h-2 w-2 rounded-full bg-brand" />
+              <span className="text-xs font-medium text-text-secondary">
+                Built for engineers
+              </span>
+            </div>
           </div>
 
-          <nav aria-label="Read">
-            <p className="text-[12.5px] font-semibold text-text">Read</p>
-            <ul className="mt-3 list-none space-y-2 p-0">
-              {READ.map((link) => (
+          {/* Explore */}
+          <nav aria-label="Explore">
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-text">
+              Explore
+            </h3>
+
+            <ul className="mt-5 list-none space-y-3 p-0">
+              {EXPLORE.map((link) => (
                 <li key={link.label}>
                   <Link
                     to={link.to}
-                    className="text-[13.5px] text-text-secondary transition hover:text-brand"
+                    className="text-sm text-text-secondary transition-colors hover:text-brand-active"
                   >
                     {link.label}
                   </Link>
@@ -46,14 +71,38 @@ export function Footer() {
             </ul>
           </nav>
 
+          {/* Career */}
+          <nav aria-label="Career tools">
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-text">
+              Career tools
+            </h3>
+
+            <ul className="mt-5 list-none space-y-3 p-0">
+              {CAREER.map((link) => (
+                <li key={link.label}>
+                  <Link
+                    to={link.to}
+                    className="text-sm text-text-secondary transition-colors hover:text-brand-active"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
+
+          {/* Legal */}
           <nav aria-label="Legal">
-            <p className="text-[12.5px] font-semibold text-text">Legal</p>
-            <ul className="mt-3 list-none space-y-2 p-0">
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-text">
+              Legal
+            </h3>
+
+            <ul className="mt-5 list-none space-y-3 p-0">
               {LEGAL.map((link) => (
                 <li key={link.label}>
                   <Link
                     to={link.to}
-                    className="text-[13.5px] text-text-secondary transition hover:text-brand"
+                    className="text-sm text-text-secondary transition-colors hover:text-brand-active"
                   >
                     {link.label}
                   </Link>
@@ -63,17 +112,22 @@ export function Footer() {
           </nav>
         </div>
 
-        <div className="mt-10 flex flex-col gap-2 border-t border-border pt-6 sm:flex-row sm:items-center sm:justify-between">
-          <p className="m-0 text-[12.5px] text-text-tertiary">
+        {/* Bottom bar */}
+        <div className="mt-14 flex flex-col gap-4 border-t border-border pt-6 sm:flex-row sm:items-center sm:justify-between">
+
+          <p className="m-0 text-xs text-text-tertiary">
             © {new Date().getFullYear()} Geekly. All rights reserved.
           </p>
-          <p className="m-0 text-[12.5px] text-text-tertiary">
-            Built with ❤️ by{' '}
+
+          <p className="m-0 text-xs text-text-tertiary">
+            Designed and built with{' '}
+            <span aria-label="love" role="img">♥</span>
+            {' '}by{' '}
             <a
               href="https://shahadat.geekly.in"
               rel="noopener noreferrer"
               target="_blank"
-              className="font-medium text-text-secondary transition hover:text-brand"
+              className="font-semibold text-text-secondary transition-colors hover:text-brand-active"
             >
               Shahadat
             </a>

@@ -1,6 +1,15 @@
 import { config } from "dotenv"
 config()
 
+// SQS_<NAME>_QUEUE_URL / SQS_<NAME>_QUEUE_ARN -> { url, arn }. Both are
+// optional: without a URL the application falls back to in-process work.
+function sqsQueue(prefix) {
+    return {
+        url: (process.env[`SQS_${prefix}_QUEUE_URL`] || "").trim() || undefined,
+        arn: (process.env[`SQS_${prefix}_QUEUE_ARN`] || "").trim() || undefined
+    }
+}
+
 export const keys = {
     server: {
         port: process.env.PORT || 3000,
@@ -33,6 +42,14 @@ export const keys = {
         accessKeyId: (process.env.R2_ACCESS_KEY_ID || "").trim() || undefined,
         secretAccessKey: (process.env.R2_SECRET_ACCESS_KEY || "").trim() || undefined,
         bucketName: (process.env.R2_BUCKET_NAME || "").trim() || undefined
+    },
+    // Background queues. Long-running work (resume analysis, roadmap
+    // generation, and whatever comes next) is queued instead of running inside
+    // an API Gateway request. Each queue is one entry: sqs.<name> = { url, arn }.
+    // Adding a queue means adding one line here plus its two env vars.
+    sqs: {
+        region: (process.env.AWS_REGION || "").trim() || "ap-south-1",
+        resume: sqsQueue("RESUME_ANALYSIS")
     },
     auth: {
         frontendUrl: process.env.FRONTEND_URL || "",

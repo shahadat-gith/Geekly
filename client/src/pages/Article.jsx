@@ -1,9 +1,14 @@
+
 import { useEffect, useState } from 'react';
 import { FaBars, FaXmark } from 'react-icons/fa6';
+
 import Sidebar from '../components/article/Sidebar.jsx';
 import Content from '../components/article/Content.jsx';
 import Videos from '../components/article/Videos.jsx';
-import PageSkeleton, { ArticleSkeleton } from '../components/article/PageSkeleton.jsx';
+import PageSkeleton, {
+  ArticleSkeleton,
+} from '../components/article/PageSkeleton.jsx';
+
 import { NotFound } from '../components/ui/NotFound.jsx';
 import { useArticle, useArticlePath, useTopic } from '../hooks/useArticle.js';
 import { useReveal } from '../hooks/useReveal.js';
@@ -12,16 +17,29 @@ export default function Article() {
   const { topicSlug, articleSlug, validPath } = useArticlePath();
   const [navOpen, setNavOpen] = useState(false);
 
-  const { data: page, isLoading, isError, error } = useTopic(validPath ? topicSlug : '');
+  const {
+    data: page,
+    isLoading,
+    isError,
+    error,
+  } = useTopic(validPath ? topicSlug : '');
 
-  const { topic = null, subtopics = [], articles = [], defaultArticle = null } = page ?? {};
+  const {
+    topic = null,
+    subtopics = [],
+    articles = [],
+    defaultArticle = null,
+  } = page ?? {};
 
-  // Every article link in the sidebar carries its id, so a click fetches the
-  // article directly instead of re-resolving the whole page.
-  const listing = [...articles, ...subtopics.flatMap((subtopic) => subtopic.articles)];
+  const listing = [
+    ...articles,
+    ...subtopics.flatMap((subtopic) => subtopic.articles),
+  ];
+
   const selected = articleSlug
     ? listing.find((item) => item.slug === articleSlug) ?? null
     : null;
+
   const isDefault = !selected || selected.id === defaultArticle?.id;
 
   const {
@@ -34,54 +52,117 @@ export default function Article() {
 
   useReveal();
 
+  // Lock background scrolling while the mobile drawer is open.
   useEffect(() => {
     if (!navOpen) return undefined;
+
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
+
     function onKeyDown(event) {
-      if (event.key === 'Escape') setNavOpen(false);
+      if (event.key === 'Escape') {
+        setNavOpen(false);
+      }
     }
+
     document.addEventListener('keydown', onKeyDown);
+
     return () => {
       document.body.style.overflow = previousOverflow;
       document.removeEventListener('keydown', onKeyDown);
     };
   }, [navOpen]);
 
-  if (isLoading) return <PageSkeleton />;
+  if (isLoading) {
+    return <PageSkeleton />;
+  }
 
   if (isError) {
     return (
-      <NotFound message={error?.status === 404 ? 'Page not found' : 'This page could not load'} />
+      <NotFound
+        message={
+          error?.status === 404
+            ? 'Page not found'
+            : 'This page could not load'
+        }
+      />
     );
   }
 
-  if (!topic || !validPath || (articleSlug && !selected) || articleFailed) {
+  if (
+    !topic ||
+    !validPath ||
+    (articleSlug && !selected) ||
+    articleFailed
+  ) {
     return <NotFound />;
   }
 
-  const activePath = article ? `/${topic.slug}/${article.slug}` : null;
+  const activePath = article
+    ? `/${topic.slug}/${article.slug}`
+    : null;
+
   const videos = article?.referenceVideos || [];
+  const hasVideos = videos.length > 0;
+
   const closeNav = () => setNavOpen(false);
 
   return (
     <div
-      className={`mx-auto grid max-w-7xl gap-8 px-6 py-8 lg:grid-cols-[240px_minmax(0,1fr)] lg:gap-10 lg:py-12 ${videos.length > 0 ? 'xl:grid-cols-[240px_minmax(0,1fr)_280px]' : ''
-        }`}
+      className={`
+        mx-auto grid w-full max-w-[1440px] min-w-0
+        grid-cols-1 gap-8
+        px-4 py-6
+        sm:px-6 sm:py-8
+        lg:grid-cols-[280px_minmax(0,1fr)]
+        lg:gap-8 lg:px-8 lg:py-10
+        ${hasVideos
+          ? 'xl:grid-cols-[280px_minmax(0,1fr)_260px] xl:gap-8'
+          : ''
+        }
+        2xl:px-10
+      `}
     >
-      <Sidebar topic={topic} subtopics={subtopics} articles={articles} activePath={activePath} />
+      {/* Desktop topic navigation */}
+      <aside className="hidden min-w-0 lg:block">
+        <div className="sticky top-24 max-h-[calc(100svh-7rem)] overflow-y-auto overscroll-contain">
+          <Sidebar
+            topic={topic}
+            subtopics={subtopics}
+            articles={articles}
+            activePath={activePath}
+          />
+        </div>
+      </aside>
 
-      <div className="min-w-0">
-        <button
-          type="button"
-          onClick={() => setNavOpen(true)}
-          aria-haspopup="dialog"
-          aria-expanded={navOpen}
-          className="inline-flex items-center gap-2 rounded-button border border-border bg-surface px-3 py-2 text-[13px] font-semibold text-text transition hover:bg-surface-secondary focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-soft lg:hidden"
-        >
-          <FaBars aria-hidden="true" className="text-[12px]" />
-          Contents
-        </button>
+      {/* Main article content */}
+      <main className="min-w-0">
+        {/* Mobile contents trigger */}
+        <div className="mb-6 lg:hidden">
+          <button
+            type="button"
+            onClick={() => setNavOpen(true)}
+            aria-haspopup="dialog"
+            aria-expanded={navOpen}
+            className="
+              inline-flex min-h-10 items-center gap-2
+              rounded-button border border-border
+              bg-surface px-4 py-2
+              text-[13px] font-medium text-text
+              transition-colors
+              hover:border-brand-active/50 hover:bg-surface-hover
+              focus-visible:outline-none
+              focus-visible:ring-2 focus-visible:ring-brand-active
+              focus-visible:ring-offset-2
+            "
+          >
+            <FaBars
+              aria-hidden="true"
+              className="text-[12px] text-text-secondary"
+            />
+            Contents
+          </button>
+        </div>
 
         {article ? (
           <Content article={article} topic={topic} />
@@ -91,50 +172,85 @@ export default function Article() {
           <Content article={null} topic={topic} />
         )}
 
-        {videos.length > 0 && (
-          <div className="mt-10 max-w-3xl xl:hidden">
+        {/* Videos below article on smaller screens */}
+        {hasVideos && (
+          <div className="mt-10 border-t border-border pt-8 xl:hidden">
             <Videos videos={videos} />
           </div>
         )}
-      </div>
+      </main>
 
-      {videos.length > 0 && (
-        <aside className="hidden xl:sticky xl:top-24 xl:block xl:h-fit">
-          <Videos videos={videos} />
+      {/* Desktop reference videos */}
+      {hasVideos && (
+        <aside className="hidden min-w-0 xl:block">
+          <div className="sticky top-24 max-h-[calc(100svh-7rem)] overflow-y-auto overscroll-contain">
+            <Videos videos={videos} />
+          </div>
         </aside>
       )}
 
+      {/* Mobile navigation drawer */}
       {navOpen && (
         <div className="fixed inset-0 z-[110] lg:hidden">
-          <div className="absolute inset-0 bg-ink/50" onClick={closeNav} aria-hidden="true" />
+          <button
+            type="button"
+            aria-label="Close contents menu"
+            onClick={closeNav}
+            className="absolute inset-0 h-full w-full cursor-default bg-ink/40 backdrop-blur-[2px]"
+          />
+
           <div
             role="dialog"
             aria-modal="true"
             aria-label={`${topic.name} contents`}
-            className="absolute inset-y-0 left-0 w-[86%] max-w-xs overflow-y-auto border-r border-border bg-surface p-4 shadow-dropdown"
+            className="
+              absolute inset-y-0 left-0
+              flex w-[88%] max-w-[360px] flex-col
+              overflow-hidden border-r border-border
+              bg-surface shadow-dropdown
+              animate-slide-in-left
+            "
           >
-            <div className="mb-3 flex items-center justify-between gap-3">
-              <p className="m-0 text-[11px] font-semibold uppercase tracking-[0.08em] text-text-tertiary">
-                Contents
-              </p>
+            {/* Drawer header */}
+            <div className="flex shrink-0 items-center justify-between gap-3 border-b border-border px-5 py-4">
+              <div className="min-w-0">
+                <p className="text-[10px] font-semibold uppercase tracking-[0.1em] text-text-tertiary">
+                  Contents
+                </p>
+                <p className="mt-1 truncate text-sm font-semibold text-text">
+                  {topic.name}
+                </p>
+              </div>
+
               <button
                 autoFocus
                 type="button"
                 onClick={closeNav}
                 aria-label="Close contents"
-                className="inline-flex h-8 w-8 items-center justify-center rounded-button border border-border text-text-secondary transition hover:bg-surface-secondary focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-soft"
+                className="
+                  flex size-9 shrink-0 items-center justify-center
+                  rounded-button border border-border
+                  bg-surface text-text-secondary
+                  transition-colors hover:bg-surface-hover hover:text-text
+                  focus-visible:outline-none
+                  focus-visible:ring-2 focus-visible:ring-brand-active
+                "
               >
-                <FaXmark aria-hidden="true" className="text-[13px]" />
+                <FaXmark aria-hidden="true" className="text-[14px]" />
               </button>
             </div>
-            <Sidebar
-              variant="drawer"
-              topic={topic}
-              subtopics={subtopics}
-              articles={articles}
-              activePath={activePath}
-              onNavigate={closeNav}
-            />
+
+            {/* Drawer navigation */}
+            <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain p-4">
+              <Sidebar
+                variant="drawer"
+                topic={topic}
+                subtopics={subtopics}
+                articles={articles}
+                activePath={activePath}
+                onNavigate={closeNav}
+              />
+            </div>
           </div>
         </div>
       )}

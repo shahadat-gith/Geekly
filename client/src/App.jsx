@@ -13,6 +13,12 @@ import OAuthCallback from './pages/OAuthCallback.jsx';
 import Home from './pages/Home.jsx';
 import LegalPage from './pages/LegalPage.jsx';
 import Article from './pages/Article.jsx';
+import ResumeIntelligence from './pages/ResumeIntelligence.jsx';
+import ResumeNew from './pages/ResumeNew.jsx';
+import ResumeReport from './pages/ResumeReport.jsx';
+import ResumePreparation from './pages/ResumePreparation.jsx';
+import Profile from './pages/Profile.jsx';
+import { RequireAuth } from './components/auth/RequireAuth.jsx';
 
 export default function App() {
   const location = useLocation()
@@ -50,6 +56,47 @@ function AnimatedRoutes() {
         <Route path="/" element={<Home />} />
         <Route path="/terms" element={<LegalPage page="terms" />} />
         <Route path="/privacy" element={<LegalPage page="privacy" />} />
+        {/* Resume Intelligence is private: reports belong to one account. */}
+        <Route
+          path="/profile"
+          element={
+            <RequireAuth>
+              <Profile />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/resume-intelligence"
+          element={
+            <RequireAuth>
+              <ResumeIntelligence />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/resume-intelligence/new"
+          element={
+            <RequireAuth>
+              <ResumeNew />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/resume-intelligence/:id"
+          element={
+            <RequireAuth>
+              <ResumeReport />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/resume-intelligence/:id/preparation"
+          element={
+            <RequireAuth>
+              <ResumePreparation />
+            </RequireAuth>
+          }
+        />
         {/* Topics and articles share one nested content route:
             /system-design, /system-design/basics,
             /system-design/basics/caching */}

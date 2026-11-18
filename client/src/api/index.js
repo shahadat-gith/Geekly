@@ -5,3 +5,4 @@ export * as authApi from './auth.js';
 export * as usersApi from './users.js';
 export * as topicsApi from './topics.js';
 export * as articlesApi from './articles.js';
+export * as resumeApi from './resume.js';

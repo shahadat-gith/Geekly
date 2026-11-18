@@ -1,3 +1,4 @@
+
 const SIZES = {
   sm: 'h-7 w-7 text-[16px]',
   md: 'h-10 w-10 text-[20px]',
@@ -15,8 +16,8 @@ const VARIANTS = {
 };
 
 /**
- * Icon-only control. `label` is required: it is the accessible name, so the
- * icon itself can stay `aria-hidden`.
+ * Icon-only control.
+ * `label` provides the accessible name for the icon button.
  */
 export function IconButton({
   as: Tag = 'button',
@@ -28,10 +29,14 @@ export function IconButton({
   ...props
 }) {
   const classes = [
-    'inline-flex shrink-0 items-center justify-center transition active:scale-[0.97] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-soft disabled:cursor-not-allowed disabled:opacity-55',
-    SIZES[size],
-    SHAPES[shape],
-    VARIANTS[variant],
+    'inline-flex shrink-0 select-none items-center justify-center whitespace-nowrap',
+    'transition active:scale-[0.97]',
+    'focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-soft',
+    'disabled:cursor-not-allowed disabled:opacity-55',
+    'motion-reduce:transition-none motion-reduce:active:scale-100',
+    SIZES[size] ?? SIZES.md,
+    SHAPES[shape] ?? SHAPES.square,
+    VARIANTS[variant] ?? VARIANTS.default,
     className,
   ]
     .filter(Boolean)

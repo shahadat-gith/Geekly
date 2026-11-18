@@ -1,6 +1,8 @@
+
 import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { FaGithub, FaGoogle } from 'react-icons/fa6';
+
 import { useAuth } from '../context/authContext.js';
 import { AuthLayout, AuthLink } from '../components/layout/AuthLayout.jsx';
 import { Alert } from '../components/ui/Alert.jsx';
@@ -13,6 +15,7 @@ export default function Login() {
   const { login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -22,6 +25,7 @@ export default function Login() {
     e.preventDefault();
     setError('');
     setBusy(true);
+
     try {
       await login({ email, password });
       navigate(location.state?.from || '/', { replace: true });
@@ -34,27 +38,45 @@ export default function Login() {
 
   return (
     <AuthLayout
-      title="Sign in"
-      description="Welcome back to Geekly."
+      title="Welcome back"
+      description="Sign in to continue learning and growing with Geekly."
       footer={
         <>
-          New to Geekly? <AuthLink to="/auth/register">Create an account</AuthLink>
+          New to Geekly?{' '}
+          <AuthLink to="/auth/register">Create an account</AuthLink>
         </>
       }
     >
+      {/* Social login */}
       <div className="grid grid-cols-2 gap-3">
-        <Button as="a" href={googleOAuthUrl} variant="secondary" className="w-full px-4">
-          <FaGoogle aria-hidden="true" className="text-[17px]" /> Google
+        <Button
+          as="a"
+          href={googleOAuthUrl}
+          variant="secondary"
+          className="w-full gap-2.5"
+        >
+          <FaGoogle aria-hidden="true" className="text-[16px]" />
+          Google
         </Button>
-        <Button as="a" href={githubOAuthUrl} variant="secondary" className="w-full px-4">
-          <FaGithub aria-hidden="true" className="text-[17px]" /> GitHub
+
+        <Button
+          as="a"
+          href={githubOAuthUrl}
+          variant="secondary"
+          className="w-full gap-2.5"
+        >
+          <FaGithub aria-hidden="true" className="text-[17px]" />
+          GitHub
         </Button>
       </div>
-      <Divider label="or" className="my-1" />
+
+      <Divider label="or continue with email" className="my-1" />
+
       {error && <Alert>{error}</Alert>}
-      <form onSubmit={onSubmit} className="flex flex-col gap-4">
+
+      <form onSubmit={onSubmit} className="flex flex-col gap-5">
         <Input
-          label="Email"
+          label="Email address"
           type="email"
           autoComplete="email"
           required
@@ -62,7 +84,8 @@ export default function Login() {
           onChange={(e) => setEmail(e.target.value)}
           placeholder="you@example.com"
         />
-        <div className="flex flex-col gap-1.5">
+
+        <div className="flex flex-col gap-2">
           <Input
             label="Password"
             type="password"
@@ -71,18 +94,29 @@ export default function Login() {
             minLength={8}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            placeholder="Password"
+            placeholder="Enter your password"
           />
+
           <div className="flex justify-end">
             <Link
               to="/auth/forgot-password"
-              className="text-[13px] font-medium text-brand hover:text-brand-hover"
+              className="
+                text-[12.5px] font-medium text-[#527C42]
+                transition-colors hover:text-[#365D2B]
+                focus-visible:rounded-sm focus-visible:outline-none
+                focus-visible:ring-2 focus-visible:ring-brand-active
+              "
             >
               Forgot password?
             </Link>
           </div>
         </div>
-        <Button type="submit" disabled={busy} className="w-full">
+
+        <Button
+          type="submit"
+          disabled={busy}
+          className="mt-1 w-full"
+        >
           {busy ? 'Signing in…' : 'Sign in'}
         </Button>
       </form>

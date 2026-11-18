@@ -1,8 +1,13 @@
+
 const VARIANTS = {
-  primary: 'bg-brand text-on-brand shadow-button hover:bg-brand-hover active:bg-brand-active',
-  secondary: 'border border-border bg-surface text-text hover:bg-surface-hover',
-  ghost: 'text-text hover:bg-surface-secondary',
-  inverse: 'border border-ink-soft bg-transparent text-ink-text hover:bg-ink-secondary',
+  primary:
+    'bg-brand text-on-brand shadow-button hover:bg-brand-hover active:bg-brand-active',
+  secondary:
+    'border border-border bg-surface text-text hover:bg-surface-hover',
+  ghost:
+    'text-text hover:bg-surface-secondary',
+  inverse:
+    'border border-ink-soft bg-transparent text-ink-text hover:bg-ink-secondary',
 };
 
 const SIZES = {
@@ -23,7 +28,7 @@ export function Button({
   ...props
 }) {
   const classes = [
-    'inline-flex items-center justify-center gap-2 rounded-button font-medium transition active:scale-[0.98] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-soft disabled:cursor-not-allowed disabled:opacity-55',
+    'inline-flex items-center justify-center gap-2 whitespace-nowrap select-none rounded-button font-medium transition active:scale-[0.98] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-soft disabled:cursor-not-allowed disabled:opacity-55 motion-reduce:transition-none motion-reduce:active:scale-100',
     SIZES[size],
     VARIANTS[variant],
     className,
@@ -32,6 +37,10 @@ export function Button({
     .join(' ');
 
   return (
-    <Tag type={type ?? (Tag === 'button' ? 'button' : undefined)} className={classes} {...props} />
+    <Tag
+      type={type ?? (Tag === 'button' ? 'button' : undefined)}
+      className={classes}
+      {...props}
+    />
   );
 }
