@@ -1,37 +1,24 @@
+import { useEffect, useRef, useState } from 'react';
+import { FaCheck, FaCopy } from 'react-icons/fa6';
 
-import { useState } from 'react';
-import { ResumeSection } from './ResumeSection.jsx';
-
-const REPORT_SECTIONS = [
-  ['strengths', 'Strengths'],
-  ['gaps', 'Gaps and missing skills'],
-  ['requirements', 'Job requirement match'],
-  ['skills', 'Technical skills'],
-  ['projects', 'Projects'],
-  ['ats', 'ATS readability'],
-  ['improvements', 'Improvement plan'],
-  ['assessment', 'Final assessment'],
-  ['job-description', 'Job description'],
+const TABS = [
+  { key: 'summary', label: 'Summary' },
+  { key: 'strengths', label: 'Strong points' },
+  { key: 'gaps', label: 'Weak points' },
+  { key: 'missing', label: 'Missing skills' },
+  { key: 'fixes', label: 'Fixes' },
 ];
 
-const PRIORITY_TONE = {
+const SEVERITY_TONE = {
   Critical: 'bg-error/10 text-[#B94F47]',
   High: 'bg-accent-soft text-[#A9672D]',
   Medium: 'bg-warning/10 text-[#98651F]',
   Low: 'bg-surface-tertiary text-text-secondary',
 };
 
-const MATCH_TONE = {
-  Strong: 'bg-success/10 text-[#527C42]',
-  Partial: 'bg-warning/10 text-[#98651F]',
-  'Not Demonstrated': 'bg-error/10 text-[#B94F47]',
-};
-
-const SKILL_TONE = {
-  Strong: 'bg-success/10 text-[#527C42]',
-  Good: 'bg-brand-soft text-[#527C42]',
-  Partial: 'bg-warning/10 text-[#98651F]',
-  Missing: 'bg-error/10 text-[#B94F47]',
+const PRIORITY_LABEL = {
+  Must: 'Must have',
+  Nice: 'Nice to have',
 };
 
 function Tag({ tone, children }) {
@@ -44,348 +31,407 @@ function Tag({ tone, children }) {
   );
 }
 
-function Findings({ items, withSuggestion = false }) {
-  if (!items?.length) {
-    return (
-      <p className="m-0 text-[13.5px] text-text-tertiary">
-        Nothing to show here.
-      </p>
-    );
-  }
-
+function PanelHeading({ title, meta }) {
   return (
-    <ul className="m-0 flex list-none flex-col gap-4 p-0">
+    <div className="mb-5 flex flex-wrap items-baseline gap-x-3 gap-y-1 border-b border-border-secondary pb-4">
+      <h2 className="m-0 text-[16px] font-semibold leading-snug tracking-[-0.01em] text-text">
+        {title}
+      </h2>
+
+      {meta && (
+        <span className="text-[12.5px] leading-snug text-text-tertiary">{meta}</span>
+      )}
+    </div>
+  );
+}
+
+function NumberedPoints({ items, tone }) {
+  return (
+    <ol className="m-0 flex list-none flex-col gap-4 p-0">
       {items.map((item, index) => (
         <li
           key={`${item.title}-${index}`}
           className={index ? 'border-t border-border-secondary pt-4' : ''}
         >
-          <div className="flex flex-wrap items-start justify-between gap-2">
-            <h3 className="m-0 text-[14.5px] font-semibold leading-snug text-text">
-              {item.title}
-            </h3>
-            {item.priority && (
-              <Tag tone={PRIORITY_TONE[item.priority] ?? PRIORITY_TONE.Medium}>
-                {item.priority}
-              </Tag>
-            )}
-          </div>
+          <div className="flex gap-3">
+            <span
+              className={`mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[11px] font-semibold ${tone}`}
+            >
+              {index + 1}
+            </span>
 
-          {item.description && (
-            <p className="mt-1.5 text-[13.5px] leading-[1.7] text-text-secondary">
-              {item.description}
-            </p>
-          )}
-
-          {item.evidence && (
-            <p className="mt-2 border-l-2 border-border pl-3 text-[13px] leading-[1.7] text-text-tertiary">
-              {item.evidence}
-            </p>
-          )}
-
-          {withSuggestion && item.suggestion && (
-            <p className="mt-2 text-[13.5px] leading-[1.7] text-text-secondary">
-              <span className="font-semibold text-text">Do this: </span>
-              {item.suggestion}
-            </p>
-          )}
-        </li>
-      ))}
-    </ul>
-  );
-}
-
-function SkillRows({ items }) {
-  return (
-    <div className="flex flex-col divide-y divide-border-secondary">
-      {items.map((skill, index) => (
-        <div
-          key={`${skill.name}-${index}`}
-          className="grid gap-2 py-3 first:pt-0 last:pb-0 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-start"
-        >
-          <div className="min-w-0">
-            <p className="m-0 text-[14px] font-semibold leading-snug text-text">
-              {skill.name}
-            </p>
-
-            {skill.evidence && (
-              <p className="mt-1 text-[13px] leading-[1.65] text-text-tertiary">
-                {skill.evidence}
+            <div className="min-w-0">
+              <p className="m-0 text-[14px] font-semibold leading-snug text-text">
+                {item.title}
               </p>
-            )}
 
-            {skill.reason && (
-              <p className="mt-1 text-[13px] leading-[1.65] text-text-secondary">
-                {skill.reason}
-              </p>
-            )}
-          </div>
-
-          <div className="flex flex-wrap items-center gap-2 sm:justify-end">
-            {skill.status && (
-              <Tag tone={SKILL_TONE[skill.status] ?? SKILL_TONE.Missing}>
-                {skill.status}
-              </Tag>
-            )}
-
-            {skill.importance && (
-              <span className="text-[11.5px] text-text-tertiary">
-                {skill.importance} importance
-              </span>
-            )}
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-function BulletList({ items, label }) {
-  if (!items?.length) return null;
-
-  return (
-    <div>
-      <h3 className="m-0 text-[13.5px] font-semibold text-text">
-        {label}
-      </h3>
-
-      <ul className="mt-2 flex list-disc flex-col gap-1.5 pl-5 text-[13.5px] leading-[1.7] text-text-secondary">
-        {items.map((item, index) => (
-          <li key={index}>{item}</li>
-        ))}
-      </ul>
-    </div>
-  );
-}
-
-/** Resume report with persistent sidebar navigation and one visible section. */
-export function ReportSections({ analysis, jobDescription, company }) {
-  const [selected, setSelected] = useState('strengths');
-
-  const ats = analysis.atsAnalysis ?? {};
-  const verdict = analysis.finalVerdict ?? {};
-  const missing = analysis.missingSkills ?? [];
-
-  return (
-    <div className="grid gap-5 lg:h-full lg:min-h-0 lg:grid-cols-[220px_minmax(0,1fr)] lg:grid-rows-[minmax(0,1fr)]">
-      <nav
-        aria-label="Resume report sections"
-        className="rounded-card border border-border bg-surface p-3 shadow-card lg:self-start"
-      >
-        <p className="m-0 px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.08em] text-text-tertiary">
-          Report sections
-        </p>
-
-        <ul className="m-0 flex list-none flex-row gap-1 overflow-x-auto p-0 lg:flex-col">
-          {REPORT_SECTIONS.map(([key, label]) => (
-            <li key={key} className="shrink-0 lg:shrink">
-              <button
-                type="button"
-                aria-current={selected === key ? 'page' : undefined}
-                onClick={() => setSelected(key)}
-                className={`w-full rounded-button px-3 py-2.5 text-left text-[13px] font-medium transition-colors focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-soft ${selected === key
-                    ? 'bg-brand-soft text-[#527C42]'
-                    : 'text-text-secondary hover:bg-surface-secondary hover:text-text'
-                  }`}
-              >
-                {label}
-              </button>
-            </li>
-          ))}
-        </ul>
-      </nav>
-
-      <div className="min-w-0 lg:h-full lg:min-h-0 lg:overflow-y-auto lg:pr-2 lg:[scrollbar-gutter:stable]">
-        <ResumeSection
-          active={selected === 'strengths'}
-          title="Strengths"
-          meta={`${analysis.strengths?.length ?? 0} points`}
-        >
-          <Findings items={analysis.strengths} />
-        </ResumeSection>
-
-        <ResumeSection
-          active={selected === 'gaps'}
-          title="Gaps and missing skills"
-          meta={`${analysis.shortcomings?.length ?? 0} gaps · ${missing.length} missing skills`}
-          defaultOpen
-        >
-          <div className="flex flex-col gap-6">
-            <Findings items={analysis.shortcomings} withSuggestion />
-
-            <div>
-              <h3 className="m-0 text-[13.5px] font-semibold text-text">
-                Required but not demonstrated
-              </h3>
-
-              {missing.length ? (
-                <div className="mt-3">
-                  <SkillRows
-                    items={missing.map((skill) => ({
-                      ...skill,
-                      status: 'Missing',
-                    }))}
-                  />
-                </div>
-              ) : (
-                <p className="mt-2 text-[13.5px] leading-[1.7] text-text-secondary">
-                  Every skill the posting requires is at least mentioned in the resume.
+              {item.detail && (
+                <p className="m-0 mt-1 text-[13.5px] leading-[1.75] text-text-secondary">
+                  {item.detail}
                 </p>
               )}
             </div>
           </div>
-        </ResumeSection>
+        </li>
+      ))}
+    </ol>
+  );
+}
 
-        <ResumeSection
-          active={selected === 'requirements'}
-          title="Job requirement match"
-          meta={`${analysis.requirementMatches?.length ?? 0} requirements`}
-        >
-          {analysis.requirementMatches?.length ? (
-            <ul className="m-0 flex list-none flex-col divide-y divide-border-secondary p-0">
-              {analysis.requirementMatches.map((item, index) => (
-                <li
-                  key={`${item.requirement}-${index}`}
-                  className="py-4 first:pt-0 last:pb-0"
-                >
-                  <div className="flex flex-wrap items-start justify-between gap-2">
-                    <p className="m-0 text-[14px] font-semibold leading-snug text-text">
-                      {item.requirement}
-                    </p>
+async function writeClipboard(text) {
+  if (navigator.clipboard?.writeText) {
+    await navigator.clipboard.writeText(text);
+    return;
+  }
 
-                    <Tag
-                      tone={
-                        MATCH_TONE[item.status] ??
-                        MATCH_TONE['Not Demonstrated']
-                      }
-                    >
-                      {item.status}
-                    </Tag>
-                  </div>
+  // Older or non-secure contexts do not expose the async clipboard API.
+  const area = document.createElement('textarea');
+  area.value = text;
+  area.setAttribute('readonly', '');
+  area.style.position = 'fixed';
+  area.style.opacity = '0';
+  document.body.appendChild(area);
+  area.select();
+  document.execCommand('copy');
+  document.body.removeChild(area);
+}
 
-                  {item.evidence && (
-                    <p className="mt-1.5 text-[13px] leading-[1.7] text-text-tertiary">
-                      {item.evidence}
-                    </p>
-                  )}
+function useCopyFeedback() {
+  const [copied, setCopied] = useState('');
+  const timer = useRef(null);
 
-                  {item.gap && (
-                    <p className="mt-1 text-[13px] leading-[1.7] text-text-secondary">
-                      <span className="font-semibold text-text">Gap: </span>
-                      {item.gap}
-                    </p>
-                  )}
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p className="m-0 text-[13.5px] text-text-tertiary">
-              The job description did not list individual requirements.
-            </p>
-          )}
-        </ResumeSection>
+  useEffect(() => () => clearTimeout(timer.current), []);
 
-        <ResumeSection
-          active={selected === 'skills'}
-          title="Technical skills"
-          meta={`${analysis.skillsAnalysis?.length ?? 0} skills`}
-        >
-          {analysis.skillsAnalysis?.length ? (
-            <SkillRows items={analysis.skillsAnalysis} />
-          ) : (
-            <p className="m-0 text-[13.5px] text-text-tertiary">
-              No skill breakdown was produced.
-            </p>
-          )}
-        </ResumeSection>
+  async function copy(key, text) {
+    try {
+      await writeClipboard(text);
+      setCopied(key);
+    } catch {
+      setCopied('failed');
+    }
 
-        <ResumeSection
-          active={selected === 'projects'}
-          title="Projects"
-          meta={`${analysis.projectAnalysis?.length ?? 0} reviewed`}
-        >
-          <Findings items={analysis.projectAnalysis} />
-        </ResumeSection>
+    clearTimeout(timer.current);
+    timer.current = setTimeout(() => setCopied(''), 1800);
+  }
 
-        <ResumeSection
-          active={selected === 'ats'}
-          title="ATS readability"
-          meta={
-            ats.score === null || ats.score === undefined
-              ? 'No score'
-              : `${ats.score}/100`
-          }
-        >
-          <div className="flex flex-col gap-5">
-            <p className="m-0 text-[13px] leading-[1.7] text-text-tertiary">
-              This is a structural review of the document. It is not a test run in a real applicant
-              tracking system, and no system was contacted.
-            </p>
+  return { copied, copy };
+}
 
-            <BulletList
-              items={ats.issues}
-              label="What a parser may struggle with"
-            />
+function CopyButton({ label, copiedLabel, copied, onClick, disabled = false }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={disabled}
+      className="inline-flex min-h-8 shrink-0 items-center gap-1.5 rounded-button px-2.5 text-[12px] font-semibold text-[#527C42] transition-colors hover:bg-brand-soft focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-soft disabled:cursor-not-allowed disabled:opacity-50"
+    >
+      {copied ? (
+        <FaCheck aria-hidden="true" className="text-[11px]" />
+      ) : (
+        <FaCopy aria-hidden="true" className="text-[11px]" />
+      )}
+      {copied ? copiedLabel : label}
+    </button>
+  );
+}
 
-            <BulletList
-              items={ats.suggestions}
-              label="How to fix it"
-            />
-          </div>
-        </ResumeSection>
+function fixesAsText(edits) {
+  return edits
+    .map((edit, index) => {
+      const lines = [`${index + 1}. ${edit.section} — ${edit.target}`];
 
-        <ResumeSection
-          active={selected === 'improvements'}
-          title="Improvement plan"
-          meta="Ordered by impact"
-        >
-          <Findings items={analysis.improvements} withSuggestion />
-        </ResumeSection>
+      if (edit.before) lines.push(`Now: ${edit.before}`);
+      lines.push(`Use: ${edit.after}`);
+      if (edit.reason) lines.push(`Why: ${edit.reason}`);
 
-        <ResumeSection
-          active={selected === 'assessment'}
-          title="Final assessment"
-        >
-          <div className="flex flex-col gap-5">
-            <BulletList
-              items={verdict.competitiveAdvantages}
-              label="What works in your favour"
-            />
+      return lines.join('\n');
+    })
+    .join('\n\n');
+}
 
-            <BulletList
-              items={verdict.concerns}
-              label="What a hiring team will question"
-            />
+function Fixes({ edits }) {
+  const { copied, copy } = useCopyFeedback();
 
-            <BulletList
-              items={verdict.priorityActions}
-              label="Do these first"
-            />
+  if (!edits.length) {
+    return (
+      <p className="m-0 text-[13.5px] leading-[1.7] text-text-secondary">
+        No changes are needed for this role. The resume already covers what this
+        job asks for.
+      </p>
+    );
+  }
 
-            <p className="m-0 border-t border-border-secondary pt-4 text-[13px] leading-[1.7] text-text-tertiary">
-              These scores describe how well this resume supports this application. They are not a
-              probability of being hired.
-            </p>
-          </div>
-        </ResumeSection>
+  return (
+    <div className="flex flex-col gap-5">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <p className="m-0 text-[13px] leading-[1.7] text-text-secondary">
+          Each fix is finished text. Copy it into the section named above it.
+        </p>
 
-        <ResumeSection
-          active={selected === 'job-description'}
-          title="What this was compared with"
-          meta="Job description"
-        >
-          <div className="flex flex-col gap-3">
-            {company?.website && (
-              <p className="m-0 text-[13px] text-text-secondary">
-                Company website: {company.website}
+        <CopyButton
+          label="Copy all fixes"
+          copiedLabel="Copied all fixes"
+          copied={copied === 'all'}
+          onClick={() => copy('all', fixesAsText(edits))}
+        />
+      </div>
+
+      <ol className="m-0 flex list-none flex-col gap-5 p-0">
+        {edits.map((edit, index) => (
+          <li
+            key={`${edit.target}-${index}`}
+            className={index ? 'border-t border-border-secondary pt-5' : ''}
+          >
+            <div className="flex flex-wrap items-start justify-between gap-2">
+              <div className="min-w-0">
+                <p className="m-0 text-[11px] font-semibold uppercase tracking-[0.08em] text-text-tertiary">
+                  {edit.section}
+                </p>
+
+                <p className="m-0 mt-1 text-[14px] font-semibold leading-snug text-text">
+                  {edit.target}
+                </p>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-2">
+                <Tag tone="bg-surface-tertiary text-text-secondary">
+                  {edit.action}
+                </Tag>
+
+                <Tag tone={SEVERITY_TONE[edit.priority] ?? SEVERITY_TONE.Medium}>
+                  {edit.priority}
+                </Tag>
+              </div>
+            </div>
+
+            {edit.before && (
+              <p className="mt-2 border-l-2 border-border pl-3 text-[13px] leading-[1.7] text-text-tertiary">
+                <span className="font-semibold text-text-secondary">Now: </span>
+                {edit.before}
               </p>
             )}
 
-            <p className="m-0 whitespace-pre-line text-[13px] leading-[1.75] text-text-secondary">
-              {jobDescription}
-            </p>
-          </div>
-        </ResumeSection>
+            <div className="mt-2 overflow-hidden rounded-button border border-border bg-surface-secondary">
+              <div className="flex items-center justify-between gap-3 border-b border-border px-3 py-1.5">
+                <span className="text-[10.5px] font-semibold uppercase tracking-[0.08em] text-text-tertiary">
+                  Paste this
+                </span>
+
+                <CopyButton
+                  label="Copy"
+                  copiedLabel="Copied"
+                  copied={copied === `edit-${index}`}
+                  onClick={() => copy(`edit-${index}`, edit.after)}
+                />
+              </div>
+
+              <p className="m-0 whitespace-pre-line px-3 py-3 font-mono text-[12.5px] leading-[1.75] text-text">
+                {edit.after}
+              </p>
+            </div>
+
+            {edit.reason && (
+              <p className="mt-2 text-[13px] leading-[1.7] text-text-secondary">
+                <span className="font-semibold text-text">Why: </span>
+                {edit.reason}
+              </p>
+            )}
+          </li>
+        ))}
+      </ol>
+    </div>
+  );
+}
+
+/** Full review in tabs: summary, strong points, weak points, missing skills, fixes. */
+export function ReportSections({ analysis }) {
+  const [active, setActive] = useState('summary');
+
+  const strengths = analysis.strengths ?? [];
+  const gaps = analysis.gaps ?? [];
+  const missingSkills = analysis.missingSkills ?? [];
+  const edits = analysis.edits ?? [];
+
+  const counts = {
+    strengths: strengths.length,
+    gaps: gaps.length,
+    missing: missingSkills.length,
+    fixes: edits.length,
+  };
+
+  return (
+    <div className="overflow-hidden rounded-card border border-border bg-surface shadow-card">
+      <div
+        role="tablist"
+        aria-label="Resume report sections"
+        className="flex gap-1 overflow-x-auto border-b border-border-secondary p-2"
+      >
+        {TABS.map((tab) => {
+          const count = counts[tab.key] ?? 0;
+
+          return (
+            <button
+              key={tab.key}
+              type="button"
+              role="tab"
+              id={`report-tab-${tab.key}`}
+              aria-selected={active === tab.key}
+              aria-controls={`report-panel-${tab.key}`}
+              tabIndex={active === tab.key ? 0 : -1}
+              onClick={() => setActive(tab.key)}
+              className={`inline-flex shrink-0 items-center gap-1.5 rounded-button px-3 py-2 text-[13px] font-medium transition-colors focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-soft ${
+                active === tab.key
+                  ? 'bg-brand-soft text-[#527C42]'
+                  : 'text-text-secondary hover:bg-surface-secondary hover:text-text'
+              }`}
+            >
+              {tab.label}
+
+              {count > 0 && (
+                <span className="rounded-full bg-surface-tertiary px-1.5 py-0.5 text-[10.5px] font-semibold leading-none text-text-secondary">
+                  {count}
+                </span>
+              )}
+            </button>
+          );
+        })}
+      </div>
+
+      <div
+        role="tabpanel"
+        id={`report-panel-${active}`}
+        aria-labelledby={`report-tab-${active}`}
+        className="px-5 py-5 sm:px-6 sm:py-6"
+      >
+        {active === 'summary' && (
+          <>
+            <PanelHeading title="Summary" meta="Verdict for this role" />
+
+            {analysis.summary ? (
+              <p className="m-0 whitespace-pre-line text-[14px] leading-[1.8] text-text-secondary">
+                {analysis.summary}
+              </p>
+            ) : (
+              <p className="m-0 text-[13.5px] text-text-tertiary">
+                No summary was produced for this report.
+              </p>
+            )}
+          </>
+        )}
+
+        {active === 'strengths' && (
+          <>
+            <PanelHeading
+              title="Strong points"
+              meta={
+                strengths.length
+                  ? `${strengths.length} things working in your favour`
+                  : 'What the resume does well'
+              }
+            />
+
+            {strengths.length ? (
+              <NumberedPoints
+                items={strengths}
+                tone="bg-success/10 text-[#527C42]"
+              />
+            ) : (
+              <p className="m-0 text-[13.5px] leading-[1.7] text-text-tertiary">
+                No specific strong points were found for this role. The fixes are where the
+                gains are.
+              </p>
+            )}
+          </>
+        )}
+
+        {active === 'gaps' && (
+          <>
+            <PanelHeading
+              title="Weak points"
+              meta={gaps.length ? `${gaps.length} issues holding this resume back` : 'Nothing major found'}
+            />
+
+            {gaps.length ? (
+              <ul className="m-0 flex list-none flex-col divide-y divide-border-secondary p-0">
+                {gaps.map((item, index) => (
+                  <li key={`${item.title}-${index}`} className="py-4 first:pt-0 last:pb-0">
+                    <div className="flex flex-wrap items-start justify-between gap-2">
+                      <p className="m-0 text-[14px] font-semibold leading-snug text-text">
+                        {item.title}
+                      </p>
+
+                      <Tag tone={SEVERITY_TONE[item.severity] ?? SEVERITY_TONE.Medium}>
+                        {item.severity}
+                      </Tag>
+                    </div>
+
+                    {item.detail && (
+                      <p className="m-0 mt-1.5 text-[13.5px] leading-[1.75] text-text-secondary">
+                        {item.detail}
+                      </p>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="m-0 text-[13.5px] leading-[1.7] text-text-tertiary">
+                No major weaknesses were found for this job.
+              </p>
+            )}
+          </>
+        )}
+
+        {active === 'missing' && (
+          <>
+            <PanelHeading
+              title="Missing skills"
+              meta={
+                missingSkills.length
+                  ? `${missingSkills.length} skills this job asks for that the resume does not show`
+                  : 'Nothing missing'
+              }
+            />
+
+            {missingSkills.length ? (
+              <ul className="m-0 flex list-none flex-col divide-y divide-border-secondary p-0">
+                {missingSkills.map((item, index) => (
+                  <li key={`${item.skill}-${index}`} className="py-4 first:pt-0 last:pb-0">
+                    <div className="flex flex-wrap items-start justify-between gap-2">
+                      <p className="m-0 text-[14px] font-semibold leading-snug text-text">
+                        {item.skill}
+                      </p>
+
+                      <Tag tone="bg-surface-tertiary text-text-secondary">
+                        {PRIORITY_LABEL[item.priority] ?? PRIORITY_LABEL.Must}
+                      </Tag>
+                    </div>
+
+                    {item.detail && (
+                      <p className="m-0 mt-1.5 text-[13.5px] leading-[1.75] text-text-secondary">
+                        {item.detail}
+                      </p>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="m-0 text-[13.5px] leading-[1.7] text-text-tertiary">
+                Your resume shows every skill this job description asks for.
+              </p>
+            )}
+          </>
+        )}
+
+        {active === 'fixes' && (
+          <>
+            <PanelHeading
+              title="Fixes to apply"
+              meta={edits.length ? `${edits.length} changes, ordered by impact` : 'Nothing to change'}
+            />
+
+            <Fixes edits={edits} />
+          </>
+        )}
       </div>
     </div>
   );

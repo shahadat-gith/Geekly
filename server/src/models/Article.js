@@ -56,24 +56,6 @@ const ArticleSchema = new mongoose.Schema(
         default: 0,
         min: 0,
       },
-
-      reactions: {
-        type: Number,
-        default: 0,
-        min: 0,
-      },
-
-      comments: {
-        type: Number,
-        default: 0,
-        min: 0,
-      },
-
-      bookmarks: {
-        type: Number,
-        default: 0,
-        min: 0,
-      },
     },
 
     status: {

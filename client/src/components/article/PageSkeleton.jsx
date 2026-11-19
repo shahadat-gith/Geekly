@@ -1,8 +1,9 @@
-
-function SkeletonBlock({ className = '' }) {
+function SkeletonBlock({ className = '', strong = false }) {
   return (
     <div
-      className={`animate-pulse rounded-lg bg-surface-tertiary ${className}`}
+      className={`animate-pulse rounded-lg ${
+        strong ? 'bg-skeleton-strong' : 'bg-skeleton'
+      } ${className}`}
     />
   );
 }
@@ -57,6 +58,11 @@ export default function PageSkeleton() {
 
       {/* Article content skeleton */}
       <main className="min-w-0">
+        {/* Matches the mobile "Contents" button on the real page. */}
+        <div className="mb-6 lg:hidden">
+          <SkeletonBlock className="h-10 w-28 rounded-button" />
+        </div>
+
         <div className="mt-2">
           <SkeletonBlock className="h-3 w-28" />
           <SkeletonBlock className="mt-5 h-10 w-4/5 max-w-2xl sm:h-12" />
@@ -77,7 +83,7 @@ export default function PageSkeleton() {
           <SkeletonBlock className="h-4 w-[97%]" />
           <SkeletonBlock className="h-4 w-4/5" />
 
-          <SkeletonBlock className="mt-8 h-56 w-full rounded-card sm:h-72" />
+          <SkeletonBlock strong className="mt-8 h-56 w-full rounded-card sm:h-72" />
 
           <SkeletonBlock className="mt-8 h-5 w-2/5" />
           <SkeletonBlock className="h-4 w-full" />
@@ -113,7 +119,7 @@ export function ArticleSkeleton() {
         <SkeletonBlock className="h-4 w-[97%]" />
         <SkeletonBlock className="h-4 w-4/5" />
 
-        <SkeletonBlock className="mt-8 h-56 w-full rounded-card sm:h-72" />
+        <SkeletonBlock strong className="mt-8 h-56 w-full rounded-card sm:h-72" />
 
         <SkeletonBlock className="mt-8 h-5 w-2/5" />
         <SkeletonBlock className="h-4 w-full" />

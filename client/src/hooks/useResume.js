@@ -3,21 +3,14 @@ import {
   createResumeApi,
   deleteResumeApi,
   getResumeApi,
-  getRoadmapApi,
   listResumesApi,
   retryResumeApi,
-  setTopicCompletionApi,
-  startRoadmapApi,
 } from '../api/resume.js';
 
 const LIST_KEY = ['resume-analyses'];
 
 function analysisKey(id) {
   return ['resume-analysis', id];
-}
-
-function roadmapKey(id) {
-  return ['resume-analysis', id, 'preparation'];
 }
 
 function isWorking(status) {
@@ -59,7 +52,6 @@ export function useDeleteResume() {
     mutationFn: deleteResumeApi,
     onSuccess: (_result, id) => {
       queryClient.removeQueries({ queryKey: analysisKey(id) });
-      queryClient.removeQueries({ queryKey: roadmapKey(id) });
       queryClient.invalidateQueries({ queryKey: LIST_KEY });
     },
   });
@@ -73,37 +65,6 @@ export function useRetryResume(id) {
     onSuccess: (analysis) => {
       queryClient.setQueryData(analysisKey(id), analysis);
       queryClient.invalidateQueries({ queryKey: LIST_KEY });
-    },
-  });
-}
-
-export function useRoadmap(id) {
-  return useQuery({
-    queryKey: roadmapKey(id),
-    queryFn: () => getRoadmapApi(id),
-    enabled: Boolean(id),
-    refetchInterval: pollWhileWorking,
-  });
-}
-
-export function useStartRoadmap(id) {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: () => startRoadmapApi(id),
-    onSuccess: (roadmap) => {
-      queryClient.setQueryData(roadmapKey(id), roadmap);
-    },
-  });
-}
-
-export function useToggleTopic(id) {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: ({ topicId, completed }) => setTopicCompletionApi(id, topicId, completed),
-    onSuccess: (roadmap) => {
-      queryClient.setQueryData(roadmapKey(id), roadmap);
     },
   });
 }

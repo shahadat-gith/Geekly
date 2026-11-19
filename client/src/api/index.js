@@ -6,3 +6,4 @@ export * as usersApi from './users.js';
 export * as topicsApi from './topics.js';
 export * as articlesApi from './articles.js';
 export * as resumeApi from './resume.js';
+export * as deploymentsApi from './deployments.js';

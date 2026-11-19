@@ -59,13 +59,13 @@ export default function Profile() {
             </h2>
 
             <p className="m-0 mt-1.5 text-[13px] leading-relaxed text-text-secondary">
-              Open a saved report to review its scores and findings.
+              Open a saved report to review its verdict and the fixes it found.
             </p>
           </div>
 
           <Button
             as={Link}
-            to="/resume-intelligence/new"
+            to="/resume-analysis"
             size="sm"
             className="w-full xs:w-auto"
           >
@@ -81,16 +81,16 @@ export default function Profile() {
               {[1, 2, 3].map((item) => (
                 <div
                   key={item}
-                  className="flex items-center gap-4 rounded-card border border-border bg-surface p-5"
+                  className="flex items-center gap-3 rounded-card border border-border bg-surface px-4 py-4 shadow-card sm:gap-4 sm:px-5"
                 >
-                  <div className="h-9 w-9 shrink-0 animate-pulse rounded-lg bg-surface-tertiary" />
+                  <div className="h-10 w-10 shrink-0 animate-pulse rounded-xl bg-skeleton" />
 
                   <div className="min-w-0 flex-1 space-y-2">
-                    <div className="h-3.5 w-36 max-w-full animate-pulse rounded bg-surface-tertiary" />
-                    <div className="h-3 w-48 max-w-full animate-pulse rounded bg-surface-tertiary" />
+                    <div className="h-3.5 w-36 max-w-full animate-pulse rounded bg-skeleton" />
+                    <div className="h-3 w-48 max-w-full animate-pulse rounded bg-skeleton" />
                   </div>
 
-                  <div className="h-5 w-12 animate-pulse rounded bg-surface-tertiary" />
+                  <div className="h-6 w-16 shrink-0 animate-pulse rounded-full bg-skeleton" />
                 </div>
               ))}
             </div>
@@ -113,7 +113,7 @@ export default function Profile() {
 
               <Button
                 as={Link}
-                to="/resume-intelligence/new"
+                to="/resume-analysis"
                 size="sm"
                 className="mt-5"
               >
@@ -125,7 +125,7 @@ export default function Profile() {
               {analyses.map((analysis) => (
                 <li key={analysis.id}>
                   <Link
-                    to={`/resume-intelligence/${analysis.id}`}
+                    to={`/resume-analysis/${analysis.id}`}
                     className="
                       group flex min-w-0 items-center justify-between gap-3
                       rounded-card border border-border bg-surface px-4 py-4
@@ -158,19 +158,7 @@ export default function Profile() {
                     </div>
 
                     <div className="flex shrink-0 items-center gap-2.5 sm:gap-3">
-                      {analysis.scores?.overall !== null &&
-                        analysis.scores?.overall !== undefined ? (
-                        <div className="text-right">
-                          <p className="m-0 text-[16px] font-semibold tabular-nums text-text sm:text-[18px]">
-                            {analysis.scores.overall}
-                            <span className="ml-0.5 text-[10px] font-medium text-text-tertiary">
-                              /100
-                            </span>
-                          </p>
-                        </div>
-                      ) : (
-                        <StatusChip status={analysis.status} />
-                      )}
+                      <StatusChip status={analysis.status} />
 
                       <FaArrowRight
                         aria-hidden="true"

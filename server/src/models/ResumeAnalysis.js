@@ -13,121 +13,94 @@ const companyDetailsSchema = new mongoose.Schema(
 const documentSchema = new mongoose.Schema(
   {
     fileName: { type: String, default: '', maxlength: 255 },
-    format: { type: String, enum: ['pdf', 'docx'], default: 'pdf' },
+    format: { type: String, enum: ['pdf', 'docx', 'text'], default: 'pdf' },
     pages: { type: Number, default: 0, min: 0 },
     words: { type: Number, default: 0, min: 0 },
   },
   { _id: false }
 );
 
-// Reusable schemas
-const findingSchema = new mongoose.Schema(
+// One change the candidate can paste into the resume.
+const editSchema = new mongoose.Schema(
   {
-    title: { type: String, required: true },
-    description: { type: String, default: '' },
-    evidence: { type: String, default: '' },
     priority: {
       type: String,
       enum: ['Critical', 'High', 'Medium', 'Low'],
       default: 'Medium',
     },
-    suggestion: { type: String, default: '' },
-  },
-  { _id: false }
-);
-
-const skillSchema = new mongoose.Schema(
-  {
-    name: { type: String, required: true },
-    status: {
+    section: {
       type: String,
-      enum: ['Strong', 'Good', 'Partial', 'Missing'],
-      default: 'Missing',
+      enum: ['Summary', 'Experience', 'Projects', 'Skills', 'Education', 'Other'],
+      default: 'Other',
     },
-    importance: {
+    target: { type: String, default: '' },
+    action: {
       type: String,
-      enum: ['High', 'Medium', 'Low'],
-      default: 'Medium',
+      enum: ['Rewrite', 'Add', 'Quantify', 'Remove', 'Reorder'],
+      default: 'Rewrite',
     },
-    evidence: { type: String, default: '' },
+    before: { type: String, default: '' },
+    after: { type: String, required: true },
     reason: { type: String, default: '' },
   },
   { _id: false }
 );
 
-// One job-description requirement, matched against the resume.
-const requirementMatchSchema = new mongoose.Schema(
+// Only version-2 reports carry this; the review no longer produces it.
+const formattingSchema = new mongoose.Schema(
   {
-    requirement: { type: String, required: true },
-    status: {
-      type: String,
-      enum: ['Strong', 'Partial', 'Not Demonstrated'],
-      default: 'Not Demonstrated',
-    },
-    evidence: { type: String, default: '' },
-    gap: { type: String, default: '' },
+    issue: { type: String, required: true },
+    fix: { type: String, default: '' },
   },
   { _id: false }
 );
 
-// Complete AI analysis report
+// A labelled point: a strong point.
+const pointSchema = new mongoose.Schema(
+  {
+    title: { type: String, required: true },
+    detail: { type: String, default: '' },
+  },
+  { _id: false }
+);
+
+// A skill the posting asks for and the resume does not show.
+const missingSkillSchema = new mongoose.Schema(
+  {
+    skill: { type: String, required: true },
+    priority: { type: String, enum: ['Must', 'Nice'], default: 'Must' },
+    detail: { type: String, default: '' },
+  },
+  { _id: false }
+);
+
+// A weak point, with how much it hurts this application.
+const gapSchema = new mongoose.Schema(
+  {
+    title: { type: String, required: true },
+    detail: { type: String, default: '' },
+    severity: {
+      type: String,
+      enum: ['Critical', 'High', 'Medium', 'Low'],
+      default: 'Medium',
+    },
+  },
+  { _id: false }
+);
+
+// The review report. Older stored reports have version 0 and none of these
+// fields, which is how the client recognises a report from the previous format.
 const analysisSchema = new mongoose.Schema(
   {
-    overallScore: { type: Number, min: 0, max: 100 },
-    jobMatchScore: { type: Number, min: 0, max: 100 },
-    technicalScore: { type: Number, min: 0, max: 100 },
-    projectScore: { type: Number, min: 0, max: 100 },
-    presentationScore: { type: Number, min: 0, max: 100 },
+    version: { type: Number, default: 0 },
 
     summary: { type: String, default: '' },
 
-    strengths: {
-      type: [findingSchema],
-      default: [],
-    },
-
-    shortcomings: {
-      type: [findingSchema],
-      default: [],
-    },
-
-    missingSkills: {
-      type: [skillSchema],
-      default: [],
-    },
-
-    skillsAnalysis: {
-      type: [skillSchema],
-      default: [],
-    },
-
-    requirementMatches: {
-      type: [requirementMatchSchema],
-      default: [],
-    },
-
-    projectAnalysis: {
-      type: [findingSchema],
-      default: [],
-    },
-
-    atsAnalysis: {
-      score: { type: Number, min: 0, max: 100 },
-      issues: { type: [String], default: [] },
-      suggestions: { type: [String], default: [] },
-    },
-
-    improvements: {
-      type: [findingSchema],
-      default: [],
-    },
-
-    finalVerdict: {
-      summary: { type: String, default: '' },
-      competitiveAdvantages: { type: [String], default: [] },
-      concerns: { type: [String], default: [] },
-      priorityActions: { type: [String], default: [] },
-    },
+    strengths: { type: [pointSchema], default: [] },
+    gaps: { type: [gapSchema], default: [] },
+    missingSkills: { type: [missingSkillSchema], default: [] },
+    edits: { type: [editSchema], default: [] },
+    formatting: { type: [formattingSchema], default: [] },
   },
   { _id: false }
 );

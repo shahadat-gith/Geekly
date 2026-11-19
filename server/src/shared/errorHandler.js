@@ -1,5 +1,5 @@
 import { keys } from '../config/env.js';
-import { ApiError } from './apiError.js';
+import { ApiError } from './errors.js';
 
 // Central error handler - every error ends up here as JSON.
 // eslint-disable-next-line no-unused-vars

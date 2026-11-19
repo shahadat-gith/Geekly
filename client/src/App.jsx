@@ -13,10 +13,11 @@ import OAuthCallback from './pages/OAuthCallback.jsx';
 import Home from './pages/Home.jsx';
 import LegalPage from './pages/LegalPage.jsx';
 import Article from './pages/Article.jsx';
-import ResumeIntelligence from './pages/ResumeIntelligence.jsx';
-import ResumeNew from './pages/ResumeNew.jsx';
+import ResumeAnalysis from './pages/ResumeAnalysis.jsx';
 import ResumeReport from './pages/ResumeReport.jsx';
-import ResumePreparation from './pages/ResumePreparation.jsx';
+import Deployments from './pages/Deployments.jsx';
+import DeploymentNew from './pages/DeploymentNew.jsx';
+import DeploymentDetail from './pages/DeploymentDetail.jsx';
 import Profile from './pages/Profile.jsx';
 import { RequireAuth } from './components/auth/RequireAuth.jsx';
 
@@ -66,37 +67,35 @@ function AnimatedRoutes() {
           }
         />
         <Route
-          path="/resume-intelligence"
+          path="/resume-analysis"
           element={
             <RequireAuth>
-              <ResumeIntelligence />
+              <ResumeAnalysis />
             </RequireAuth>
           }
         />
         <Route
-          path="/resume-intelligence/new"
-          element={
-            <RequireAuth>
-              <ResumeNew />
-            </RequireAuth>
-          }
+          path="/resume-analysis/new"
+          element={<Navigate to="/resume-analysis" replace />}
         />
         <Route
-          path="/resume-intelligence/:id"
+          path="/resume-analysis/:id"
           element={
             <RequireAuth>
               <ResumeReport />
             </RequireAuth>
           }
         />
+        {/* Static site hosting is private to the signed-in account. */}
+        <Route path="/deployments" element={<RequireAuth><Deployments /></RequireAuth>} />
+        <Route path="/deployments/new" element={<RequireAuth><DeploymentNew /></RequireAuth>} />
+        <Route path="/deployments/:projectId" element={<RequireAuth><DeploymentDetail /></RequireAuth>} />
+        {/* Old resume-intelligence URLs keep working. */}
         <Route
-          path="/resume-intelligence/:id/preparation"
-          element={
-            <RequireAuth>
-              <ResumePreparation />
-            </RequireAuth>
-          }
+          path="/resume-intelligence"
+          element={<Navigate to="/resume-analysis" replace />}
         />
+        <Route path="/resume-intelligence/*" element={<RedirectResumeLegacy />} />
         {/* Topics and articles share one nested content route:
             /system-design, /system-design/basics,
             /system-design/basics/caching */}
@@ -172,6 +171,17 @@ function GuestOnly({ children }) {
   }
 
   return children;
+}
+
+function RedirectResumeLegacy() {
+  const { pathname } = useLocation();
+  const rest = pathname.slice('/resume-intelligence'.length);
+  const target =
+    !rest || rest === '/' || rest === '/new'
+      ? '/resume-analysis'
+      : `/resume-analysis${rest}`;
+
+  return <Navigate to={target} replace />;
 }
 
 function RedirectTo({ to }) {

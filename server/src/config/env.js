@@ -1,19 +1,18 @@
 import { config } from "dotenv"
 config()
 
-// SQS_<NAME>_QUEUE_URL / SQS_<NAME>_QUEUE_ARN -> { url, arn }. Both are
-// optional: without a URL the application falls back to in-process work.
-function sqsQueue(prefix) {
-    return {
-        url: (process.env[`SQS_${prefix}_QUEUE_URL`] || "").trim() || undefined,
-        arn: (process.env[`SQS_${prefix}_QUEUE_ARN`] || "").trim() || undefined
-    }
-}
-
 export const keys = {
     server: {
         port: process.env.PORT || 3000,
         environment: process.env.NODE_ENV || "development"
+    },
+    // Comma-separated origin allowlist. Empty means "allow any origin", which is
+    // only appropriate for local development.
+    cors: {
+        origins: (process.env.CORS_ORIGINS || "")
+            .split(",")
+            .map((origin) => origin.trim())
+            .filter(Boolean)
     },
     db: {
         uri: process.env.MONGODB_URI
@@ -33,23 +32,30 @@ export const keys = {
     openrouter: {
         apiKey: (process.env.OPENROUTER_API_KEY || "").trim() || undefined
     },
-    email: {
-        resendApiKey: (process.env.RESEND_API_KEY || "").trim() || undefined
+    // AWS region used by SES (transactional email).
+    aws: {
+        region: (process.env.AWS_REGION || "").trim() || "ap-south-1"
     },
-    r2: {
-        publicUrl: (process.env.R2_PUBLIC_URL || "").trim().replace(/\/$/, "") || undefined,
-        accountId: (process.env.R2_ACCOUNT_ID || "").trim() || undefined,
-        accessKeyId: (process.env.R2_ACCESS_KEY_ID || "").trim() || undefined,
-        secretAccessKey: (process.env.R2_SECRET_ACCESS_KEY || "").trim() || undefined,
-        bucketName: (process.env.R2_BUCKET_NAME || "").trim() || undefined
+    redis: {
+        url: (process.env.REDIS_URL || "").trim() || undefined
     },
-    // Background queues. Long-running work (resume analysis, roadmap
-    // generation, and whatever comes next) is queued instead of running inside
-    // an API Gateway request. Each queue is one entry: sqs.<name> = { url, arn }.
-    // Adding a queue means adding one line here plus its two env vars.
-    sqs: {
-        region: (process.env.AWS_REGION || "").trim() || "ap-south-1",
-        resume: sqsQueue("RESUME_ANALYSIS")
+    // Cloudflare: one account, one R2 credential pair, and every bucket and KV
+    // namespace listed once. Hosting reads its buckets and KV from here too.
+    cloudflare: {
+        accountId: (process.env.CLOUDFLARE_ACCOUNT_ID || "").trim() || undefined,
+        apiToken: (process.env.CLOUDFLARE_API_TOKEN || "").trim() || undefined,
+        r2: {
+            accessKeyId: (process.env.CLOUDFLARE_R2_ACCESS_KEY_ID || "").trim() || undefined,
+            secretAccessKey: (process.env.CLOUDFLARE_R2_SECRET_ACCESS_KEY || "").trim() || undefined,
+            publicUrl: (process.env.CLOUDFLARE_R2_PUBLIC_URL || "").trim().replace(/\/$/, "") || undefined,
+            buckets: {
+                assets: (process.env.CLOUDFLARE_R2_ASSETS_BUCKET || "").trim() || undefined,
+                deployments: (process.env.CLOUDFLARE_R2_DEPLOYMENTS_BUCKET || "geekly-deployments").trim()
+            }
+        },
+        kv: {
+            namespaceId: (process.env.CLOUDFLARE_KV_NAMESPACE_ID || "").trim() || undefined
+        }
     },
     auth: {
         frontendUrl: process.env.FRONTEND_URL || "",
@@ -65,5 +71,62 @@ export const keys = {
             clientSecret: process.env.GITHUB_CLIENT_SECRET,
             callbackUrl: process.env.GITHUB_CALLBACK_URL
         }
+    }
+}
+
+// Required settings stop the boot; optional integrations only warn, so a
+// developer without R2 or OpenRouter keys can still run the API. Email uses SES
+// with the instance's AWS credentials, so it has no key of its own to check.
+const REQUIRED = {
+    MONGODB_URI: () => keys.db.uri,
+    JWT_SECRET: () => keys.jwt.secret
+}
+
+const OPTIONAL = [
+    {
+        name: "R2 storage",
+        configured: () => Boolean(
+            keys.cloudflare.r2.publicUrl && keys.cloudflare.accountId && keys.cloudflare.r2.accessKeyId &&
+            keys.cloudflare.r2.secretAccessKey && keys.cloudflare.r2.buckets.assets
+        )
+    },
+    { name: "OpenRouter (AI)", configured: () => Boolean(keys.openrouter.apiKey) },
+    {
+        name: "Admin console login",
+        configured: () => Boolean(keys.admin.email && keys.admin.password)
+    },
+    { name: "Redis queue (BullMQ)", configured: () => Boolean(keys.redis.url) },
+    {
+        name: "Static site hosting",
+        configured: () => Boolean(
+            keys.cloudflare.accountId && keys.cloudflare.apiToken &&
+            keys.cloudflare.kv.namespaceId && keys.cloudflare.r2.accessKeyId &&
+            keys.cloudflare.r2.secretAccessKey
+        )
+    },
+    {
+        name: "OAuth login",
+        configured: () => Boolean(
+            (keys.auth.google.clientId && keys.auth.google.clientSecret) ||
+            (keys.auth.github.clientId && keys.auth.github.clientSecret)
+        )
+    }
+]
+
+export function assertConfig() {
+    const missing = Object.entries(REQUIRED)
+        .filter(([, read]) => {
+            const value = read()
+            return typeof value !== "string" || !value.trim()
+        })
+        .map(([name]) => name)
+
+    if (missing.length) {
+        throw new Error(`Missing required environment variables: ${missing.join(", ")}`)
+    }
+
+    const unconfigured = OPTIONAL.filter((item) => !item.configured()).map((item) => item.name)
+    if (unconfigured.length) {
+        console.warn(`[config] not configured: ${unconfigured.join(", ")}`)
     }
 }

@@ -1,4 +1,4 @@
-import { ApiError } from './apiError.js';
+import { ApiError } from './errors.js';
 
 // Small in-process limiter for expensive, authenticated endpoints.
 //

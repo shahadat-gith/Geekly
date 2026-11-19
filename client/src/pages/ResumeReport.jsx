@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { FaTrashCan } from 'react-icons/fa6';
@@ -7,7 +6,6 @@ import { Alert } from '../components/ui/Alert.jsx';
 import { Button } from '../components/ui/Button.jsx';
 import { ProcessingPanel } from '../components/resume/ProcessingPanel.jsx';
 import { ReportSections } from '../components/resume/ReportSections.jsx';
-import { ScoreGrid } from '../components/resume/ScoreGrid.jsx';
 import { StatusChip } from '../components/resume/ResumeStatus.jsx';
 import { statusIsWorking } from '../components/resume/status.js';
 import { formatDate } from '../utils/format.js';
@@ -15,90 +13,51 @@ import { formatDate } from '../utils/format.js';
 
 function Skeleton() {
   return (
-    <div className="mx-auto max-w-6xl animate-pulse px-6 py-10 sm:py-14">
-      {/* Header */}
+    <div
+      className="mx-auto max-w-4xl px-6 py-10 sm:py-14"
+      aria-hidden="true"
+      aria-label="Loading resume analysis"
+    >
+      {/* Page heading: title, meta line and status chip */}
       <div className="flex flex-wrap items-start justify-between gap-5">
         <div className="min-w-0 flex-1">
-          <div className="h-8 w-56 rounded-lg bg-surface-tertiary" />
-          <div className="mt-3 h-3.5 w-80 max-w-full rounded bg-surface-tertiary" />
+          <div className="h-8 w-56 animate-pulse rounded-lg bg-skeleton" />
+          <div className="mt-3 h-3.5 w-80 max-w-full animate-pulse rounded bg-skeleton" />
         </div>
-        <div className="h-10 w-36 rounded-button bg-surface-tertiary" />
+        <div className="h-6 w-20 animate-pulse rounded-full bg-skeleton" />
       </div>
 
-      {/* Score cards */}
-      <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
-        {[0, 1, 2, 3, 4, 5].map((key) => (
-          <div
-            key={key}
-            className="rounded-card border border-border bg-surface p-4 shadow-card"
-          >
-            <div className="mx-auto h-3 w-20 rounded bg-surface-tertiary" />
-            <div className="mx-auto mt-4 h-8 w-14 rounded bg-surface-tertiary" />
-            <div className="mt-3 h-1.5 rounded-full bg-surface-tertiary" />
+      {/* Report card: tab strip plus the open summary panel */}
+      <div className="mt-8 overflow-hidden rounded-card border border-border bg-surface shadow-card">
+        <div className="flex gap-1 overflow-hidden border-b border-border-secondary p-2">
+          {[76, 100, 92, 96, 60].map((width, index) => (
+            <div
+              key={index}
+              className="h-8 shrink-0 animate-pulse rounded-button bg-skeleton"
+              style={{ width: `${width}px` }}
+            />
+          ))}
+        </div>
+
+        <div className="px-5 py-5 sm:px-6 sm:py-6">
+          <div className="flex flex-wrap items-baseline gap-3 border-b border-border-secondary pb-4">
+            <div className="h-4 w-24 animate-pulse rounded bg-skeleton" />
+            <div className="h-3 w-36 animate-pulse rounded bg-skeleton" />
           </div>
-        ))}
-      </div>
 
-      {/* Report layout */}
-      <div className="mt-8 grid gap-5 lg:h-[calc(100svh-262px)] lg:min-h-[520px] lg:grid-cols-[minmax(0,1fr)_256px] lg:grid-rows-[minmax(0,1fr)]">
-        {/* Report content */}
-        <div className="min-h-[480px] overflow-hidden rounded-card border border-border bg-surface p-5 shadow-card sm:p-6">
-          {/* Section navigation */}
-          <div className="flex gap-2 overflow-hidden border-b border-border pb-4">
-            {[100, 76, 88, 72, 92].map((width, index) => (
+          <div className="mt-5 space-y-2.5">
+            {['w-full', 'w-[97%]', 'w-[92%]', 'w-4/5', 'w-3/5'].map((width) => (
               <div
-                key={index}
-                className="h-8 shrink-0 rounded-button bg-surface-tertiary"
-                style={{ width: `${width}px` }}
+                key={width}
+                className={`h-3.5 ${width} animate-pulse rounded bg-skeleton`}
               />
             ))}
           </div>
-
-          {/* Section heading */}
-          <div className="mt-6 h-6 w-48 rounded bg-surface-tertiary" />
-          <div className="mt-3 h-3.5 w-full max-w-xl rounded bg-surface-tertiary" />
-          <div className="mt-2 h-3.5 w-4/5 max-w-lg rounded bg-surface-tertiary" />
-
-          {/* Report content blocks */}
-          <div className="mt-8 space-y-5">
-            {[0, 1, 2].map((key) => (
-              <div
-                key={key}
-                className="rounded-xl border border-border-secondary p-4 sm:p-5"
-              >
-                <div className="h-4 w-36 rounded bg-surface-tertiary" />
-                <div className="mt-4 space-y-2.5">
-                  <div className="h-3 w-full rounded bg-surface-tertiary" />
-                  <div className="h-3 w-11/12 rounded bg-surface-tertiary" />
-                  <div className="h-3 w-3/4 rounded bg-surface-tertiary" />
-                </div>
-              </div>
-            ))}
-          </div>
         </div>
-
-        {/* Scores sidebar */}
-        <aside className="h-fit rounded-card border border-border bg-surface p-4 shadow-card">
-          <div className="mb-5 h-5 w-20 rounded bg-surface-tertiary" />
-
-          <div className="grid grid-cols-2 gap-3 lg:grid-cols-1">
-            {[0, 1, 2, 3, 4, 5].map((key) => (
-              <div
-                key={key}
-                className="rounded-xl border border-border-secondary p-3"
-              >
-                <div className="h-3 w-20 rounded bg-surface-tertiary" />
-                <div className="mt-3 h-6 w-12 rounded bg-surface-tertiary" />
-                <div className="mt-3 h-1.5 rounded-full bg-surface-tertiary" />
-              </div>
-            ))}
-          </div>
-        </aside>
       </div>
     </div>
   );
 }
-
 
 export default function ResumeReport() {
   const { id } = useParams();
@@ -122,7 +81,7 @@ export default function ResumeReport() {
         <div className="mt-5">
           <Button
             as={Link}
-            to="/resume-intelligence"
+            to="/profile"
             variant="secondary"
           >
             All analyses
@@ -137,7 +96,7 @@ export default function ResumeReport() {
 
     try {
       await remove.mutateAsync(id);
-      navigate('/resume-intelligence');
+      navigate('/profile');
     } catch (err) {
       setDeleteError(err.message);
     }
@@ -148,7 +107,7 @@ export default function ResumeReport() {
   const working = statusIsWorking(analysis.status);
 
   return (
-    <div className="mx-auto max-w-6xl px-6 py-10 sm:py-14">
+    <div className="mx-auto max-w-4xl px-6 py-10 sm:py-14">
       {/* Page heading */}
       <div className="flex flex-wrap items-start justify-between gap-5">
         <div className="min-w-0">
@@ -167,18 +126,7 @@ export default function ResumeReport() {
           </p>
         </div>
 
-        {completed ? (
-          <Button
-            as={Link}
-            to={`/resume-intelligence/${id}/preparation`}
-            variant="secondary"
-            className="shrink-0"
-          >
-            Preparation plan
-          </Button>
-        ) : (
-          <StatusChip status={analysis.status} />
-        )}
+        <StatusChip status={analysis.status} />
       </div>
 
       {/* Processing state */}
@@ -211,22 +159,21 @@ export default function ResumeReport() {
         </div>
       )}
 
-      {/* Completed report */}
+      {/* Report generated with the previous report format */}
+      {completed && (report.version ?? 0) < 4 && (
+        <div className="mt-8">
+          <Alert tone="info" title="This report uses an earlier format">
+            It was created before the report became a full review with strong
+            points, weak points and missing skills. Upload the resume again to
+            get the current report.
+          </Alert>
+        </div>
+      )}
+
+      {/* Completed report: one column, every section visible */}
       {completed && (
-        <div className="mt-8 grid gap-5 lg:h-[calc(100svh-262px)] lg:min-h-[520px] lg:grid-cols-[minmax(0,1fr)_256px] lg:grid-rows-[minmax(0,1fr)]">
-          <ReportSections
-            analysis={report}
-            jobDescription={analysis.jobDescription}
-            company={analysis.company}
-          />
-
-          <aside className="rounded-card border border-border bg-surface p-4 shadow-card lg:self-start">
-            <h2 className="mb-4 mt-0 text-[15px] font-semibold tracking-[-0.01em] text-text">
-              Scores
-            </h2>
-
-            <ScoreGrid scores={analysis.scores} compact />
-          </aside>
+        <div className="mt-8">
+          <ReportSections analysis={report} />
         </div>
       )}
 
@@ -235,7 +182,7 @@ export default function ResumeReport() {
         <div className="mt-10 flex flex-wrap items-center justify-between gap-4 border-t border-border pt-6">
           <Button
             as={Link}
-            to="/resume-intelligence"
+            to="/profile"
             variant="secondary"
             size="sm"
           >
@@ -245,7 +192,7 @@ export default function ResumeReport() {
           {confirmingDelete ? (
             <div className="flex flex-wrap items-center justify-end gap-2">
               <span className="mr-1 text-[13px] text-text-secondary">
-                Delete this report and its plan?
+                Delete this report?
               </span>
 
               <Button

@@ -23,8 +23,8 @@ const FEATURES = [
   },
   {
     Icon: FaListCheck,
-    title: 'Preparation roadmap',
-    description: 'Get focused topics to prepare based on your resume and target role.',
+    title: 'Paste-ready fixes',
+    description: 'Get finished lines for the section they belong to, ready to copy in.',
   },
 ];
 
@@ -107,15 +107,15 @@ function AnalysisPreview() {
             <div className="flex items-center gap-2">
               <FaListCheck className="text-[13px] text-[#A36B32]" />
               <p className="text-[12px] font-semibold text-text">
-                Preparation priorities
+                Fixes to apply
               </p>
             </div>
 
             <div className="mt-3 space-y-2.5">
               {[
-                'Review system design fundamentals',
-                'Strengthen database concepts',
-                'Prepare project impact examples',
+                'Rewrite the first bullet with impact',
+                'Add the missing stack to a project',
+                'Move skills above the projects',
               ].map((item) => (
                 <div key={item} className="flex items-start gap-2">
                   <FaCheck className="mt-0.5 shrink-0 text-[10px] text-success" />
@@ -170,9 +170,9 @@ export function ResumeIntelligenceCta() {
           </h2>
 
           <p className="mt-5 max-w-lg text-[14.5px] leading-[1.8] text-text-secondary sm:text-[15.5px]">
-            Go beyond a basic resume review. Compare your resume with a
-            job description, discover what's missing, and get a focused
-            preparation plan built around your target role.
+            Compare your resume with a job description, see which
+            requirements it really evidences, and get the exact lines to paste
+            in to close the gaps.
           </p>
 
           <div className="mt-8 space-y-4">
@@ -195,7 +195,7 @@ export function ResumeIntelligenceCta() {
           </div>
 
           <div className="mt-9 flex flex-wrap items-center gap-4">
-            <Button as={Link} to="/resume-intelligence">
+            <Button as={Link} to="/resume-analysis">
               Analyze your resume
               <FaArrowRight
                 aria-hidden="true"

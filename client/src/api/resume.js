@@ -15,14 +15,19 @@ export async function getResumeApi(id) {
 
 export async function createResumeApi({
   file,
-  jobDescription,
+  resumeText = '',
+  jobDescription = '',
+  jobDescriptionFile,
   companyName = '',
   companyWebsite = '',
   customInstructions = '',
 }) {
+  // Either side of the comparison can be a file or pasted text.
   const form = new FormData();
-  form.append('resume', file);
-  form.append('jobDescription', jobDescription);
+  if (file) form.append('resume', file);
+  if (resumeText) form.append('resumeText', resumeText);
+  if (jobDescriptionFile) form.append('jobDescriptionFile', jobDescriptionFile);
+  if (jobDescription) form.append('jobDescription', jobDescription);
   if (companyName) form.append('companyName', companyName);
   if (companyWebsite) form.append('companyWebsite', companyWebsite);
   if (customInstructions) form.append('customInstructions', customInstructions);
@@ -40,32 +45,4 @@ export async function deleteResumeApi(id) {
 export async function retryResumeApi(id) {
   const { data } = await api.post(`/api/resume-analysis/${encodeURIComponent(id)}/retry`);
   return data.analysis;
-}
-
-export async function getRoadmapApi(id) {
-  try {
-    const { data } = await api.get(
-      `/api/resume-analysis/${encodeURIComponent(id)}/preparation`
-    );
-    return data.roadmap;
-  } catch (error) {
-    // No plan yet is a normal state, not a failure.
-    if (error.status === 404) return null;
-    throw error;
-  }
-}
-
-export async function startRoadmapApi(id) {
-  const { data } = await api.post(
-    `/api/resume-analysis/${encodeURIComponent(id)}/preparation`
-  );
-  return data.roadmap;
-}
-
-export async function setTopicCompletionApi(id, topicId, completed) {
-  const { data } = await api.patch(
-    `/api/resume-analysis/${encodeURIComponent(id)}/preparation/topics/${encodeURIComponent(topicId)}`,
-    { completed }
-  );
-  return data.roadmap;
 }

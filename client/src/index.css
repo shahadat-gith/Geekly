@@ -25,6 +25,11 @@
   --color-surface-tertiary: #F4F5F2;
   --color-surface-hover: #F5F7F3;
 
+  /* Skeleton placeholders. Deliberately darker than both the page background
+     (#F7F8F6) and the card surface so loading blocks are clearly visible. */
+  --color-skeleton: #DFE4D7;
+  --color-skeleton-strong: #D2D9C7;
+
   /* Dark Panels */
   --color-ink: #292B29;
   --color-ink-secondary: #353935;

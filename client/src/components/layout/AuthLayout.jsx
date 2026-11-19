@@ -10,7 +10,7 @@ function Wordmark() {
       className="inline-flex w-fit rounded-button transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-soft"
     >
       <img
-        src="/brand_light.png"
+        src="/logo.png"
         alt="Geekly"
         className="h-9 w-auto max-w-[155px] object-contain"
       />

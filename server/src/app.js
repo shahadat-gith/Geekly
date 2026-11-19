@@ -4,15 +4,16 @@ import cors from "cors"
 import helmet from "helmet"
 
 import { keys } from "./config/env.js"
-import { connectToDB } from "./config/mongodb.js"
+import { connectToDB } from "./config/database.js"
 
-import authRoutes from "./client/routes/authRoutes.js"
-import userRoutes from "./client/routes/userRoutes.js"
-import topicRoutes from "./client/routes/topicRoutes.js"
-import articleRoutes from "./client/routes/articleRoutes.js"
+import authRoutes from "./features/public/auth/routes.js"
+import userRoutes from "./features/public/users/routes.js"
+import topicRoutes from "./features/public/topics/routes.js"
+import articleRoutes from "./features/public/articles/routes.js"
 
-import adminRoutes from "./admin/routes/index.js"
-import resumeRoutes from "./resume/routes/resumeRoutes.js"
+import adminRoutes from "./features/admin/routes.js"
+import hostingRoutes from "./features/hosting/hosting.routes.js"
+import resumeRoutes from "./features/resume/resume.routes.js"
 
 import { errorHandler } from "./shared/errorHandler.js"
 
@@ -24,10 +25,7 @@ app.use(helmet({
     crossOriginResourcePolicy: { policy: "cross-origin" },
 }))
 
-const allowedOrigins = (process.env.CORS_ORIGINS || "")
-    .split(",")
-    .map((origin) => origin.trim())
-    .filter(Boolean)
+const { origins: allowedOrigins } = keys.cors
 
 app.use(cors({
     origin(origin, callback) {
@@ -46,8 +44,9 @@ app.get("/", (_req, res) => {
     res.status(200).json({ message: "Server is UP" })
 })
 
-// Health check
-app.get("/api/health", async (req, res) => {
+// Readiness check: 503 when the database is unreachable, so an uptime monitor
+// or a deploy never sees a healthy instance that cannot serve requests.
+app.get("/api/health", async (_req, res) => {
     try {
         await connectToDB()
 
@@ -59,8 +58,8 @@ app.get("/api/health", async (req, res) => {
     } catch (error) {
         console.error("Health check: database unavailable:", error)
 
-        res.json({
-            status: "ok",
+        res.status(503).json({
+            status: "degraded",
             environment: keys.server.environment,
             database: "unavailable",
             databaseError: error.name || "Error",
@@ -75,6 +74,7 @@ app.use("/api/topics", topicRoutes)
 app.use("/api/articles", articleRoutes)
 app.use("/api/resume-analysis", resumeRoutes)
 app.use("/api/admin", adminRoutes)
+app.use("/api/deployments", hostingRoutes)
 
 // 404 handler
 app.use((req, res) => {

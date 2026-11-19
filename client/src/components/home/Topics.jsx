@@ -82,13 +82,13 @@ function TopicSkeleton() {
         <div
             className="w-[268px] shrink-0 overflow-hidden rounded-card border border-border bg-surface sm:w-[300px]"
         >
-            <div className="aspect-[16/10] w-full animate-pulse bg-surface-tertiary" />
+            <div className="aspect-[16/10] w-full animate-pulse bg-skeleton-strong" />
 
-            <div className="p-5">
-                <div className="h-5 w-40 animate-pulse rounded-md bg-surface-tertiary" />
-                <div className="mt-3 h-3 w-full animate-pulse rounded bg-surface-tertiary" />
-                <div className="mt-2 h-3 w-2/3 animate-pulse rounded bg-surface-tertiary" />
-                <div className="mt-6 h-3 w-24 animate-pulse rounded bg-surface-tertiary" />
+            <div className="flex min-h-[160px] flex-1 flex-col p-5">
+                <div className="h-5 w-40 animate-pulse rounded-md bg-skeleton" />
+                <div className="mt-3 h-3 w-full animate-pulse rounded bg-skeleton" />
+                <div className="mt-2 h-3 w-2/3 animate-pulse rounded bg-skeleton" />
+                <div className="mt-auto h-3 w-24 animate-pulse rounded bg-skeleton" />
             </div>
         </div>
     );

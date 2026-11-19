@@ -38,7 +38,7 @@ export function Navbar() {
             <div
               role="status"
               aria-label="Restoring your session"
-              className="h-9 w-9 animate-pulse rounded-full bg-surface-tertiary"
+              className="h-9 w-9 animate-pulse rounded-full bg-skeleton"
             />
           ) : user ? (
             <ProfileMenu user={user} onLogout={onLogout} />
@@ -133,6 +133,15 @@ function ProfileMenu({ user, onLogout }) {
               className="flex w-full items-center rounded-lg px-3 py-2.5 text-sm font-medium text-text-secondary transition-colors hover:bg-brand-soft hover:text-text focus-visible:bg-brand-soft focus-visible:outline-none"
             >
               My profile
+            </Link>
+
+            <Link
+              to="/deployments"
+              role="menuitem"
+              onClick={() => setOpen(false)}
+              className="flex w-full items-center rounded-lg px-3 py-2.5 text-sm font-medium text-text-secondary transition-colors hover:bg-brand-soft hover:text-text focus-visible:bg-brand-soft focus-visible:outline-none"
+            >
+              My sites
             </Link>
 
             <button
