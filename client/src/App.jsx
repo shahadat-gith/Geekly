@@ -21,13 +21,30 @@ import DeploymentDetail from './pages/DeploymentDetail.jsx';
 import Profile from './pages/Profile.jsx';
 import { RequireAuth } from './components/auth/RequireAuth.jsx';
 
+const TITLES = [
+  [/^\/$/, 'Geekly — Understand what your code runs on'],
+  [/^\/auth\/login$/, 'Sign in — Geekly'],
+  [/^\/auth\/register$/, 'Create your account — Geekly'],
+  [/^\/auth\/forgot-password$/, 'Reset your password — Geekly'],
+  [/^\/auth\/reset-password$/, 'Choose a new password — Geekly'],
+  [/^\/auth\/callback$/, 'Signing you in — Geekly'],
+  [/^\/profile$/, 'Your profile — Geekly'],
+  [/^\/resume-analysis\/new$/, 'Resume analysis — Geekly'],
+  [/^\/resume-analysis$/, 'Resume analysis — Geekly'],
+  [/^\/resume-analysis\/[^/]+$/, 'Resume report — Geekly'],
+  [/^\/deployments$/, 'My sites — Geekly'],
+  [/^\/deployments\/new$/, 'New site — Geekly'],
+  [/^\/deployments\/[^/]+$/, 'Site versions — Geekly'],
+  [/^\/terms$/, 'Terms and conditions — Geekly'],
+  [/^\/privacy$/, 'Privacy policy — Geekly'],
+];
+
+function titleFor(pathname) {
+  const match = TITLES.find(([pattern]) => pattern.test(pathname));
+  return match ? match[1] : null;
+}
+
 export default function App() {
-  const location = useLocation()
-
-  useEffect(() => {
-    window.scrollTo(0, 0)
-  }, [location.pathname])
-
   return (
     <ToastProvider>
       <AuthProvider>
@@ -40,6 +57,14 @@ export default function App() {
 // Every route change re-mounts the page with a soft entrance transition.
 function AnimatedRoutes() {
   const { pathname, hash } = useLocation();
+
+  // Keep the document title in step with the route; content pages keep the
+  // marketing title because their own heading carries the topic name.
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    const next = titleFor(pathname);
+    if (next) document.title = next;
+  }, [pathname]);
 
   // Honour in-page links such as /#topics once the new page has mounted.
   useEffect(() => {
@@ -160,7 +185,7 @@ function GuestOnly({ children }) {
         <span
           role="status"
           aria-label="Loading"
-          className="h-5 w-5 animate-spin rounded-full border-2 border-border border-t-brand"
+          className="h-5 w-5 animate-spin rounded-full border-2 border-border border-t-brand-strong"
         />
       </div>
     );

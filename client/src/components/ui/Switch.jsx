@@ -22,7 +22,7 @@ export function Switch({
       className={[
         'relative inline-flex h-6 w-11 shrink-0 items-center rounded-full',
         'transition-colors duration-200',
-        'focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-soft',
+        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
         'disabled:cursor-not-allowed disabled:opacity-55',
         'motion-reduce:transition-none',
         checked ? 'bg-brand-active' : 'bg-surface-tertiary',

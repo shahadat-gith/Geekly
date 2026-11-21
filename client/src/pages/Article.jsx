@@ -1,5 +1,5 @@
-
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { FaBars, FaXmark } from 'react-icons/fa6';
 
 import Sidebar from '../components/article/Sidebar.jsx';
@@ -109,23 +109,18 @@ export default function Article() {
 
   return (
     <div
-      className={`
-        mx-auto grid w-full max-w-[1440px] min-w-0
-        grid-cols-1 gap-8
-        px-4 py-6
-        sm:px-6 sm:py-8
-        lg:grid-cols-[280px_minmax(0,1fr)]
-        lg:gap-8 lg:px-8 lg:py-10
-        ${hasVideos
-          ? 'xl:grid-cols-[280px_minmax(0,1fr)_260px] xl:gap-8'
-          : ''
-        }
-        2xl:px-10
-      `}
+      className={[
+        'mx-auto grid w-full min-w-0 grid-cols-1 gap-8',
+        'max-w-[1400px] px-4 py-6 sm:px-6 sm:py-8 lg:px-8 lg:py-10',
+        'lg:grid-cols-[248px_minmax(0,1fr)]',
+        hasVideos ? 'xl:grid-cols-[256px_minmax(0,1fr)_240px]' : '',
+      ]
+        .filter(Boolean)
+        .join(' ')}
     >
       {/* Desktop topic navigation */}
       <aside className="hidden min-w-0 lg:block">
-        <div className="sticky top-24 max-h-[calc(100svh-7rem)] overflow-y-auto overscroll-contain">
+        <div className="sticky top-20 max-h-[calc(100svh-6rem)] overflow-y-auto overscroll-contain">
           <Sidebar
             topic={topic}
             subtopics={subtopics}
@@ -137,29 +132,23 @@ export default function Article() {
 
       {/* Main article content */}
       <main className="min-w-0">
-        {/* Mobile contents trigger */}
-        <div className="mb-6 lg:hidden">
+        {/* Mobile contents bar */}
+        <div className="mb-5 flex flex-wrap items-center justify-between gap-3 border-b border-border pb-3 lg:hidden">
+          <Link
+            to={`/${topic.slug}`}
+            className="min-w-0 truncate font-mono text-[11px] uppercase tracking-[0.1em] text-text-tertiary transition-colors hover:text-text"
+          >
+            {topic.name}
+          </Link>
+
           <button
             type="button"
             onClick={() => setNavOpen(true)}
             aria-haspopup="dialog"
             aria-expanded={navOpen}
-            className="
-              inline-flex min-h-10 items-center gap-2
-              rounded-button border border-border
-              bg-surface px-4 py-2
-              text-[13px] font-medium text-text
-              transition-colors
-              hover:border-brand-active/50 hover:bg-surface-hover
-              focus-visible:outline-none
-              focus-visible:ring-2 focus-visible:ring-brand-active
-              focus-visible:ring-offset-2
-            "
+            className="inline-flex min-h-9 items-center gap-2 rounded-button border border-border bg-surface px-3 text-[12.5px] font-medium text-text transition-colors hover:bg-surface-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           >
-            <FaBars
-              aria-hidden="true"
-              className="text-[12px] text-text-secondary"
-            />
+            <FaBars aria-hidden="true" className="text-[11px] text-text-secondary" />
             Contents
           </button>
         </div>
@@ -183,7 +172,7 @@ export default function Article() {
       {/* Desktop reference videos */}
       {hasVideos && (
         <aside className="hidden min-w-0 xl:block">
-          <div className="sticky top-24 max-h-[calc(100svh-7rem)] overflow-y-auto overscroll-contain">
+          <div className="sticky top-20 max-h-[calc(100svh-6rem)] overflow-y-auto overscroll-contain">
             <Videos videos={videos} />
           </div>
         </aside>
@@ -196,28 +185,22 @@ export default function Article() {
             type="button"
             aria-label="Close contents menu"
             onClick={closeNav}
-            className="absolute inset-0 h-full w-full cursor-default bg-ink/40 backdrop-blur-[2px]"
+            className="absolute inset-0 h-full w-full cursor-default bg-ink/40"
           />
 
           <div
             role="dialog"
             aria-modal="true"
             aria-label={`${topic.name} contents`}
-            className="
-              absolute inset-y-0 left-0
-              flex w-[88%] max-w-[360px] flex-col
-              overflow-hidden border-r border-border
-              bg-surface shadow-dropdown
-              animate-slide-in-left
-            "
+            className="absolute inset-y-0 left-0 flex w-[88%] max-w-[340px] flex-col overflow-hidden border-r border-border bg-surface shadow-dropdown animate-slide-in-left"
           >
             {/* Drawer header */}
-            <div className="flex shrink-0 items-center justify-between gap-3 border-b border-border px-5 py-4">
+            <div className="flex shrink-0 items-center justify-between gap-3 border-b border-border px-4 py-3.5">
               <div className="min-w-0">
-                <p className="text-[10px] font-semibold uppercase tracking-[0.1em] text-text-tertiary">
+                <p className="m-0 font-mono text-[9.5px] uppercase tracking-[0.12em] text-text-tertiary">
                   Contents
                 </p>
-                <p className="mt-1 truncate text-sm font-semibold text-text">
+                <p className="m-0 mt-1 truncate text-sm font-semibold text-text">
                   {topic.name}
                 </p>
               </div>
@@ -227,14 +210,7 @@ export default function Article() {
                 type="button"
                 onClick={closeNav}
                 aria-label="Close contents"
-                className="
-                  flex size-9 shrink-0 items-center justify-center
-                  rounded-button border border-border
-                  bg-surface text-text-secondary
-                  transition-colors hover:bg-surface-hover hover:text-text
-                  focus-visible:outline-none
-                  focus-visible:ring-2 focus-visible:ring-brand-active
-                "
+                className="flex size-9 shrink-0 items-center justify-center rounded-button border border-border bg-surface text-text-secondary transition-colors hover:bg-surface-secondary hover:text-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               >
                 <FaXmark aria-hidden="true" className="text-[14px]" />
               </button>

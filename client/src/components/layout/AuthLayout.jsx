@@ -1,4 +1,3 @@
-
 import { Link } from 'react-router-dom';
 import { Background } from './Background.jsx';
 
@@ -7,7 +6,7 @@ function Wordmark() {
     <Link
       to="/"
       aria-label="Geekly home"
-      className="inline-flex w-fit rounded-button transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-soft"
+      className="inline-flex w-fit rounded-button transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
     >
       <img
         src="/logo.png"
@@ -20,53 +19,70 @@ function Wordmark() {
 
 function EditorialPanel() {
   return (
-    <aside className="relative hidden min-h-svh flex-col justify-between overflow-hidden border-r border-border/70 bg-[#F1F6ED] px-10 py-10 lg:flex xl:px-14">
-
-      {/* Decorative elements */}
+    <aside className="relative hidden min-h-svh flex-col justify-between overflow-hidden bg-ink px-10 py-10 lg:flex xl:px-14">
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 opacity-30"
+        className="pointer-events-none absolute inset-0 opacity-20"
         style={{
           backgroundImage:
-            'radial-gradient(circle at 1px 1px, #78936C 1px, transparent 0)',
+            'radial-gradient(circle at 1px 1px, #FFFFFF 1px, transparent 0)',
           backgroundSize: '28px 28px',
-          maskImage: 'linear-gradient(to bottom, black, transparent 75%)',
+          maskImage: 'linear-gradient(to bottom, black, transparent 70%)',
+          WebkitMaskImage: 'linear-gradient(to bottom, black, transparent 70%)',
         }}
       />
 
-      <div className="pointer-events-none absolute -right-32 top-24 h-96 w-96 rounded-full bg-[#B9E5A2]/40 blur-3xl" />
-
       <div className="relative z-10">
-        <Wordmark />
+        <span className="inline-flex items-center gap-2 rounded-full border border-ink-soft bg-ink-secondary px-3 py-1.5">
+          <span className="h-1.5 w-1.5 rounded-full bg-brand-mint" />
+          <span className="font-mono text-[10.5px] font-semibold uppercase tracking-[0.14em] text-ink-muted">
+            Built for engineers
+          </span>
+        </span>
       </div>
 
       <div className="relative z-10 max-w-lg py-16">
-
-        <div className="mb-7 inline-flex items-center gap-2 rounded-full border border-[#D8E6D0] bg-white/70 px-3.5 py-2">
-          <span className="h-2 w-2 rounded-full bg-[#80AE69]" />
-          <span className="text-xs font-semibold tracking-wide text-[#526B49]">
-            BUILT FOR ENGINEERS
-          </span>
-        </div>
-
-        <h2 className="max-w-lg font-heading text-4xl font-semibold leading-[1.13] tracking-[-0.045em] text-[#252D24] xl:text-[48px]">
-          Grow your skills.
+        <h2 className="max-w-lg font-heading text-4xl font-semibold leading-[1.1] tracking-[-0.035em] text-ink-text xl:text-[44px]">
+          Understand what
           <br />
-          <span className="text-[#638B50]">
-            Build your career.
-          </span>
+          your code runs on.
         </h2>
 
-        <p className="mt-6 max-w-md text-[15px] leading-7 text-[#697466]">
-          Everything you need to become a stronger engineer.
-          Understand core concepts, master system design,
-          prepare for technical interviews, and take your
-          career to the next level.
+        <p className="mt-6 max-w-md text-[15px] leading-7 text-ink-muted">
+          Backend, databases, operating systems, networking and system
+          design — with worked examples and diagrams, not slogans.
         </p>
+
+        <dl className="mt-10 grid grid-cols-3 gap-6 border-t border-ink-soft pt-8">
+          <div>
+            <dt className="font-mono text-[10px] uppercase tracking-[0.14em] text-ink-muted">
+              Learn
+            </dt>
+            <dd className="m-0 mt-2 text-[13px] leading-snug text-ink-text">
+              Topics with worked examples
+            </dd>
+          </div>
+          <div>
+            <dt className="font-mono text-[10px] uppercase tracking-[0.14em] text-ink-muted">
+              Prepare
+            </dt>
+            <dd className="m-0 mt-2 text-[13px] leading-snug text-ink-text">
+              Resume analysis against a role
+            </dd>
+          </div>
+          <div>
+            <dt className="font-mono text-[10px] uppercase tracking-[0.14em] text-ink-muted">
+              Ship
+            </dt>
+            <dd className="m-0 mt-2 text-[13px] leading-snug text-ink-text">
+              Static sites on geekly.in
+            </dd>
+          </div>
+        </dl>
       </div>
 
       <div className="relative z-10">
-        <p className="max-w-sm text-xs leading-6 text-[#899283]">
+        <p className="m-0 max-w-sm text-xs leading-6 text-ink-muted">
           A space to learn, prepare, and grow as an engineer.
         </p>
       </div>
@@ -86,37 +102,33 @@ export function AuthLayout({
       <Background />
 
       <div className="relative z-10 mx-auto flex min-h-svh max-w-[1440px] flex-col lg:grid lg:grid-cols-[1.05fr_0.95fr]">
-
         {/* Editorial brand panel */}
         <EditorialPanel />
 
         {/* Authentication area */}
-        <div className="flex min-h-svh flex-col bg-surface/50">
-
+        <div className="flex min-h-svh flex-col bg-surface/60">
           {/* Mobile brand header */}
           <header className="flex px-6 py-6 lg:hidden">
             <Wordmark />
           </header>
 
-          <main className="animate-page flex flex-1 items-center justify-center px-5 pb-12 pt-4 sm:px-8 lg:px-12 lg:py-16">
-
-            <div className="w-full max-w-[420px] rounded-[24px] border border-border/80 bg-surface p-6 shadow-card sm:p-9">
-
+          <main className="animate-page flex flex-1 items-center justify-center px-4 pb-12 pt-4 sm:px-8 lg:px-12 lg:py-16">
+            <div className="w-full max-w-[420px] rounded-panel border border-border bg-surface p-6 shadow-card sm:p-8">
               {/* Form heading */}
               <div>
-                <h1 className="text-balance font-heading text-[28px] font-semibold leading-[1.2] tracking-[-0.035em] text-text sm:text-[32px]">
+                <h1 className="text-balance font-heading text-[26px] font-semibold leading-[1.2] tracking-[-0.03em] text-text sm:text-[30px]">
                   {title}
                 </h1>
 
                 {description && (
-                  <p className="mt-3 text-sm leading-6 text-text-secondary">
+                  <p className="mt-2.5 text-sm leading-6 text-text-secondary">
                     {description}
                   </p>
                 )}
               </div>
 
               {/* Form content */}
-              <div className="mt-8">
+              <div className="mt-7">
                 {children}
               </div>
 
@@ -139,7 +151,7 @@ export function AuthLink({ to, children }) {
   return (
     <Link
       to={to}
-      className="font-semibold text-[#527C42] transition-colors hover:text-[#365D2B] focus-visible:rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand"
+      className="font-semibold text-brand-strong transition-colors hover:text-brand-strong-hover focus-visible:rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
     >
       {children}
     </Link>

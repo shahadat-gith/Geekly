@@ -1,14 +1,15 @@
-
 import { Link } from 'react-router-dom';
 
-const EXPLORE = [
-  { label: 'Interview preparation', to: '/#topics' },
+const LEARN = [
+  { label: 'Browse topics', to: '/#topics' },
   { label: 'System design', to: '/#topics' },
   { label: 'CS fundamentals', to: '/#topics' },
 ];
 
-const CAREER = [
-  { label: 'Resume analysis', to: '/resume' },
+const TOOLS = [
+  { label: 'Resume analysis', to: '/resume-analysis' },
+  { label: 'My sites', to: '/deployments' },
+  { label: 'Profile', to: '/profile' },
 ];
 
 const LEGAL = [
@@ -18,18 +19,15 @@ const LEGAL = [
 
 export function Footer() {
   return (
-    <footer className="relative mt-auto border-t border-border/70 bg-surface">
-      <div className="mx-auto max-w-7xl px-5 pb-8 pt-14 sm:px-8 lg:px-10">
-
-        {/* Main footer */}
+    <footer className="relative mt-auto border-t border-border bg-surface">
+      <div className="mx-auto max-w-7xl px-4 pb-8 pt-12 sm:px-6 lg:px-8">
         <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[1.8fr_1fr_1fr_1fr] lg:gap-12">
-
           {/* Brand */}
           <div className="max-w-sm">
             <Link
               to="/"
               aria-label="Geekly home"
-              className="inline-flex rounded-button transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-soft"
+              className="inline-flex rounded-button transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             >
               <img
                 src="/logo.png"
@@ -39,30 +37,26 @@ export function Footer() {
             </Link>
 
             <p className="mt-5 text-sm leading-7 text-text-secondary">
-              A platform for engineers to sharpen their skills, prepare
-              for technical interviews, and grow their careers.
+              Understand what your code runs on — backend, databases,
+              operating systems, networking and system design — with
+              worked examples for engineers.
             </p>
 
-            <div className="mt-5 inline-flex items-center gap-2 rounded-full border border-border bg-surface-secondary px-3 py-1.5">
-              <span className="h-2 w-2 rounded-full bg-brand" />
-              <span className="text-xs font-medium text-text-secondary">
-                Built for engineers
-              </span>
-            </div>
+            <p className="mt-5 font-mono text-[11px] uppercase tracking-[0.12em] text-text-tertiary">
+              Built for engineers
+            </p>
           </div>
 
-          {/* Explore */}
-          <nav aria-label="Explore">
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-text">
-              Explore
-            </h3>
+          {/* Learn */}
+          <nav aria-label="Learn">
+            <h3 className="eyebrow m-0">Learn</h3>
 
             <ul className="mt-5 list-none space-y-3 p-0">
-              {EXPLORE.map((link) => (
+              {LEARN.map((link) => (
                 <li key={link.label}>
                   <Link
                     to={link.to}
-                    className="text-sm text-text-secondary transition-colors hover:text-brand-active"
+                    className="text-sm text-text-secondary transition-colors hover:text-brand-strong focus-visible:outline-none"
                   >
                     {link.label}
                   </Link>
@@ -71,18 +65,16 @@ export function Footer() {
             </ul>
           </nav>
 
-          {/* Career */}
-          <nav aria-label="Career tools">
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-text">
-              Career tools
-            </h3>
+          {/* Tools */}
+          <nav aria-label="Tools">
+            <h3 className="eyebrow m-0">Tools</h3>
 
             <ul className="mt-5 list-none space-y-3 p-0">
-              {CAREER.map((link) => (
+              {TOOLS.map((link) => (
                 <li key={link.label}>
                   <Link
                     to={link.to}
-                    className="text-sm text-text-secondary transition-colors hover:text-brand-active"
+                    className="text-sm text-text-secondary transition-colors hover:text-brand-strong focus-visible:outline-none"
                   >
                     {link.label}
                   </Link>
@@ -93,16 +85,14 @@ export function Footer() {
 
           {/* Legal */}
           <nav aria-label="Legal">
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-text">
-              Legal
-            </h3>
+            <h3 className="eyebrow m-0">Legal</h3>
 
             <ul className="mt-5 list-none space-y-3 p-0">
               {LEGAL.map((link) => (
                 <li key={link.label}>
                   <Link
                     to={link.to}
-                    className="text-sm text-text-secondary transition-colors hover:text-brand-active"
+                    className="text-sm text-text-secondary transition-colors hover:text-brand-strong focus-visible:outline-none"
                   >
                     {link.label}
                   </Link>
@@ -113,21 +103,18 @@ export function Footer() {
         </div>
 
         {/* Bottom bar */}
-        <div className="mt-14 flex flex-col gap-4 border-t border-border pt-6 sm:flex-row sm:items-center sm:justify-between">
-
+        <div className="mt-12 flex flex-col gap-4 border-t border-border-secondary pt-6 sm:flex-row sm:items-center sm:justify-between">
           <p className="m-0 text-xs text-text-tertiary">
             © {new Date().getFullYear()} Geekly. All rights reserved.
           </p>
 
           <p className="m-0 text-xs text-text-tertiary">
-            Designed and built with{' '}
-            <span aria-label="love" role="img">♥</span>
-            {' '}by{' '}
+            Designed and built by{' '}
             <a
               href="https://shahadat.geekly.in"
               rel="noopener noreferrer"
               target="_blank"
-              className="font-semibold text-text-secondary transition-colors hover:text-brand-active"
+              className="font-semibold text-text-secondary transition-colors hover:text-brand-strong"
             >
               Shahadat
             </a>

@@ -101,8 +101,9 @@ export default function ResetPassword() {
 
             <Button
               type="submit"
-              disabled={resetPassword.isPending}
+              loading={resetPassword.isPending}
               className="mt-1 w-full"
+              size="lg"
             >
               {resetPassword.isPending ? 'Updating password…' : 'Update password'}
             </Button>

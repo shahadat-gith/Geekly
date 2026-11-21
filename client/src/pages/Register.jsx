@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FaGithub, FaGoogle } from 'react-icons/fa6';
@@ -20,6 +19,8 @@ export default function Register() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
+
+  const passwordTooShort = password.length > 0 && password.length < 8;
 
   async function onSubmit(e) {
     e.preventDefault();
@@ -45,7 +46,7 @@ export default function Register() {
   return (
     <AuthLayout
       title="Create your account"
-      description="Join Geekly and start building your engineering skills."
+      description="One account for topics, resume reviews and your published sites."
       footer={
         <>
           Already have an account?{' '}
@@ -59,9 +60,10 @@ export default function Register() {
           as="a"
           href={googleOAuthUrl}
           variant="secondary"
-          className="w-full gap-2.5"
+          disabled={busy}
+          className="w-full"
         >
-          <FaGoogle aria-hidden="true" className="text-[16px]" />
+          <FaGoogle aria-hidden="true" className="text-[15px]" />
           Google
         </Button>
 
@@ -69,18 +71,19 @@ export default function Register() {
           as="a"
           href={githubOAuthUrl}
           variant="secondary"
-          className="w-full gap-2.5"
+          disabled={busy}
+          className="w-full"
         >
-          <FaGithub aria-hidden="true" className="text-[17px]" />
+          <FaGithub aria-hidden="true" className="text-[16px]" />
           GitHub
         </Button>
       </div>
 
-      <Divider label="or sign up with email" className="my-1" />
-
-      {error && <Alert>{error}</Alert>}
+      <Divider label="or sign up with email" className="my-5" />
 
       <form onSubmit={onSubmit} className="flex flex-col gap-4">
+        {error && <Alert>{error}</Alert>}
+
         <Input
           label="Full name"
           type="text"
@@ -89,6 +92,7 @@ export default function Register() {
           value={fullname}
           onChange={(e) => setFullname(e.target.value)}
           placeholder="Enter your full name"
+          disabled={busy}
         />
 
         <Input
@@ -99,6 +103,7 @@ export default function Register() {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="you@example.com"
+          disabled={busy}
         />
 
         <Input
@@ -110,28 +115,32 @@ export default function Register() {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           placeholder="At least 8 characters"
+          disabled={busy}
+          error={passwordTooShort ? 'Use at least 8 characters.' : undefined}
+          hint={passwordTooShort ? undefined : 'At least 8 characters.'}
         />
 
         <Button
           type="submit"
-          disabled={busy}
+          loading={busy}
           className="mt-1 w-full"
+          size="lg"
         >
           {busy ? 'Creating account…' : 'Create account'}
         </Button>
 
-        <p className="m-0 px-1 text-center text-[11.5px] leading-[1.8] text-text-tertiary">
+        <p className="m-0 px-1 text-center text-[11.5px] leading-[1.7] text-text-tertiary">
           By creating an account, you agree to our{' '}
           <Link
             to="/terms"
-            className="font-medium text-[#527C42] underline underline-offset-2 transition-colors hover:text-[#365D2B]"
+            className="font-medium text-brand-strong underline underline-offset-2 transition-colors hover:text-brand-strong-hover"
           >
             Terms of Service
           </Link>{' '}
           and{' '}
           <Link
             to="/privacy"
-            className="font-medium text-[#527C42] underline underline-offset-2 transition-colors hover:text-[#365D2B]"
+            className="font-medium text-brand-strong underline underline-offset-2 transition-colors hover:text-brand-strong-hover"
           >
             Privacy Policy
           </Link>

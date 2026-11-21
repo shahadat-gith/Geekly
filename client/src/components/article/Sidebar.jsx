@@ -1,8 +1,7 @@
-
 import { Link } from 'react-router-dom';
 
-const CARD =
-  'hidden h-fit w-full overflow-y-auto rounded-card border border-border bg-surface p-4 lg:sticky lg:top-24 lg:block lg:max-h-[calc(100svh-7rem)] lg:w-[280px] xl:w-[300px]';
+const RAIL =
+  'hidden h-fit w-full lg:sticky lg:top-20 lg:block lg:max-h-[calc(100svh-6rem)] lg:overflow-y-auto lg:overscroll-contain lg:w-[248px] lg:border-r lg:border-border lg:pr-4 xl:w-[268px]';
 
 function ArticleLink({ to, title, active, onNavigate, number }) {
   return (
@@ -10,19 +9,18 @@ function ArticleLink({ to, title, active, onNavigate, number }) {
       to={to}
       onClick={onNavigate}
       aria-current={active ? 'page' : undefined}
-      className={`
-        flex min-w-0 items-start gap-3 rounded-lg px-3 py-2.5
-        text-[12.5px] leading-relaxed transition-colors duration-150
-        focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-active
-        ${active
-          ? 'bg-brand-soft font-medium text-[#527C42]'
-          : 'text-text-secondary hover:bg-surface-secondary hover:text-text'
-        }
-      `}
+      className={[
+        'group flex min-w-0 items-start gap-2.5 rounded-button px-2.5 py-2 text-[12.5px] leading-snug transition-colors duration-150',
+        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
+        active
+          ? 'bg-brand-soft font-medium text-brand-strong'
+          : 'text-text-secondary hover:bg-surface-secondary hover:text-text',
+      ].join(' ')}
     >
       <span
-        className={`mt-px w-5 shrink-0 text-right text-[11px] tabular-nums ${active ? 'font-semibold text-[#527C42]' : 'text-text-tertiary'
-          }`}
+        className={`mt-px w-4 shrink-0 text-right font-mono text-[10px] tabular-nums ${
+          active ? 'text-brand-strong' : 'text-text-tertiary'
+        }`}
       >
         {String(number).padStart(2, '0')}
       </span>
@@ -34,7 +32,7 @@ function ArticleLink({ to, title, active, onNavigate, number }) {
 
 function SectionLabel({ children }) {
   return (
-    <p className="mb-1 px-3 pt-5 text-[10px] font-semibold uppercase tracking-[0.09em] text-text-tertiary first:pt-0">
+    <p className="mb-1 mt-4 px-2.5 font-mono text-[9.5px] font-semibold uppercase tracking-[0.12em] text-text-tertiary first:mt-0">
       {children}
     </p>
   );
@@ -48,37 +46,28 @@ export default function Sidebar({
   variant = 'card',
   onNavigate,
 }) {
-  let articleNumber = 0;
+  // Reading order across the topic: top-level articles first, then subtopics.
+  const numberById = new Map(
+    [...articles, ...subtopics.flatMap((subtopic) => subtopic.articles)].map(
+      (article, index) => [article.id, index + 1],
+    ),
+  );
 
   return (
-    <aside
-      className={
-        variant === 'drawer'
-          ? 'min-w-0'
-          : CARD
-      }
-    >
+    <aside className={variant === 'drawer' ? 'min-w-0' : RAIL}>
       <Link
         to={`/${topic.slug}`}
         onClick={onNavigate}
         aria-current={activePath === `/${topic.slug}` ? 'page' : undefined}
-        className={`
-          block rounded-lg px-3 py-2.5 text-[14px] font-semibold
-          tracking-[-0.01em] transition-colors
-          ${activePath === `/${topic.slug}`
-            ? 'bg-brand-soft text-[#527C42]'
-            : 'text-text hover:bg-surface-secondary'
-          }
-        `}
+        className={[
+          'block rounded-button px-2.5 py-1.5 text-[13.5px] font-semibold tracking-[-0.01em] transition-colors',
+          activePath === `/${topic.slug}`
+            ? 'text-brand-strong'
+            : 'text-text hover:text-brand-strong',
+        ].join(' ')}
       >
         {topic.name}
       </Link>
-
-      {topic.description && (
-        <p className="px-3 pb-2 pt-1 text-[11.5px] leading-relaxed text-text-tertiary">
-          {topic.description}
-        </p>
-      )}
 
       <nav aria-label={`${topic.name} contents`} className="mt-3">
         {articles.length > 0 && (
@@ -87,14 +76,13 @@ export default function Sidebar({
             <ul className="m-0 list-none space-y-0.5 p-0">
               {articles.map((article) => {
                 const to = `/${topic.slug}/${article.slug}`;
-                articleNumber += 1;
 
                 return (
                   <li key={article.id}>
                     <ArticleLink
                       to={to}
                       title={article.title}
-                      number={articleNumber}
+                      number={numberById.get(article.id)}
                       active={activePath === to}
                       onNavigate={onNavigate}
                     />
@@ -112,14 +100,13 @@ export default function Sidebar({
             <ul className="m-0 list-none space-y-0.5 p-0">
               {subtopic.articles.map((article) => {
                 const to = `/${topic.slug}/${article.slug}`;
-                articleNumber += 1;
 
                 return (
                   <li key={article.id}>
                     <ArticleLink
                       to={to}
                       title={article.title}
-                      number={articleNumber}
+                      number={numberById.get(article.id)}
                       active={activePath === to}
                       onNavigate={onNavigate}
                     />
@@ -128,7 +115,7 @@ export default function Sidebar({
               })}
 
               {subtopic.articles.length === 0 && (
-                <li className="px-3 py-2 text-[11px] text-text-tertiary">
+                <li className="px-2.5 py-2 text-[11px] text-text-tertiary">
                   No articles yet
                 </li>
               )}
@@ -137,7 +124,7 @@ export default function Sidebar({
         ))}
 
         {subtopics.length === 0 && articles.length === 0 && (
-          <p className="px-3 py-3 text-[11.5px] leading-relaxed text-text-tertiary">
+          <p className="m-0 px-2.5 py-3 text-[11.5px] leading-relaxed text-text-tertiary">
             Nothing has been published in this topic yet.
           </p>
         )}

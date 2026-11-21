@@ -61,7 +61,7 @@ export default function ForgotPassword() {
 
                 <Link
                   to={`/auth/reset-password?token=${encodeURIComponent(devToken)}`}
-                  className="w-fit text-[12px] font-semibold text-[#527C42] underline underline-offset-4 transition-colors hover:text-[#365D2B]"
+                  className="w-fit text-[12px] font-semibold text-brand-strong underline underline-offset-4 transition-colors hover:text-brand-strong-hover"
                 >
                   Open the reset page
                 </Link>
@@ -96,8 +96,9 @@ export default function ForgotPassword() {
 
           <Button
             type="submit"
-            disabled={forgotPassword.isPending}
+            loading={forgotPassword.isPending}
             className="mt-1 w-full"
+            size="lg"
           >
             {forgotPassword.isPending ? 'Sending reset link…' : 'Send reset link'}
           </Button>

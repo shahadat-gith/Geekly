@@ -120,7 +120,7 @@ function AnnotationPopover({
           rounded-full border border-accent/25
           bg-accent-soft px-2.5 py-1
           text-[10.5px] font-semibold
-          tracking-wide text-[#94602F]
+          tracking-wide text-warning
         ">
           <span
             aria-hidden="true"
@@ -141,7 +141,7 @@ function AnnotationPopover({
             transition
             hover:bg-surface-secondary hover:text-text
             focus-visible:outline-none
-            focus-visible:ring-4 focus-visible:ring-brand-soft
+            focus-visible:ring-2 focus-visible:ring-ring
           "
         >
           <FaXmark aria-hidden="true" className="text-[12px]" />

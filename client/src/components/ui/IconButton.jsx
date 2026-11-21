@@ -31,7 +31,7 @@ export function IconButton({
   const classes = [
     'inline-flex shrink-0 select-none items-center justify-center whitespace-nowrap',
     'transition active:scale-[0.97]',
-    'focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-soft',
+    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
     'disabled:cursor-not-allowed disabled:opacity-55',
     'motion-reduce:transition-none motion-reduce:active:scale-100',
     SIZES[size] ?? SIZES.md,

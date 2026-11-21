@@ -45,12 +45,12 @@ function ReferenceVideo({ url, index }) {
         className="
           group block overflow-hidden rounded-xl border border-border
           bg-surface transition-all duration-200
-          hover:border-brand-active/60 hover:shadow-card
+          hover:border-brand-strong/60 hover:shadow-card
           focus-visible:outline-none focus-visible:ring-2
-          focus-visible:ring-brand-active focus-visible:ring-offset-2
+          focus-visible:ring-ring focus-visible:ring-offset-2
         "
       >
-        <span className="relative block aspect-video overflow-hidden bg-[#292B29]">
+        <span className="relative block aspect-video overflow-hidden bg-ink">
           {id && !thumbnailFailed ? (
             <img
               src={`https://i.ytimg.com/vi/${id}/hqdefault.jpg`}
@@ -103,17 +103,17 @@ export default function Videos({ videos = [] }) {
         p-4 shadow-card
       "
     >
-      <div className="flex items-center justify-between">
+      <div className="flex items-start justify-between gap-3 border-b border-border-secondary pb-3">
         <div>
-          <h2 className="m-0 text-[13px] font-semibold tracking-[-0.01em] text-text">
+          <h2 className="m-0 text-[13.5px] font-semibold tracking-[-0.01em] text-text">
             Video references
           </h2>
-          <p className="mb-0 mt-1 text-[11px] text-text-tertiary">
+          <p className="m-0 mt-1 text-[11.5px] text-text-tertiary">
             Watch and explore further
           </p>
         </div>
 
-        <span className="flex size-8 items-center justify-center rounded-lg bg-accent-soft text-[#A66D38]">
+        <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-accent-soft text-warning">
           <FaVideo aria-hidden="true" className="text-[13px]" />
         </span>
       </div>

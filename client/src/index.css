@@ -2,96 +2,99 @@
 
 
 @theme {
-  /* Primary — Soft Sage Green */
-  --color-brand: #B9E5A2;
-  --color-brand-hover: #A7D88D;
-  --color-brand-active: #91C879;
-  --color-brand-soft: #EDF7E8;
-  --color-brand-light: #D6EEC8;
-  --color-on-brand: #253022;
+  /* Brand — deep pine. Primary actions use this with white text. */
+  --color-brand: #2F6B45;
+  --color-brand-hover: #27593A;
+  --color-brand-active: #1F4A30;
+  --color-brand-strong: #2F6B45;
+  --color-brand-strong-hover: #27593A;
+  --color-brand-soft: #E9F1E6;
+  --color-brand-light: #D3E4CC;
+  --color-brand-mint: #B9E5A2;
+  --color-on-brand: #FFFFFF;
+  --color-ring: #BFDAC8;
 
-  /* Accent — Soft Peach */
-  --color-accent: #FFC58F;
-  --color-accent-soft: #FFF2E5;
+  /* Accent — warm amber, reserved for warnings and highlights. */
+  --color-accent: #C97B3D;
+  --color-accent-soft: #FAEFE0;
 
   /* Backgrounds */
-  --color-bg: #F7F8F6;
-  --color-bg-secondary: #F1F3EF;
-  --color-bg-tertiary: #E9ECE7;
+  --color-bg: #F7F8F5;
+  --color-bg-secondary: #F0F2ED;
+  --color-bg-tertiary: #E7EAE3;
 
   /* Surfaces */
   --color-surface: #FFFFFF;
-  --color-surface-secondary: #FCFCFA;
-  --color-surface-tertiary: #F4F5F2;
-  --color-surface-hover: #F5F7F3;
+  --color-surface-secondary: #FBFBF9;
+  --color-surface-tertiary: #F2F4F0;
+  --color-surface-hover: #F3F5F1;
 
   /* Skeleton placeholders. Deliberately darker than both the page background
-     (#F7F8F6) and the card surface so loading blocks are clearly visible. */
+     and the card surface so loading blocks are clearly visible. */
   --color-skeleton: #DFE4D7;
   --color-skeleton-strong: #D2D9C7;
 
   /* Dark Panels */
-  --color-ink: #292B29;
-  --color-ink-secondary: #353935;
-  --color-ink-soft: #464B45;
+  --color-ink: #1B1E1B;
+  --color-ink-secondary: #262A26;
+  --color-ink-soft: #3A403A;
   --color-ink-text: #FFFFFF;
-  --color-ink-muted: #B6BDB4;
+  --color-ink-muted: #A9B3A6;
 
   /* Typography */
-  --color-text: #252725;
-  --color-text-secondary: #747A73;
-  --color-text-tertiary: #A0A59E;
-  --color-text-disabled: #C4C8C1;
+  --color-text: #1D211D;
+  --color-text-secondary: #5C645C;
+  --color-text-tertiary: #8A918A;
+  --color-text-disabled: #BCC2BB;
 
   /* Borders */
-  --color-border: #E9ECE6;
-  --color-border-secondary: #F0F2ED;
-  --color-border-focus: #91C879;
+  --color-border: #E5E8E1;
+  --color-border-secondary: #EEF0E9;
+  --color-border-focus: #2F6B45;
 
   /* Semantic Colors */
-  --color-success: #73A85E;
-  --color-warning: #D99A4E;
-  --color-error: #D66B62;
-  --color-info: #819C91;
+  --color-success: #2E7D46;
+  --color-warning: #A96B1B;
+  --color-error: #C2402F;
+  --color-info: #3D6B8E;
 
   /* Fonts */
-  --font-sans: "Inter", ui-sans-serif, -apple-system,
+  --font-sans: "Instrument Sans", ui-sans-serif, -apple-system,
     BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
 
-  --font-heading: "Inter", ui-sans-serif, -apple-system,
+  --font-heading: "Instrument Sans", ui-sans-serif, -apple-system,
     BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
 
-  --font-mono: ui-monospace, SFMono-Regular, Menlo,
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo,
     Consolas, monospace;
 
-  /* Shadows */
+  /* Shadows — flat by default, depth only on elevation. */
   --shadow-card:
-    0 1px 3px rgb(35 40 32 / 0.03),
-    0 12px 32px -20px rgb(35 40 32 / 0.12);
+    0 1px 2px rgb(27 30 27 / 0.04);
 
   --shadow-card-hover:
-    0 3px 8px rgb(35 40 32 / 0.04),
-    0 16px 36px -18px rgb(35 40 32 / 0.15);
+    0 2px 4px rgb(27 30 27 / 0.05),
+    0 8px 24px -12px rgb(27 30 27 / 0.14);
 
   --shadow-note:
-    0 2px 4px rgb(35 40 32 / 0.04),
-    0 14px 30px -18px rgb(35 40 32 / 0.14);
+    0 2px 4px rgb(27 30 27 / 0.04),
+    0 14px 30px -18px rgb(27 30 27 / 0.14);
 
   --shadow-button:
-    0 2px 4px rgb(35 40 32 / 0.08);
+    0 1px 2px rgb(27 30 27 / 0.12);
 
   --shadow-field:
     inset 0 1px 0 rgb(0 0 0 / 0.02);
 
   --shadow-dropdown:
-    0 4px 10px rgb(35 40 32 / 0.05),
-    0 16px 36px -16px rgb(35 40 32 / 0.14);
+    0 4px 10px rgb(27 30 27 / 0.06),
+    0 16px 36px -16px rgb(27 30 27 / 0.16);
 
-  /* Radii */
-  --radius-button: 0.625rem;
-  --radius-card: 1rem;
-  --radius-field: 0.75rem;
-  --radius-panel: 1.25rem;
+  /* Radii — one scale used everywhere. */
+  --radius-button: 0.5rem;
+  --radius-card: 0.75rem;
+  --radius-field: 0.5rem;
+  --radius-panel: 1rem;
 
   --breakpoint-xs: 30rem;
 }
@@ -109,6 +112,46 @@ body {
   letter-spacing: -0.006em;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+}
+
+/* Mono eyebrow label used for section kickers and technical meta. */
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-brand);
+}
+
+/* Visible keyboard focus everywhere. */
+:focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 2px;
+}
+
+.skip-link {
+  position: fixed;
+  top: -100px;
+  left: 16px;
+  z-index: 200;
+  border-radius: var(--radius-button);
+  background: var(--color-ink);
+  color: var(--color-ink-text);
+  padding: 10px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  transition: top 160ms ease;
+}
+
+.skip-link:focus {
+  top: 12px;
+}
+
+/* Quiet thin scrollbars for sidebars and tab strips. */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--color-text) 22%, transparent) transparent;
 }
 
 button,
@@ -129,10 +172,10 @@ input[type="radio"] {
 /* Scroll reveal: elements start faded + lowered, then rise in. */
 .reveal {
   opacity: 0;
-  transform: translateY(20px);
+  transform: translateY(14px);
   transition:
-    opacity 700ms ease,
-    transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
+    opacity 500ms ease,
+    transform 500ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .reveal.is-visible {
@@ -143,13 +186,14 @@ input[type="radio"] {
 /* Shared smooth hover treatment for linked cards. */
 .card-hover {
   transition:
-    transform 400ms cubic-bezier(0.22, 1, 0.36, 1),
-    box-shadow 400ms ease;
+    transform 220ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 220ms ease,
+    border-color 220ms ease;
 }
 
 .card-hover:hover,
 .card-hover:focus-visible {
-  transform: translateY(-3px);
+  transform: translateY(-2px);
   box-shadow: var(--shadow-card-hover);
 }
 
@@ -198,6 +242,41 @@ input[type="radio"] {
 
 @media (prefers-reduced-motion: reduce) {
   .animate-page {
+    animation: none;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 200ms ease both;
+}
+
+@keyframes slide-in-left {
+  from {
+    transform: translateX(-100%);
+  }
+
+  to {
+    transform: none;
+  }
+}
+
+.animate-slide-in-left {
+  animation: slide-in-left 260ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-in,
+  .animate-slide-in-left {
     animation: none;
   }
 }

@@ -1,4 +1,3 @@
-
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
@@ -6,7 +5,6 @@ import { clearSession, setSession } from '../utils/tokens.js';
 import { useAuth } from '../context/authContext.js';
 import { AuthLayout, AuthLink } from '../components/layout/AuthLayout.jsx';
 import { Alert } from '../components/ui/Alert.jsx';
-import { Button } from '../components/ui/Button.jsx';
 
 export default function OAuthCallback() {
   const [params] = useSearchParams();
@@ -51,11 +49,11 @@ export default function OAuthCallback() {
         <div
           role="status"
           aria-live="polite"
-          className="flex items-center gap-3 rounded-xl border border-border bg-surface-secondary px-4 py-4"
+          className="flex items-center gap-3 rounded-field border border-border bg-surface-secondary px-4 py-4"
         >
           <span
             aria-hidden="true"
-            className="h-5 w-5 shrink-0 animate-spin rounded-full border-2 border-border border-t-[#527C42]"
+            className="h-5 w-5 shrink-0 animate-spin rounded-full border-2 border-border border-t-brand"
           />
 
           <p className="m-0 text-[13px] font-medium text-text-secondary">
@@ -77,17 +75,7 @@ export default function OAuthCallback() {
         </>
       }
     >
-      <div className="flex flex-col gap-4">
-        <Alert>{error}</Alert>
-
-        <Button
-          as="a"
-          href="/auth/login"
-          className="w-full"
-        >
-          Back to sign in
-        </Button>
-      </div>
+      <Alert>{error}</Alert>
     </AuthLayout>
   );
 }

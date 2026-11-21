@@ -1,6 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { FaArrowLeft, FaCircleCheck, FaCircleXmark, FaFolderOpen } from 'react-icons/fa6';
+import {
+  FaCircleCheck,
+  FaCircleXmark,
+  FaFolderOpen,
+  FaGlobe,
+  FaSpinner,
+} from 'react-icons/fa6';
 import {
   checkSlugApi,
   createDeploymentApi,
@@ -10,8 +16,8 @@ import {
 } from '../api/deployments.js';
 import { Alert } from '../components/ui/Alert.jsx';
 import { Button } from '../components/ui/Button.jsx';
-import { Card } from '../components/ui/Card.jsx';
 import { Input } from '../components/ui/Input.jsx';
+import { PageHeader } from '../components/ui/PageHeader.jsx';
 import { siteHost } from '../components/deployments/deploymentMeta.js';
 
 const CONCURRENCY = 4;
@@ -21,6 +27,61 @@ const relativePathOf = (file) => file.webkitRelativePath || file.name;
 
 function errorText(error, fallback) {
   return error?.response?.data?.message || fallback;
+}
+
+function SectionCard({ step, title, description, children }) {
+  return (
+    <section className="rounded-card border border-border bg-surface p-5 shadow-card sm:p-6">
+      <div className="flex items-start gap-3">
+        <span
+          aria-hidden="true"
+          className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-md border border-border bg-surface-tertiary font-mono text-[11px] font-semibold text-text-secondary"
+        >
+          {step}
+        </span>
+
+        <div className="min-w-0">
+          <h2 className="m-0 text-[14.5px] font-semibold tracking-[-0.01em] text-text">
+            {title}
+          </h2>
+          <p className="m-0 mt-1 text-[12.5px] leading-relaxed text-text-secondary">
+            {description}
+          </p>
+        </div>
+      </div>
+
+      <div className="mt-5">{children}</div>
+    </section>
+  );
+}
+
+function SlugStatus({ state, host }) {
+  if (state.status === 'idle') return null;
+
+  return (
+    <p className="m-0 flex items-center gap-2 text-[12.5px]" role="status" aria-live="polite">
+      {state.status === 'checking' && (
+        <>
+          <FaSpinner aria-hidden="true" className="animate-spin text-[11px] text-text-tertiary" />
+          <span className="text-text-tertiary">Checking availability…</span>
+        </>
+      )}
+
+      {state.status === 'available' && (
+        <>
+          <FaCircleCheck aria-hidden="true" className="text-[11px] text-success" />
+          <span className="text-success">{host} is available</span>
+        </>
+      )}
+
+      {(state.status === 'taken' || state.status === 'error') && (
+        <>
+          <FaCircleXmark aria-hidden="true" className="text-[11px] text-error" />
+          <span className="text-error">Not available</span>
+        </>
+      )}
+    </p>
+  );
 }
 
 export default function DeploymentNew() {
@@ -126,121 +187,149 @@ export default function DeploymentNew() {
   const canSubmit = !busy && slugState.status === 'available' && files.length > 0;
 
   return (
-    <div className="mx-auto w-full max-w-2xl px-4 py-8 sm:px-6 sm:py-12">
-      <Link
-        to="/deployments"
-        className="inline-flex items-center gap-2 text-[13px] font-medium text-text-secondary transition-colors hover:text-text"
-      >
-        <FaArrowLeft aria-hidden="true" className="text-[11px]" />
-        My sites
-      </Link>
+    <div className="mx-auto w-full max-w-2xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8">
+      <PageHeader
+        eyebrow="Static hosting"
+        title="New site"
+        description="Pick a name and address, then choose the built folder of your website."
+      />
 
-      <header className="mt-5">
-        <p className="m-0 text-[11px] font-semibold uppercase tracking-[0.12em] text-[#527C42]">
-          Static hosting
-        </p>
-        <h1 className="m-0 mt-2 font-heading text-[28px] font-semibold tracking-[-0.035em] text-text sm:text-[32px]">
-          New site
-        </h1>
-        <p className="m-0 mt-2 text-[13.5px] leading-relaxed text-text-secondary">
-          Pick a name and address, then choose the built folder of your website.
-        </p>
-      </header>
-
-      <form onSubmit={onSubmit} className="mt-8 flex flex-col gap-6">
-        <Card className="flex flex-col gap-6 p-5 sm:p-6">
-          <Input
-            label="Site name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            maxLength={80}
-            placeholder="My portfolio"
-            disabled={busy}
-          />
-
-          <div className="flex flex-col gap-2">
+      <form onSubmit={onSubmit} className="mt-7 flex flex-col gap-4">
+        <SectionCard
+          step="01"
+          title="Name and address"
+          description="The address becomes the public geekly.in hostname for this site."
+        >
+          <div className="flex flex-col gap-5">
             <Input
-              label="Address"
-              value={slug}
-              onChange={(e) => setSlug(e.target.value)}
-              maxLength={63}
-              placeholder="my-portfolio"
+              label="Site name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              maxLength={80}
+              placeholder="My portfolio"
               disabled={busy}
-              error={slugState.status === 'taken' || slugState.status === 'error' ? slugState.reason : undefined}
-              hint={slugState.status === 'idle' ? 'Lowercase letters, numbers and hyphens.' : undefined}
             />
-            <p className="m-0 flex items-center gap-2 text-[12.5px]" role="status">
-              {slugState.status === 'checking' && <span className="text-text-tertiary">Checking availability…</span>}
-              {slugState.status === 'available' && (
-                <span className="inline-flex items-center gap-1.5 text-success">
-                  <FaCircleCheck aria-hidden="true" /> {siteHost(normalizedSlug)} is available
-                </span>
-              )}
-              {(slugState.status === 'taken' || slugState.status === 'error') && (
-                <span className="inline-flex items-center gap-1.5 text-error">
-                  <FaCircleXmark aria-hidden="true" /> Not available
-                </span>
-              )}
-            </p>
-          </div>
-        </Card>
 
-        <Card className="flex flex-col gap-4 p-5 sm:p-6">
-          <div>
-            <h2 className="m-0 text-[15px] font-semibold text-text">Site folder</h2>
-            <p className="m-0 mt-1 text-[13px] leading-relaxed text-text-secondary">
-              Choose the folder your build produced. It must contain an index.html at its top level.
-            </p>
-          </div>
-
-          {folderSupported ? (
-            <label className="flex cursor-pointer flex-col items-center gap-3 rounded-card border border-dashed border-border-focus/60 bg-surface-secondary/60 px-6 py-8 text-center transition-colors hover:bg-brand-soft/40 has-[:focus-visible]:ring-4 has-[:focus-visible]:ring-brand-soft has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-60">
-              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-brand-soft">
-                <FaFolderOpen aria-hidden="true" className="text-[17px] text-[#527C42]" />
-              </div>
-              <span className="text-[14px] font-medium text-text">
-                {files.length > 0 ? 'Choose a different folder' : 'Choose a folder'}
-              </span>
-              <span className="text-[12.5px] text-text-tertiary">
-                {files.length > 0 ? `${files.length} file(s) selected` : 'No folder selected yet'}
-              </span>
-              <input
-                type="file"
-                webkitdirectory=""
-                multiple
-                onChange={onPickFolder}
+            <div className="flex flex-col gap-2.5">
+              <Input
+                label="Address"
+                value={slug}
+                onChange={(e) => setSlug(e.target.value)}
+                maxLength={63}
+                placeholder="my-portfolio"
                 disabled={busy}
-                className="sr-only"
+                error={slugState.status === 'taken' || slugState.status === 'error' ? slugState.reason : undefined}
+                hint={slugState.status === 'idle' ? 'Lowercase letters, numbers and hyphens.' : undefined}
               />
-            </label>
-          ) : (
-            <Alert tone="error">
-              Folder upload is not supported in this browser. Use a recent Chrome, Edge, Firefox or Safari.
-            </Alert>
-          )}
 
-          {busy && (
-            <div className="flex flex-col gap-2" aria-live="polite">
-              <div className="h-2 w-full overflow-hidden rounded-full bg-surface-tertiary">
-                <div
-                  className="h-2 rounded-full bg-brand transition-[width] duration-300"
-                  style={{ width: `${progress}%` }}
-                />
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <SlugStatus state={slugState} host={siteHost(normalizedSlug || 'your-site')} />
+
+                <span className="ml-auto inline-flex items-center gap-1.5 font-mono text-[11px] text-text-tertiary">
+                  <FaGlobe aria-hidden="true" className="text-[10px]" />
+                  {siteHost(normalizedSlug || 'your-site')}
+                </span>
               </div>
-              <p className="m-0 text-[12.5px] text-text-tertiary">Uploading… {progress}%</p>
             </div>
-          )}
-        </Card>
+          </div>
+        </SectionCard>
+
+        <SectionCard
+          step="02"
+          title="Site folder"
+          description="Choose the folder your build produced. It must contain an index.html at its top level."
+        >
+          <div className="flex flex-col gap-4">
+            {folderSupported ? (
+              <label
+                className={[
+                  'flex cursor-pointer flex-col items-center gap-2.5 rounded-card border border-dashed px-6 py-8 text-center transition-colors',
+                  'border-border bg-surface-secondary hover:border-brand-light',
+                  busy ? 'cursor-not-allowed opacity-60' : '',
+                  'has-[:focus-visible]:border-brand has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-ring',
+                ].join(' ')}
+              >
+                <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-brand-soft">
+                  <FaFolderOpen aria-hidden="true" className="text-[17px] text-brand-strong" />
+                </div>
+
+                <span className="text-[13.5px] font-semibold text-text">
+                  {files.length > 0 ? 'Choose a different folder' : 'Choose a folder'}
+                </span>
+
+                <span className="font-mono text-[11px] text-text-tertiary">
+                  {files.length > 0 ? `${files.length} file(s) selected` : 'no folder selected'}
+                </span>
+
+                <input
+                  type="file"
+                  webkitdirectory=""
+                  multiple
+                  onChange={onPickFolder}
+                  disabled={busy}
+                  className="sr-only"
+                />
+              </label>
+            ) : (
+              <Alert tone="error">
+                Folder upload is not supported in this browser. Use a recent Chrome, Edge, Firefox or Safari.
+              </Alert>
+            )}
+
+            {files.length > 0 && !busy && (
+              <p className="m-0 flex items-start gap-2 rounded-field border border-border bg-surface-secondary px-3.5 py-2.5 text-[12px] leading-relaxed text-text-secondary">
+                <FaCircleCheck aria-hidden="true" className="mt-0.5 shrink-0 text-[11px] text-success" />
+                Ready to publish. Every file in the folder will be uploaded and the newest version becomes live.
+              </p>
+            )}
+
+            {busy && (
+              <div className="flex flex-col gap-2" aria-live="polite">
+                <div className="flex items-center justify-between gap-3 font-mono text-[11px] text-text-secondary">
+                  <span>Uploading files…</span>
+                  <span className="tabular-nums">{progress}%</span>
+                </div>
+
+                <div
+                  role="progressbar"
+                  aria-valuenow={progress}
+                  aria-valuemin={0}
+                  aria-valuemax={100}
+                  aria-label="Upload progress"
+                  className="h-1.5 w-full overflow-hidden rounded-full bg-surface-tertiary"
+                >
+                  <div
+                    className="h-full rounded-full bg-brand transition-[width] duration-300"
+                    style={{ width: `${progress}%` }}
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+        </SectionCard>
 
         {error && <Alert tone="error">{error}</Alert>}
 
-        <div className="flex flex-col-reverse gap-3 xs:flex-row xs:justify-end">
-          <Button as={Link} to="/deployments" variant="secondary" className="w-full xs:w-auto">
-            Cancel
-          </Button>
-          <Button type="submit" disabled={!canSubmit} className="w-full xs:w-auto">
-            {busy ? 'Publishing…' : 'Publish site'}
-          </Button>
+        <div className="flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <p className="m-0 font-mono text-[11px] text-text-tertiary">
+            first version goes live immediately
+          </p>
+
+          <div className="flex flex-col-reverse gap-3 xs:flex-row">
+            <Button
+              as={Link}
+              to="/deployments"
+              variant="secondary"
+              className="w-full xs:w-auto"
+              aria-disabled={busy || undefined}
+            >
+              Cancel
+            </Button>
+
+            <Button type="submit" disabled={!canSubmit} loading={busy} className="w-full xs:w-auto">
+              {busy ? 'Publishing…' : 'Publish site'}
+            </Button>
+          </div>
         </div>
       </form>
     </div>

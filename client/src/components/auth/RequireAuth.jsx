@@ -15,7 +15,7 @@ export function RequireAuth({ children }) {
         <span
           role="status"
           aria-label="Restoring your session"
-          className="h-5 w-5 animate-spin rounded-full border-2 border-border border-t-brand"
+          className="h-5 w-5 animate-spin rounded-full border-2 border-border border-t-brand-strong"
         />
       </div>
     );

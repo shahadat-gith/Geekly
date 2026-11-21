@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { FaGithub, FaGoogle } from 'react-icons/fa6';
@@ -53,9 +52,10 @@ export default function Login() {
           as="a"
           href={googleOAuthUrl}
           variant="secondary"
-          className="w-full gap-2.5"
+          disabled={busy}
+          className="w-full"
         >
-          <FaGoogle aria-hidden="true" className="text-[16px]" />
+          <FaGoogle aria-hidden="true" className="text-[15px]" />
           Google
         </Button>
 
@@ -63,18 +63,19 @@ export default function Login() {
           as="a"
           href={githubOAuthUrl}
           variant="secondary"
-          className="w-full gap-2.5"
+          disabled={busy}
+          className="w-full"
         >
-          <FaGithub aria-hidden="true" className="text-[17px]" />
+          <FaGithub aria-hidden="true" className="text-[16px]" />
           GitHub
         </Button>
       </div>
 
-      <Divider label="or continue with email" className="my-1" />
+      <Divider label="or continue with email" className="my-5" />
 
-      {error && <Alert>{error}</Alert>}
+      <form onSubmit={onSubmit} className="flex flex-col gap-4">
+        {error && <Alert>{error}</Alert>}
 
-      <form onSubmit={onSubmit} className="flex flex-col gap-5">
         <Input
           label="Email address"
           type="email"
@@ -83,6 +84,7 @@ export default function Login() {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="you@example.com"
+          disabled={busy}
         />
 
         <div className="flex flex-col gap-2">
@@ -95,17 +97,13 @@ export default function Login() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Enter your password"
+            disabled={busy}
           />
 
           <div className="flex justify-end">
             <Link
               to="/auth/forgot-password"
-              className="
-                text-[12.5px] font-medium text-[#527C42]
-                transition-colors hover:text-[#365D2B]
-                focus-visible:rounded-sm focus-visible:outline-none
-                focus-visible:ring-2 focus-visible:ring-brand-active
-              "
+              className="rounded-sm text-[12.5px] font-medium text-brand-strong transition-colors hover:text-brand-strong-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             >
               Forgot password?
             </Link>
@@ -114,8 +112,9 @@ export default function Login() {
 
         <Button
           type="submit"
-          disabled={busy}
+          loading={busy}
           className="mt-1 w-full"
+          size="lg"
         >
           {busy ? 'Signing in…' : 'Sign in'}
         </Button>

@@ -1,31 +1,18 @@
+import { Badge } from '../ui/Badge.jsx';
 
 const STATUS = {
-  QUEUED: {
-    label: 'Queued',
-    tone: 'bg-surface-tertiary text-text-secondary',
-  },
-  PROCESSING: {
-    label: 'In progress',
-    tone: 'bg-brand-soft text-[#527C42]',
-  },
-  COMPLETED: {
-    label: 'Ready',
-    tone: 'bg-success/10 text-[#527C42]',
-  },
-  FAILED: {
-    label: 'Failed',
-    tone: 'bg-error/10 text-[#B94F47]',
-  },
+  QUEUED: { label: 'Queued', tone: 'neutral' },
+  PROCESSING: { label: 'In progress', tone: 'info', dot: true },
+  COMPLETED: { label: 'Ready', tone: 'success' },
+  FAILED: { label: 'Failed', tone: 'error' },
 };
 
 export function StatusChip({ status, label, className = '' }) {
   const config = STATUS[status] ?? STATUS.QUEUED;
 
   return (
-    <span
-      className={`inline-flex items-center rounded-full px-2.5 py-1 text-[11.5px] font-semibold leading-none ${config.tone} ${className}`}
-    >
+    <Badge tone={config.tone} dot={config.dot} className={className}>
       {label ?? config.label}
-    </span>
+    </Badge>
   );
 }

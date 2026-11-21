@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom';
+
 const DOCS = {
   terms: {
     title: 'Terms and conditions',
@@ -87,33 +89,77 @@ const DOCS = {
 
 export default function LegalPage({ page }) {
   const doc = DOCS[page];
+  const otherPage = page === 'terms' ? 'privacy' : 'terms';
 
   return (
-    <article className="mx-auto max-w-3xl px-6 py-14 sm:py-20">
-      <header className="border-b border-border pb-7">
-        <h1 className="text-balance font-heading text-[32px] font-semibold leading-[1.12] tracking-[-0.03em] sm:text-[40px]">
-          {doc.title}
-        </h1>
-        <p className="mt-3 text-[12.5px] text-text-tertiary">{doc.updated}</p>
-      </header>
+    <div className="mx-auto max-w-4xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
+      <div className="grid gap-10 lg:grid-cols-[170px_minmax(0,1fr)] lg:gap-14">
+        {/* Contents rail */}
+        <nav aria-label="Document contents" className="lg:sticky lg:top-24 lg:self-start">
+          <p className="eyebrow m-0">On this page</p>
 
-      <div className="mt-9 space-y-9">
-        {doc.sections.map((section) => (
-          <section key={section.heading}>
-            <h2 className="m-0 font-heading text-[19px] font-semibold leading-snug tracking-[-0.02em]">
-              {section.heading}
-            </h2>
-            {section.paragraphs.map((paragraph) => (
-              <p
-                key={paragraph}
-                className="mt-2.5 text-[14.5px] leading-[1.78] text-text-secondary"
-              >
-                {paragraph}
-              </p>
-            ))}
-          </section>
-        ))}
+          <ul className="m-0 mt-3 flex list-none flex-col gap-1.5 p-0">
+            {doc.sections.map((section) => {
+              const id = section.heading.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+
+              return (
+                <li key={section.heading}>
+                  <a
+                    href={`#${id}`}
+                    className="block text-[12.5px] leading-snug text-text-secondary transition-colors hover:text-text focus-visible:outline-none"
+                  >
+                    {section.heading}
+                  </a>
+                </li>
+              );
+            })}
+          </ul>
+
+          <div className="mt-5 border-t border-border-secondary pt-4">
+            <Link
+              to={`/${otherPage}`}
+              className="text-[12.5px] font-medium text-brand-strong transition-colors hover:text-brand-strong-hover focus-visible:outline-none"
+            >
+              {otherPage === 'terms' ? 'Terms of service' : 'Privacy policy'}
+            </Link>
+          </div>
+        </nav>
+
+        {/* Document */}
+        <article className="min-w-0">
+          <header className="border-b border-border pb-6">
+            <h1 className="text-balance font-heading text-[30px] font-semibold leading-[1.12] tracking-[-0.03em] sm:text-[36px]">
+              {doc.title}
+            </h1>
+            <p className="m-0 mt-2.5 font-mono text-[11px] uppercase tracking-[0.1em] text-text-tertiary">
+              {doc.updated}
+            </p>
+          </header>
+
+          <div className="mt-8 flex flex-col gap-8">
+            {doc.sections.map((section) => {
+              const id = section.heading.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+
+              return (
+                <section key={section.heading} id={id} className="scroll-mt-24">
+                  <h2 className="m-0 text-[17px] font-semibold leading-snug tracking-[-0.015em] text-text">
+                    {section.heading}
+                  </h2>
+
+                  {section.paragraphs.map((paragraph) => (
+                    <p
+                      key={paragraph}
+                      className="mt-2.5 text-[14px] leading-[1.8] text-text-secondary"
+                    >
+                      {paragraph}
+                    </p>
+                  ))}
+                </section>
+              );
+            })}
+          </div>
+        </article>
       </div>
-    </article>
+    </div>
   );
 }

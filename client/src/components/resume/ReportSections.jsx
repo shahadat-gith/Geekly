@@ -1,19 +1,29 @@
 import { useEffect, useRef, useState } from 'react';
-import { FaCheck, FaCopy } from 'react-icons/fa6';
+import {
+  FaCheck,
+  FaCopy,
+  FaLayerGroup,
+  FaCircleCheck,
+  FaTriangleExclamation,
+  FaCircleMinus,
+  FaWandMagicSparkles,
+} from 'react-icons/fa6';
+
+import { Badge } from '../ui/Badge.jsx';
 
 const TABS = [
-  { key: 'summary', label: 'Summary' },
-  { key: 'strengths', label: 'Strong points' },
-  { key: 'gaps', label: 'Weak points' },
-  { key: 'missing', label: 'Missing skills' },
-  { key: 'fixes', label: 'Fixes' },
+  { key: 'summary', label: 'Summary', Icon: FaLayerGroup },
+  { key: 'strengths', label: 'Strong points', Icon: FaCircleCheck },
+  { key: 'gaps', label: 'Weak points', Icon: FaTriangleExclamation },
+  { key: 'missing', label: 'Missing skills', Icon: FaCircleMinus },
+  { key: 'fixes', label: 'Fixes', Icon: FaWandMagicSparkles },
 ];
 
 const SEVERITY_TONE = {
-  Critical: 'bg-error/10 text-[#B94F47]',
-  High: 'bg-accent-soft text-[#A9672D]',
-  Medium: 'bg-warning/10 text-[#98651F]',
-  Low: 'bg-surface-tertiary text-text-secondary',
+  Critical: 'error',
+  High: 'warning',
+  Medium: 'warning',
+  Low: 'neutral',
 };
 
 const PRIORITY_LABEL = {
@@ -21,31 +31,31 @@ const PRIORITY_LABEL = {
   Nice: 'Nice to have',
 };
 
-function Tag({ tone, children }) {
-  return (
-    <span
-      className={`inline-flex shrink-0 items-center rounded-full px-2.5 py-1 text-[11.5px] font-semibold leading-none ${tone}`}
-    >
-      {children}
-    </span>
-  );
-}
-
 function PanelHeading({ title, meta }) {
   return (
-    <div className="mb-5 flex flex-wrap items-baseline gap-x-3 gap-y-1 border-b border-border-secondary pb-4">
-      <h2 className="m-0 text-[16px] font-semibold leading-snug tracking-[-0.01em] text-text">
+    <div className="mb-5 border-b border-border-secondary pb-4">
+      <h2 className="m-0 text-[15px] font-semibold leading-snug tracking-[-0.01em] text-text">
         {title}
       </h2>
 
       {meta && (
-        <span className="text-[12.5px] leading-snug text-text-tertiary">{meta}</span>
+        <p className="m-0 mt-1 text-[12.5px] leading-snug text-text-tertiary">
+          {meta}
+        </p>
       )}
     </div>
   );
 }
 
-function NumberedPoints({ items, tone }) {
+function EmptyNote({ children }) {
+  return (
+    <p className="m-0 rounded-field border border-dashed border-border bg-surface-secondary px-4 py-5 text-[13px] leading-[1.7] text-text-secondary">
+      {children}
+    </p>
+  );
+}
+
+function NumberedPoints({ items }) {
   return (
     <ol className="m-0 flex list-none flex-col gap-4 p-0">
       {items.map((item, index) => (
@@ -54,9 +64,7 @@ function NumberedPoints({ items, tone }) {
           className={index ? 'border-t border-border-secondary pt-4' : ''}
         >
           <div className="flex gap-3">
-            <span
-              className={`mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[11px] font-semibold ${tone}`}
-            >
+            <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-success/10 font-mono text-[11px] font-semibold text-success">
               {index + 1}
             </span>
 
@@ -123,7 +131,7 @@ function CopyButton({ label, copiedLabel, copied, onClick, disabled = false }) {
       type="button"
       onClick={onClick}
       disabled={disabled}
-      className="inline-flex min-h-8 shrink-0 items-center gap-1.5 rounded-button px-2.5 text-[12px] font-semibold text-[#527C42] transition-colors hover:bg-brand-soft focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-soft disabled:cursor-not-allowed disabled:opacity-50"
+      className="inline-flex min-h-7 shrink-0 items-center gap-1.5 rounded-button px-2 text-[11.5px] font-semibold text-brand-strong transition-colors hover:bg-brand-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
     >
       {copied ? (
         <FaCheck aria-hidden="true" className="text-[11px]" />
@@ -154,17 +162,17 @@ function Fixes({ edits }) {
 
   if (!edits.length) {
     return (
-      <p className="m-0 text-[13.5px] leading-[1.7] text-text-secondary">
+      <EmptyNote>
         No changes are needed for this role. The resume already covers what this
         job asks for.
-      </p>
+      </EmptyNote>
     );
   }
 
   return (
     <div className="flex flex-col gap-5">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <p className="m-0 text-[13px] leading-[1.7] text-text-secondary">
+      <div className="flex flex-wrap items-center justify-between gap-3 rounded-field border border-border bg-surface-secondary px-4 py-3">
+        <p className="m-0 text-[12.5px] leading-[1.6] text-text-secondary">
           Each fix is finished text. Copy it into the section named above it.
         </p>
 
@@ -184,7 +192,7 @@ function Fixes({ edits }) {
           >
             <div className="flex flex-wrap items-start justify-between gap-2">
               <div className="min-w-0">
-                <p className="m-0 text-[11px] font-semibold uppercase tracking-[0.08em] text-text-tertiary">
+                <p className="m-0 font-mono text-[10.5px] uppercase tracking-[0.1em] text-text-tertiary">
                   {edit.section}
                 </p>
 
@@ -194,26 +202,23 @@ function Fixes({ edits }) {
               </div>
 
               <div className="flex flex-wrap items-center gap-2">
-                <Tag tone="bg-surface-tertiary text-text-secondary">
-                  {edit.action}
-                </Tag>
-
-                <Tag tone={SEVERITY_TONE[edit.priority] ?? SEVERITY_TONE.Medium}>
+                <Badge tone="neutral">{edit.action}</Badge>
+                <Badge tone={SEVERITY_TONE[edit.priority] ?? 'warning'}>
                   {edit.priority}
-                </Tag>
+                </Badge>
               </div>
             </div>
 
             {edit.before && (
-              <p className="mt-2 border-l-2 border-border pl-3 text-[13px] leading-[1.7] text-text-tertiary">
+              <p className="m-0 mt-2 border-l-2 border-border pl-3 text-[13px] leading-[1.7] text-text-tertiary">
                 <span className="font-semibold text-text-secondary">Now: </span>
                 {edit.before}
               </p>
             )}
 
-            <div className="mt-2 overflow-hidden rounded-button border border-border bg-surface-secondary">
+            <div className="mt-2 overflow-hidden rounded-field border border-border bg-surface-secondary">
               <div className="flex items-center justify-between gap-3 border-b border-border px-3 py-1.5">
-                <span className="text-[10.5px] font-semibold uppercase tracking-[0.08em] text-text-tertiary">
+                <span className="font-mono text-[10px] uppercase tracking-[0.1em] text-text-tertiary">
                   Paste this
                 </span>
 
@@ -231,7 +236,7 @@ function Fixes({ edits }) {
             </div>
 
             {edit.reason && (
-              <p className="mt-2 text-[13px] leading-[1.7] text-text-secondary">
+              <p className="m-0 mt-2 text-[13px] leading-[1.7] text-text-secondary">
                 <span className="font-semibold text-text">Why: </span>
                 {edit.reason}
               </p>
@@ -243,9 +248,10 @@ function Fixes({ edits }) {
   );
 }
 
-/** Full review in tabs: summary, strong points, weak points, missing skills, fixes. */
+/** Full review: summary, strong points, weak points, missing skills and fixes. */
 export function ReportSections({ analysis }) {
   const [active, setActive] = useState('summary');
+  const tabRefs = useRef({});
 
   const strengths = analysis.strengths ?? [];
   const gaps = analysis.gaps ?? [];
@@ -259,49 +265,91 @@ export function ReportSections({ analysis }) {
     fixes: edits.length,
   };
 
+  function onTabKeyDown(event) {
+    const index = TABS.findIndex((tab) => tab.key === active);
+    if (index === -1) return;
+
+    let next;
+
+    if (event.key === 'ArrowDown' || event.key === 'ArrowRight') {
+      next = (index + 1) % TABS.length;
+    } else if (event.key === 'ArrowUp' || event.key === 'ArrowLeft') {
+      next = (index - 1 + TABS.length) % TABS.length;
+    } else if (event.key === 'Home') {
+      next = 0;
+    } else if (event.key === 'End') {
+      next = TABS.length - 1;
+    } else {
+      return;
+    }
+
+    event.preventDefault();
+    setActive(TABS[next].key);
+    tabRefs.current[TABS[next].key]?.focus();
+  }
+
   return (
-    <div className="overflow-hidden rounded-card border border-border bg-surface shadow-card">
-      <div
-        role="tablist"
-        aria-label="Resume report sections"
-        className="flex gap-1 overflow-x-auto border-b border-border-secondary p-2"
-      >
-        {TABS.map((tab) => {
-          const count = counts[tab.key] ?? 0;
+    <div className="overflow-hidden rounded-card border border-border bg-surface shadow-card lg:grid lg:grid-cols-[232px_minmax(0,1fr)]">
+      {/* Section navigation */}
+      <div className="border-b border-border-secondary bg-surface-secondary/60 p-2 lg:border-b-0 lg:border-r lg:p-3">
+        <div
+          role="tablist"
+          aria-label="Resume report sections"
+          aria-orientation="vertical"
+          onKeyDown={onTabKeyDown}
+          className="flex gap-1 overflow-x-auto lg:flex-col lg:overflow-visible"
+        >
+          {TABS.map((tab) => {
+            const count = counts[tab.key];
+            const selected = active === tab.key;
+            const Icon = tab.Icon;
 
-          return (
-            <button
-              key={tab.key}
-              type="button"
-              role="tab"
-              id={`report-tab-${tab.key}`}
-              aria-selected={active === tab.key}
-              aria-controls={`report-panel-${tab.key}`}
-              tabIndex={active === tab.key ? 0 : -1}
-              onClick={() => setActive(tab.key)}
-              className={`inline-flex shrink-0 items-center gap-1.5 rounded-button px-3 py-2 text-[13px] font-medium transition-colors focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-soft ${
-                active === tab.key
-                  ? 'bg-brand-soft text-[#527C42]'
-                  : 'text-text-secondary hover:bg-surface-secondary hover:text-text'
-              }`}
-            >
-              {tab.label}
+            return (
+              <button
+                key={tab.key}
+                ref={(node) => {
+                  tabRefs.current[tab.key] = node;
+                }}
+                type="button"
+                role="tab"
+                id={`report-tab-${tab.key}`}
+                aria-selected={selected}
+                aria-controls={`report-panel-${tab.key}`}
+                tabIndex={selected ? 0 : -1}
+                onClick={() => setActive(tab.key)}
+                className={`inline-flex min-h-9 shrink-0 items-center gap-2 rounded-button px-3 text-[13px] font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring lg:w-full ${
+                  selected
+                    ? 'bg-surface text-text shadow-card'
+                    : 'text-text-secondary hover:bg-surface hover:text-text'
+                }`}
+              >
+                <Icon
+                  aria-hidden="true"
+                  className={`text-[12px] ${selected ? 'text-brand-strong' : 'text-text-tertiary'}`}
+                />
 
-              {count > 0 && (
-                <span className="rounded-full bg-surface-tertiary px-1.5 py-0.5 text-[10.5px] font-semibold leading-none text-text-secondary">
-                  {count}
-                </span>
-              )}
-            </button>
-          );
-        })}
+                <span className="whitespace-nowrap">{tab.label}</span>
+
+                {count > 0 && (
+                  <span
+                    className={`ml-auto hidden rounded-full px-1.5 py-0.5 font-mono text-[10.5px] font-semibold leading-none lg:inline ${selected ? 'bg-brand-soft text-brand-strong' : 'bg-surface-tertiary text-text-tertiary'}`}
+                  >
+                    {count}
+                  </span>
+                )}
+              </button>
+            );
+          })}
+        </div>
       </div>
 
+      {/* Active panel */}
       <div
         role="tabpanel"
         id={`report-panel-${active}`}
         aria-labelledby={`report-tab-${active}`}
-        className="px-5 py-5 sm:px-6 sm:py-6"
+        tabIndex={0}
+        className="min-w-0 px-5 py-5 focus-visible:outline-none sm:px-6 sm:py-6"
       >
         {active === 'summary' && (
           <>
@@ -312,9 +360,7 @@ export function ReportSections({ analysis }) {
                 {analysis.summary}
               </p>
             ) : (
-              <p className="m-0 text-[13.5px] text-text-tertiary">
-                No summary was produced for this report.
-              </p>
+              <EmptyNote>No summary was produced for this report.</EmptyNote>
             )}
           </>
         )}
@@ -331,15 +377,12 @@ export function ReportSections({ analysis }) {
             />
 
             {strengths.length ? (
-              <NumberedPoints
-                items={strengths}
-                tone="bg-success/10 text-[#527C42]"
-              />
+              <NumberedPoints items={strengths} />
             ) : (
-              <p className="m-0 text-[13.5px] leading-[1.7] text-text-tertiary">
-                No specific strong points were found for this role. The fixes are where the
-                gains are.
-              </p>
+              <EmptyNote>
+                No specific strong points were found for this role. The fixes are
+                where the gains are.
+              </EmptyNote>
             )}
           </>
         )}
@@ -348,7 +391,11 @@ export function ReportSections({ analysis }) {
           <>
             <PanelHeading
               title="Weak points"
-              meta={gaps.length ? `${gaps.length} issues holding this resume back` : 'Nothing major found'}
+              meta={
+                gaps.length
+                  ? `${gaps.length} issues holding this resume back`
+                  : 'Nothing major found'
+              }
             />
 
             {gaps.length ? (
@@ -360,9 +407,9 @@ export function ReportSections({ analysis }) {
                         {item.title}
                       </p>
 
-                      <Tag tone={SEVERITY_TONE[item.severity] ?? SEVERITY_TONE.Medium}>
+                      <Badge tone={SEVERITY_TONE[item.severity] ?? 'warning'}>
                         {item.severity}
-                      </Tag>
+                      </Badge>
                     </div>
 
                     {item.detail && (
@@ -374,9 +421,7 @@ export function ReportSections({ analysis }) {
                 ))}
               </ul>
             ) : (
-              <p className="m-0 text-[13.5px] leading-[1.7] text-text-tertiary">
-                No major weaknesses were found for this job.
-              </p>
+              <EmptyNote>No major weaknesses were found for this job.</EmptyNote>
             )}
           </>
         )}
@@ -401,9 +446,9 @@ export function ReportSections({ analysis }) {
                         {item.skill}
                       </p>
 
-                      <Tag tone="bg-surface-tertiary text-text-secondary">
+                      <Badge tone="neutral">
                         {PRIORITY_LABEL[item.priority] ?? PRIORITY_LABEL.Must}
-                      </Tag>
+                      </Badge>
                     </div>
 
                     {item.detail && (
@@ -415,9 +460,9 @@ export function ReportSections({ analysis }) {
                 ))}
               </ul>
             ) : (
-              <p className="m-0 text-[13.5px] leading-[1.7] text-text-tertiary">
+              <EmptyNote>
                 Your resume shows every skill this job description asks for.
-              </p>
+              </EmptyNote>
             )}
           </>
         )}
@@ -426,7 +471,11 @@ export function ReportSections({ analysis }) {
           <>
             <PanelHeading
               title="Fixes to apply"
-              meta={edits.length ? `${edits.length} changes, ordered by impact` : 'Nothing to change'}
+              meta={
+                edits.length
+                  ? `${edits.length} changes, ordered by impact`
+                  : 'Nothing to change'
+              }
             />
 
             <Fixes edits={edits} />

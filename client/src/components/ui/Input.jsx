@@ -6,7 +6,7 @@ const FIELD_BASE =
 
 const FIELD_STATES = {
   default:
-    'border-border hover:border-border-focus/60 focus:border-border-focus focus:ring-brand-soft',
+    'border-border hover:border-text-tertiary focus:border-border-focus focus:ring-brand-soft',
   error:
     'border-error/70 hover:border-error focus:border-error focus:ring-error/10',
 };

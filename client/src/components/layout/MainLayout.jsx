@@ -1,4 +1,3 @@
-
 import { Outlet, useLocation } from 'react-router-dom';
 import { Background } from './Background.jsx';
 import { Navbar } from './Navbar.jsx';
@@ -9,6 +8,10 @@ export function MainLayout() {
 
   return (
     <div className="relative isolate min-h-svh overflow-x-clip bg-bg text-text">
+      <a href="#main-content" className="skip-link">
+        Skip to content
+      </a>
+
       {/* Global ambient background */}
       <Background />
 
@@ -19,6 +22,7 @@ export function MainLayout() {
         {/* Route content */}
         <main
           key={pathname}
+          id="main-content"
           className="relative min-w-0 flex-1 animate-page"
         >
           <Outlet />

@@ -52,7 +52,7 @@ export function Avatar({
   return (
     <span
       aria-hidden="true"
-      className={`flex items-center justify-center ${baseClass} bg-brand-soft font-semibold text-[#527C42]`}
+      className={`flex items-center justify-center ${baseClass} bg-brand-soft font-semibold text-brand-strong`}
     >
       {getInitials(name)}
     </span>

@@ -1,4 +1,3 @@
-
 import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/authContext.js';
@@ -16,19 +15,18 @@ export function Navbar() {
   }
 
   return (
-    <header className="sticky top-0 z-50 border-b border-border/70 bg-surface/85 backdrop-blur-xl">
-      <div className="mx-auto flex h-[72px] max-w-7xl items-center justify-between px-5 sm:px-8 lg:px-10">
-
+    <header className="sticky top-0 z-50 border-b border-border bg-surface/85 backdrop-blur-xl">
+      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
         {/* Brand */}
         <Link
           to="/"
           aria-label="Geekly home"
-          className="inline-flex shrink-0 items-center rounded-button transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-soft"
+          className="inline-flex shrink-0 items-center rounded-button transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         >
           <img
             src="/logo.png"
             alt="Geekly"
-            className="h-8 w-auto max-w-[160px] object-contain sm:h-9"
+            className="h-8 w-auto max-w-[150px] object-contain sm:h-9"
           />
         </Link>
 
@@ -43,9 +41,14 @@ export function Navbar() {
           ) : user ? (
             <ProfileMenu user={user} onLogout={onLogout} />
           ) : (
-            <Button as={Link} to="/auth/login" size="sm">
-              Sign in
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button as={Link} to="/auth/register" variant="ghost" size="sm" className="hidden sm:inline-flex">
+                Create account
+              </Button>
+              <Button as={Link} to="/auth/login" size="sm">
+                Sign in
+              </Button>
+            </div>
           )}
         </div>
       </div>
@@ -89,7 +92,7 @@ function ProfileMenu({ user, onLogout }) {
         onClick={() => setOpen((v) => !v)}
         aria-haspopup="menu"
         aria-expanded={open}
-        className="rounded-full ring-offset-2 transition hover:ring-2 hover:ring-brand/40"
+        className="rounded-full ring-offset-2 transition hover:ring-2 hover:ring-brand-strong/40"
       >
         <Avatar
           src={user.avatar?.url}
@@ -105,7 +108,7 @@ function ProfileMenu({ user, onLogout }) {
           className="absolute right-0 top-[calc(100%+12px)] z-50 w-64 overflow-hidden rounded-card border border-border bg-surface shadow-dropdown animate-page"
         >
           {/* Account information */}
-          <div className="border-b border-border-secondary bg-surface-secondary/70 px-4 py-4">
+          <div className="border-b border-border-secondary bg-surface-secondary px-4 py-4">
             <div className="flex items-center gap-3">
               <Avatar
                 src={user.avatar?.url}
@@ -130,16 +133,25 @@ function ProfileMenu({ user, onLogout }) {
               to="/profile"
               role="menuitem"
               onClick={() => setOpen(false)}
-              className="flex w-full items-center rounded-lg px-3 py-2.5 text-sm font-medium text-text-secondary transition-colors hover:bg-brand-soft hover:text-text focus-visible:bg-brand-soft focus-visible:outline-none"
+              className="flex w-full items-center rounded-lg px-3 py-2.5 text-sm font-medium text-text-secondary transition-colors hover:bg-surface-secondary hover:text-text focus-visible:bg-surface-secondary focus-visible:outline-none"
             >
               My profile
+            </Link>
+
+            <Link
+              to="/resume-analysis"
+              role="menuitem"
+              onClick={() => setOpen(false)}
+              className="flex w-full items-center rounded-lg px-3 py-2.5 text-sm font-medium text-text-secondary transition-colors hover:bg-surface-secondary hover:text-text focus-visible:bg-surface-secondary focus-visible:outline-none"
+            >
+              Resume analysis
             </Link>
 
             <Link
               to="/deployments"
               role="menuitem"
               onClick={() => setOpen(false)}
-              className="flex w-full items-center rounded-lg px-3 py-2.5 text-sm font-medium text-text-secondary transition-colors hover:bg-brand-soft hover:text-text focus-visible:bg-brand-soft focus-visible:outline-none"
+              className="flex w-full items-center rounded-lg px-3 py-2.5 text-sm font-medium text-text-secondary transition-colors hover:bg-surface-secondary hover:text-text focus-visible:bg-surface-secondary focus-visible:outline-none"
             >
               My sites
             </Link>
@@ -148,7 +160,7 @@ function ProfileMenu({ user, onLogout }) {
               type="button"
               role="menuitem"
               onClick={onLogout}
-              className="flex w-full items-center rounded-lg px-3 py-2.5 text-left text-sm font-medium text-error transition-colors hover:bg-red-50 focus-visible:bg-red-50 focus-visible:outline-none"
+              className="flex w-full items-center rounded-lg px-3 py-2.5 text-left text-sm font-medium text-error transition-colors hover:bg-error/5 focus-visible:bg-error/5 focus-visible:outline-none"
             >
               Sign out
             </button>

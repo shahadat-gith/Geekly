@@ -10,9 +10,11 @@ export default function Home() {
   return (
     <>
       <Hero />
-      <ResumeIntelligenceCta />
-      <HostingCta />
       <Topics />
+      <div className="mt-16 sm:mt-20">
+        <ResumeIntelligenceCta />
+      </div>
+      <HostingCta />
     </>
   );
 }
