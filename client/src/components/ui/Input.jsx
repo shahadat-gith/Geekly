@@ -2,7 +2,7 @@
 import { useId } from 'react';
 
 const FIELD_BASE =
-  'w-full min-h-[44px] rounded-field border bg-surface px-4 text-[14px] text-text placeholder:text-text-tertiary outline-none transition-colors focus:ring-4 disabled:cursor-not-allowed disabled:bg-surface-secondary disabled:opacity-65';
+  'w-full min-h-[44px] rounded-field border bg-surface px-4 text-[14px] text-text placeholder:text-text-tertiary outline-none transition-[border-color,box-shadow,background] duration-150 focus:ring-4 disabled:cursor-not-allowed disabled:bg-surface-secondary disabled:opacity-65';
 
 const FIELD_STATES = {
   default:

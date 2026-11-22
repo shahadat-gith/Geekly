@@ -47,17 +47,17 @@ export default function Content({ article = null, topic }) {
   if (article) {
     return (
       <article className="mt-2 min-w-0 max-w-3xl">
-        <header className="border-b border-border pb-7 sm:pb-9">
+        <header className="border-b border-border pb-6 sm:pb-8">
           <Breadcrumb topic={topic} articleTitle={article.title} />
 
           {/* Title */}
-          <h1 className="max-w-3xl text-balance font-heading text-[30px] font-semibold leading-[1.15] tracking-[-0.035em] text-text sm:text-[38px] lg:text-[40px]">
+          <h1 className="max-w-3xl text-pretty font-heading text-[28px] font-semibold leading-[1.18] tracking-[-0.03em] text-text sm:text-[36px] lg:text-[38px]">
             {article.title}
           </h1>
 
           {/* Subtitle */}
           {article.subtitle && (
-            <p className="mt-4 max-w-2xl text-[14.5px] leading-[1.85] text-text-secondary sm:text-[16px]">
+            <p className="mt-4 max-w-2xl text-[14px] leading-[1.8] text-text-secondary sm:text-[15px]">
               {article.subtitle}
             </p>
           )}
@@ -88,12 +88,12 @@ export default function Content({ article = null, topic }) {
 
         <p className="eyebrow m-0">Learning topic</p>
 
-        <h1 className="mt-3 max-w-3xl text-balance font-heading text-[30px] font-semibold leading-[1.15] tracking-[-0.035em] text-text sm:text-[38px] lg:text-[40px]">
+        <h1 className="mt-3 max-w-3xl text-pretty font-heading text-[28px] font-semibold leading-[1.18] tracking-[-0.03em] text-text sm:text-[36px] lg:text-[38px]">
           {topic.name}
         </h1>
 
         {topic.description && (
-          <p className="mt-4 max-w-2xl text-[14.5px] leading-[1.85] text-text-secondary sm:text-[16px]">
+          <p className="mt-4 max-w-2xl text-[14px] leading-[1.8] text-text-secondary sm:text-[15px]">
             {topic.description}
           </p>
         )}

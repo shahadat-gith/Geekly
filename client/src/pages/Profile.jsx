@@ -18,17 +18,17 @@ export default function Profile() {
   const ready = analyses.filter((analysis) => analysis.status === 'COMPLETED').length;
 
   return (
-    <div className="mx-auto w-full max-w-5xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8">
+    <div className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
       <PageHeader
         eyebrow="Account"
         title="Your profile"
-        description="Manage your account details and revisit your resume analysis reports."
+        description="Account details and resume reviews saved to your workspace."
       />
 
-      <div className="mt-8 grid gap-4 lg:grid-cols-[minmax(0,1fr)_300px] lg:items-start">
+      <div className="mt-7 grid gap-5 lg:grid-cols-[minmax(0,1fr)_280px] lg:items-start">
         <div className="flex flex-col gap-4">
           {/* Profile information */}
-          <section className="flex items-center gap-4 rounded-card border border-border bg-surface p-5 shadow-card sm:p-6">
+          <section className="flex min-w-0 items-center gap-4 rounded-card border border-border bg-surface p-5 sm:p-6">
             <Avatar
               src={user?.avatar?.url}
               name={user?.fullname}

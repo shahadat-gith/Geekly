@@ -40,8 +40,8 @@ export function Alert({
       role={tone === 'error' ? 'alert' : 'status'}
       aria-live={tone === 'error' ? 'assertive' : 'polite'}
       className={[
-        'flex items-start gap-3 rounded-field border px-4 py-3',
-        'text-[13.5px] leading-relaxed',
+        'flex items-start gap-3 rounded-card border px-4 py-3.5',
+        'text-[13px] leading-[1.7]',
         config.tone,
         className,
       ]

@@ -1,5 +1,4 @@
 import { Outlet, useLocation } from 'react-router-dom';
-import { Background } from './Background.jsx';
 import { Navbar } from './Navbar.jsx';
 import { Footer } from './Footer.jsx';
 
@@ -11,9 +10,6 @@ export function MainLayout() {
       <a href="#main-content" className="skip-link">
         Skip to content
       </a>
-
-      {/* Global ambient background */}
-      <Background />
 
       {/* Application shell */}
       <div className="relative z-10 flex min-h-svh flex-col">

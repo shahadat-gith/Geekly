@@ -19,7 +19,7 @@ function Wordmark() {
 
 function EditorialPanel() {
   return (
-    <aside className="relative hidden min-h-svh flex-col justify-between overflow-hidden bg-ink px-10 py-10 lg:flex xl:px-14">
+    <aside className="relative hidden min-h-svh flex-col justify-between overflow-hidden bg-ink px-10 py-10 lg:flex xl:px-16">
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 opacity-20"
@@ -41,8 +41,8 @@ function EditorialPanel() {
         </span>
       </div>
 
-      <div className="relative z-10 max-w-lg py-16">
-        <h2 className="max-w-lg font-heading text-4xl font-semibold leading-[1.1] tracking-[-0.035em] text-ink-text xl:text-[44px]">
+      <div className="relative z-10 max-w-lg py-12">
+        <h2 className="max-w-lg font-heading text-[34px] font-semibold leading-[1.12] tracking-[-0.03em] text-ink-text xl:text-[40px]">
           Understand what
           <br />
           your code runs on.
@@ -106,17 +106,17 @@ export function AuthLayout({
         <EditorialPanel />
 
         {/* Authentication area */}
-        <div className="flex min-h-svh flex-col bg-surface/60">
+        <div className="flex min-h-svh flex-col bg-bg/80">
           {/* Mobile brand header */}
           <header className="flex px-6 py-6 lg:hidden">
             <Wordmark />
           </header>
 
-          <main className="animate-page flex flex-1 items-center justify-center px-4 pb-12 pt-4 sm:px-8 lg:px-12 lg:py-16">
+          <main className="animate-page flex flex-1 items-center justify-center px-4 pb-10 pt-4 sm:px-8 lg:px-12 lg:py-12">
             <div className="w-full max-w-[420px] rounded-panel border border-border bg-surface p-6 shadow-card sm:p-8">
               {/* Form heading */}
               <div>
-                <h1 className="text-balance font-heading text-[26px] font-semibold leading-[1.2] tracking-[-0.03em] text-text sm:text-[30px]">
+                <h1 className="text-balance font-heading text-[25px] font-semibold leading-[1.2] tracking-[-0.03em] text-text sm:text-[28px]">
                   {title}
                 </h1>
 

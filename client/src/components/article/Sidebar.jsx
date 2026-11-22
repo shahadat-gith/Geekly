@@ -10,7 +10,7 @@ function ArticleLink({ to, title, active, onNavigate, number }) {
       onClick={onNavigate}
       aria-current={active ? 'page' : undefined}
       className={[
-        'group flex min-w-0 items-start gap-2.5 rounded-button px-2.5 py-2 text-[12.5px] leading-snug transition-colors duration-150',
+        'group flex min-h-9 min-w-0 items-start gap-2.5 rounded-button px-2.5 py-2 text-[12.5px] leading-snug transition-colors duration-150',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
         active
           ? 'bg-brand-soft font-medium text-brand-strong'
@@ -32,7 +32,7 @@ function ArticleLink({ to, title, active, onNavigate, number }) {
 
 function SectionLabel({ children }) {
   return (
-    <p className="mb-1 mt-4 px-2.5 font-mono text-[9.5px] font-semibold uppercase tracking-[0.12em] text-text-tertiary first:mt-0">
+    <p className="mb-1 mt-5 px-2.5 font-mono text-[9.5px] font-semibold uppercase tracking-[0.12em] text-text-tertiary first:mt-0">
       {children}
     </p>
   );

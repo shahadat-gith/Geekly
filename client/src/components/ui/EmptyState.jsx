@@ -10,7 +10,7 @@ export function EmptyState({
 }) {
   return (
     <Card
-      className={`flex flex-col items-center px-6 py-10 text-center sm:py-12 ${className}`}
+      className={`flex flex-col items-center px-5 py-10 text-center sm:px-8 sm:py-12 ${className}`}
     >
       {Icon && (
         <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-brand-soft">

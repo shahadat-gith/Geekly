@@ -9,6 +9,8 @@ const VARIANTS = {
     'text-text-secondary hover:bg-surface-secondary hover:text-text',
   inverse:
     'border border-ink-soft bg-transparent text-ink-text hover:bg-ink-secondary',
+  light:
+    'bg-ink-text text-ink hover:bg-surface active:bg-surface-secondary',
   destructive:
     'bg-error text-white shadow-button hover:brightness-95 active:brightness-90',
   'destructive-outline':
@@ -16,8 +18,8 @@ const VARIANTS = {
 };
 
 const SIZES = {
-  xs: 'min-h-[32px] px-3 text-[13px] gap-1.5',
-  sm: 'min-h-[36px] px-3.5 text-[13.5px] gap-1.5',
+  xs: 'min-h-[36px] px-3 text-[13px] gap-1.5',
+  sm: 'min-h-[40px] px-3.5 text-[13.5px] gap-1.5',
   md: 'min-h-[44px] px-5 text-[14.5px]',
   lg: 'min-h-[48px] px-6 text-[15px]',
 };
@@ -49,7 +51,7 @@ export function Button({
 }) {
   const isDisabled = Boolean(disabled || loading);
   const classes = [
-    'inline-flex items-center justify-center gap-2 whitespace-nowrap select-none rounded-button font-medium transition active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-bg disabled:cursor-not-allowed disabled:opacity-55 motion-reduce:transition-none motion-reduce:active:scale-100',
+    'inline-flex items-center justify-center gap-2 whitespace-nowrap select-none rounded-button border border-transparent font-medium transition-[background,color,border-color,box-shadow,transform] duration-150 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-bg disabled:cursor-not-allowed disabled:opacity-55 motion-reduce:transition-none motion-reduce:active:scale-100',
     SIZES[size] ?? SIZES.md,
     VARIANTS[variant] ?? VARIANTS.primary,
     className,

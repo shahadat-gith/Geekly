@@ -30,15 +30,15 @@ const WHAT_YOU_GET = [
 
 export default function ResumeAnalysis() {
   return (
-    <div className="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8">
+    <div className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
       <PageHeader
         eyebrow="Resume intelligence"
         title="Review a resume against a role"
         description="Give us the resume you are sending and the job description you are targeting. You get the requirement match and the exact text to paste into the resume."
       />
 
-      <div className="mt-8 grid gap-8 lg:grid-cols-[minmax(0,1fr)_300px] lg:items-start lg:gap-10">
-        <div className="rounded-panel border border-border bg-surface p-5 shadow-card sm:p-7">
+      <div className="mt-7 grid gap-6 lg:grid-cols-[minmax(0,1fr)_300px] lg:items-start lg:gap-8">
+        <div className="min-w-0 rounded-panel border border-border bg-surface p-5 shadow-card sm:p-7">
           <UploadForm />
         </div>
 

@@ -20,8 +20,8 @@ const LEGAL = [
 export function Footer() {
   return (
     <footer className="relative mt-auto border-t border-border bg-surface">
-      <div className="mx-auto max-w-7xl px-4 pb-8 pt-12 sm:px-6 lg:px-8">
-        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[1.8fr_1fr_1fr_1fr] lg:gap-12">
+      <div className="mx-auto max-w-7xl px-4 pb-8 pt-10 sm:px-6 lg:px-8">
+        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-[1.8fr_1fr_1fr_1fr] lg:gap-12">
           {/* Brand */}
           <div className="max-w-sm">
             <Link
@@ -42,16 +42,16 @@ export function Footer() {
               worked examples for engineers.
             </p>
 
-            <p className="mt-5 font-mono text-[11px] uppercase tracking-[0.12em] text-text-tertiary">
+            <p className="mt-5 text-[12px] text-text-tertiary">
               Built for engineers
             </p>
           </div>
 
           {/* Learn */}
           <nav aria-label="Learn">
-            <h3 className="eyebrow m-0">Learn</h3>
+            <h3 className="m-0 text-[12px] font-medium text-text">Learn</h3>
 
-            <ul className="mt-5 list-none space-y-3 p-0">
+            <ul className="mt-3 list-none space-y-2.5 p-0">
               {LEARN.map((link) => (
                 <li key={link.label}>
                   <Link
@@ -67,9 +67,9 @@ export function Footer() {
 
           {/* Tools */}
           <nav aria-label="Tools">
-            <h3 className="eyebrow m-0">Tools</h3>
+            <h3 className="m-0 text-[12px] font-medium text-text">Tools</h3>
 
-            <ul className="mt-5 list-none space-y-3 p-0">
+            <ul className="mt-3 list-none space-y-2.5 p-0">
               {TOOLS.map((link) => (
                 <li key={link.label}>
                   <Link
@@ -85,9 +85,9 @@ export function Footer() {
 
           {/* Legal */}
           <nav aria-label="Legal">
-            <h3 className="eyebrow m-0">Legal</h3>
+            <h3 className="m-0 text-[12px] font-medium text-text">Legal</h3>
 
-            <ul className="mt-5 list-none space-y-3 p-0">
+            <ul className="mt-3 list-none space-y-2.5 p-0">
               {LEGAL.map((link) => (
                 <li key={link.label}>
                   <Link

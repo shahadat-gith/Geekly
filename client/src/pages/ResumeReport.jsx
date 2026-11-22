@@ -26,7 +26,7 @@ function ReportSkeleton() {
         ))}
       </div>
 
-      <div className="mt-6 overflow-hidden rounded-card border border-border bg-surface shadow-card lg:grid lg:grid-cols-[232px_minmax(0,1fr)]">
+      <div className="mt-5 min-w-0 overflow-hidden rounded-card border border-border bg-surface shadow-card lg:grid lg:grid-cols-[220px_minmax(0,1fr)]">
         <div className="border-b border-border-secondary bg-surface-secondary/60 p-3 lg:border-b-0 lg:border-r">
           {[0, 1, 2, 3, 4].map((index) => (
             <Skeleton key={index} className="mb-1.5 h-9 w-full" />
@@ -125,7 +125,13 @@ export default function ResumeReport() {
   ].filter(Boolean);
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8">
+    <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
+      <nav aria-label="Breadcrumb" className="mb-5 flex items-center gap-2 text-[12px]">
+        <Link to="/profile" className="rounded-sm text-text-secondary transition-colors hover:text-brand-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">Your profile</Link>
+        <span aria-hidden="true" className="text-text-disabled">/</span>
+        <span aria-current="page" className="font-medium text-text">Resume report</span>
+      </nav>
+
       <PageHeader
         eyebrow="Resume intelligence"
         title="Resume analysis"
@@ -176,7 +182,7 @@ export default function ResumeReport() {
 
       {/* Completed report */}
       {completed && (
-        <div className="mt-8 flex flex-col gap-6">
+        <div className="mt-7 flex flex-col gap-5">
           <ReportStats report={report} />
           <ReportSections analysis={report} />
         </div>

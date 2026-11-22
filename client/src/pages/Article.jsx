@@ -110,8 +110,8 @@ export default function Article() {
   return (
     <div
       className={[
-        'mx-auto grid w-full min-w-0 grid-cols-1 gap-8',
-        'max-w-[1400px] px-4 py-6 sm:px-6 sm:py-8 lg:px-8 lg:py-10',
+        'mx-auto grid w-full min-w-0 grid-cols-1 gap-6',
+        'max-w-[1400px] px-4 py-6 sm:gap-8 sm:px-6 sm:py-8 lg:px-8 lg:py-9',
         'lg:grid-cols-[248px_minmax(0,1fr)]',
         hasVideos ? 'xl:grid-cols-[256px_minmax(0,1fr)_240px]' : '',
       ]
@@ -146,7 +146,7 @@ export default function Article() {
             onClick={() => setNavOpen(true)}
             aria-haspopup="dialog"
             aria-expanded={navOpen}
-            className="inline-flex min-h-9 items-center gap-2 rounded-button border border-border bg-surface px-3 text-[12.5px] font-medium text-text transition-colors hover:bg-surface-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="inline-flex min-h-10 items-center gap-2 rounded-button border border-border bg-surface px-3 text-[12.5px] font-medium text-text transition-colors hover:border-brand-light hover:bg-surface-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           >
             <FaBars aria-hidden="true" className="text-[11px] text-text-secondary" />
             Contents
@@ -192,7 +192,7 @@ export default function Article() {
             role="dialog"
             aria-modal="true"
             aria-label={`${topic.name} contents`}
-            className="absolute inset-y-0 left-0 flex w-[88%] max-w-[340px] flex-col overflow-hidden border-r border-border bg-surface shadow-dropdown animate-slide-in-left"
+            className="absolute inset-y-0 left-0 flex w-[88%] max-w-[360px] flex-col overflow-hidden border-r border-border bg-surface shadow-dropdown animate-slide-in-left"
           >
             {/* Drawer header */}
             <div className="flex shrink-0 items-center justify-between gap-3 border-b border-border px-4 py-3.5">

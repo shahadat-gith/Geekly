@@ -19,7 +19,7 @@ export default function Deployments() {
   const liveCount = projects.filter((project) => project.currentDeploymentId).length;
 
   return (
-    <div className="mx-auto w-full max-w-5xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8">
+    <div className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
       <PageHeader
         eyebrow="Static hosting"
         title="My sites"
@@ -32,7 +32,7 @@ export default function Deployments() {
         }
       />
 
-      <div className="mt-8">
+      <div className="mt-7">
         {error ? (
           <Alert tone="error">Could not load your sites. Try again.</Alert>
         ) : isPending ? (
@@ -74,7 +74,7 @@ export default function Deployments() {
 
                 return (
                   <li key={project.id}>
-                    <div className="group flex flex-col gap-4 rounded-card border border-border bg-surface px-4 py-4 shadow-card transition-colors hover:border-brand-light sm:flex-row sm:items-center sm:justify-between sm:px-5">
+                    <div className="group flex min-w-0 flex-col gap-4 rounded-card border border-border bg-surface px-4 py-4 shadow-card transition-[border-color,box-shadow] hover:border-brand-light hover:shadow-card-hover sm:flex-row sm:items-center sm:justify-between sm:px-5">
                       <Link
                         to={`/deployments/${project.id}`}
                         className="flex min-w-0 items-center gap-3.5 rounded-field focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"

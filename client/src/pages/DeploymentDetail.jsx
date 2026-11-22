@@ -75,7 +75,7 @@ export default function DeploymentDetail() {
 
   if (project.isPending) {
     return (
-      <div className="mx-auto w-full max-w-4xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8" aria-label="Loading site">
+      <div className="mx-auto w-full max-w-5xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8" aria-label="Loading site">
         <Skeleton className="h-3 w-20" />
         <Skeleton className="mt-4 h-8 w-64" />
         <Skeleton className="mt-8 h-[92px] rounded-card" />
@@ -105,7 +105,13 @@ export default function DeploymentDetail() {
   const successCount = list.filter((d) => d.status === 'success').length;
 
   return (
-    <div className="mx-auto w-full max-w-4xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8">
+    <div className="mx-auto w-full max-w-5xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
+      <nav aria-label="Breadcrumb" className="mb-5 flex min-w-0 items-center gap-2 text-[12px]">
+        <Link to="/deployments" className="shrink-0 rounded-sm text-text-secondary transition-colors hover:text-brand-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">My sites</Link>
+        <span aria-hidden="true" className="shrink-0 text-text-disabled">/</span>
+        <span aria-current="page" className="truncate font-medium text-text">{site.name}</span>
+      </nav>
+
       <PageHeader
         eyebrow="Static hosting"
         title={site.name}
@@ -127,7 +133,7 @@ export default function DeploymentDetail() {
       />
 
       {/* Live status */}
-      <section className="mt-8 grid gap-3 sm:grid-cols-[minmax(0,1fr)_200px]">
+      <section className="mt-7 grid gap-3 sm:grid-cols-[minmax(0,1fr)_200px]">
         <div className="flex items-center gap-4 rounded-card border border-border bg-surface p-5 shadow-card">
           <div
             className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-lg ${liveId ? 'bg-brand-soft' : 'bg-surface-tertiary'}`}
@@ -171,7 +177,7 @@ export default function DeploymentDetail() {
       </section>
 
       {/* Versions */}
-      <section className="mt-10">
+      <section className="mt-9">
         <div className="flex flex-wrap items-end justify-between gap-3 border-b border-border pb-3">
           <div>
             <h2 className="m-0 text-[16px] font-semibold tracking-[-0.015em] text-text">
@@ -210,7 +216,7 @@ export default function DeploymentDetail() {
               return (
                 <div
                   key={d.id}
-                  className={`flex flex-col gap-3 rounded-card border bg-surface px-4 py-3.5 shadow-card transition-colors sm:flex-row sm:items-center sm:justify-between ${isLive ? 'border-brand-light' : 'border-border'}`}
+                  className={`flex min-w-0 flex-col gap-3 rounded-card border bg-surface px-4 py-3.5 shadow-card transition-[border-color,box-shadow] sm:flex-row sm:items-center sm:justify-between ${isLive ? 'border-brand-light shadow-card-hover' : 'border-border'}`}
                 >
                   <div className="flex min-w-0 items-center gap-3.5">
                     <div

@@ -1,6 +1,6 @@
 
 const SIZES = {
-  sm: 'h-7 w-7 text-[16px]',
+  sm: 'h-9 w-9 text-[16px]',
   md: 'h-10 w-10 text-[20px]',
 };
 
@@ -30,7 +30,7 @@ export function IconButton({
 }) {
   const classes = [
     'inline-flex shrink-0 select-none items-center justify-center whitespace-nowrap',
-    'transition active:scale-[0.97]',
+    'transition-[background,color,border-color,transform] duration-150 active:scale-[0.97]',
     'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
     'disabled:cursor-not-allowed disabled:opacity-55',
     'motion-reduce:transition-none motion-reduce:active:scale-100',

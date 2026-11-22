@@ -187,7 +187,13 @@ export default function DeploymentNew() {
   const canSubmit = !busy && slugState.status === 'available' && files.length > 0;
 
   return (
-    <div className="mx-auto w-full max-w-2xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8">
+    <div className="mx-auto w-full max-w-3xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
+      <nav aria-label="Breadcrumb" className="mb-5 flex items-center gap-2 text-[12px]">
+        <Link to="/deployments" className="rounded-sm text-text-secondary transition-colors hover:text-brand-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">My sites</Link>
+        <span aria-hidden="true" className="text-text-disabled">/</span>
+        <span aria-current="page" className="font-medium text-text">New site</span>
+      </nav>
+
       <PageHeader
         eyebrow="Static hosting"
         title="New site"

@@ -10,7 +10,7 @@
   },
   "scripts": {
     "start": "node src/index.js",
-    "dev": "node --watch src/index.js",
+    "dev": "nodemon src/index.js",
     "worker": "node src/jobs/resume/worker.js"
   },
   "keywords": [],

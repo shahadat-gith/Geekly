@@ -92,13 +92,13 @@ export default function LegalPage({ page }) {
   const otherPage = page === 'terms' ? 'privacy' : 'terms';
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
+    <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
       <div className="grid gap-10 lg:grid-cols-[170px_minmax(0,1fr)] lg:gap-14">
         {/* Contents rail */}
-        <nav aria-label="Document contents" className="lg:sticky lg:top-24 lg:self-start">
+        <nav aria-label="Document contents" className="min-w-0 lg:sticky lg:top-24 lg:self-start">
           <p className="eyebrow m-0">On this page</p>
 
-          <ul className="m-0 mt-3 flex list-none flex-col gap-1.5 p-0">
+          <ul className="m-0 mt-3 flex list-none flex-wrap gap-1.5 p-0 lg:flex-col">
             {doc.sections.map((section) => {
               const id = section.heading.toLowerCase().replace(/[^a-z0-9]+/g, '-');
 
@@ -106,7 +106,7 @@ export default function LegalPage({ page }) {
                 <li key={section.heading}>
                   <a
                     href={`#${id}`}
-                    className="block text-[12.5px] leading-snug text-text-secondary transition-colors hover:text-text focus-visible:outline-none"
+                    className="inline-flex min-h-9 items-center rounded-button border border-border-secondary bg-surface px-2.5 text-[12px] leading-snug text-text-secondary transition-colors hover:border-brand-light hover:text-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring lg:min-h-0 lg:border-0 lg:bg-transparent lg:px-0"
                   >
                     {section.heading}
                   </a>
