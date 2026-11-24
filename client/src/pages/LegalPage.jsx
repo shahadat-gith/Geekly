@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 const DOCS = {
   terms: {
     title: 'Terms and conditions',
-    updated: 'Last updated November 2026',
+    updated: 'Updated 24 November 2026',
     sections: [
       {
         heading: 'About Geekly',
@@ -45,7 +45,7 @@ const DOCS = {
   },
   privacy: {
     title: 'Privacy policy',
-    updated: 'Last updated November 2026',
+    updated: 'Updated 24 November 2026',
     sections: [
       {
         heading: 'What we collect',
@@ -87,76 +87,94 @@ const DOCS = {
   },
 };
 
+const sectionId = (heading) =>
+  heading.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+
 export default function LegalPage({ page }) {
   const doc = DOCS[page];
   const otherPage = page === 'terms' ? 'privacy' : 'terms';
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
-      <div className="grid gap-10 lg:grid-cols-[170px_minmax(0,1fr)] lg:gap-14">
+    <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8">
+      <div className="flex flex-wrap items-center gap-3">
+        <span aria-hidden="true" className="h-1 w-1 rounded-full bg-brand" />
+        <p className="folio m-0">Legal</p>
+        <span aria-hidden="true" className="h-px min-w-4 flex-1 bg-border" />
+        <p className="folio m-0">{doc.updated}</p>
+      </div>
+
+      <div className="mt-6 grid gap-10 lg:grid-cols-[200px_minmax(0,68ch)] lg:gap-16">
         {/* Contents rail */}
-        <nav aria-label="Document contents" className="min-w-0 lg:sticky lg:top-24 lg:self-start">
-          <p className="eyebrow m-0">On this page</p>
+        <nav
+          aria-label="Document contents"
+          className="min-w-0 lg:sticky lg:top-24 lg:self-start"
+        >
+          <p className="folio m-0">Contents</p>
 
-          <ul className="m-0 mt-3 flex list-none flex-wrap gap-1.5 p-0 lg:flex-col">
-            {doc.sections.map((section) => {
-              const id = section.heading.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+          <ol className="m-0 mt-3 list-none p-0">
+            {doc.sections.map((section, index) => (
+              <li
+                key={section.heading}
+                className="border-b border-border-secondary first:border-t"
+              >
+                <a
+                  href={`#${sectionId(section.heading)}`}
+                  className="group flex gap-3 py-2.5 text-[12.5px] leading-snug text-text-secondary transition-colors hover:text-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                >
+                  <span className="w-5 shrink-0 pt-px font-mono text-[10px] tabular-nums text-text-tertiary transition-colors group-hover:text-brand-strong">
+                    {String(index + 1).padStart(2, '0')}
+                  </span>
+                  <span>{section.heading}</span>
+                </a>
+              </li>
+            ))}
+          </ol>
 
-              return (
-                <li key={section.heading}>
-                  <a
-                    href={`#${id}`}
-                    className="inline-flex min-h-9 items-center rounded-button border border-border-secondary bg-surface px-2.5 text-[12px] leading-snug text-text-secondary transition-colors hover:border-brand-light hover:text-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring lg:min-h-0 lg:border-0 lg:bg-transparent lg:px-0"
-                  >
-                    {section.heading}
-                  </a>
-                </li>
-              );
-            })}
-          </ul>
-
-          <div className="mt-5 border-t border-border-secondary pt-4">
-            <Link
-              to={`/${otherPage}`}
-              className="text-[12.5px] font-medium text-brand-strong transition-colors hover:text-brand-strong-hover focus-visible:outline-none"
-            >
-              {otherPage === 'terms' ? 'Terms of service' : 'Privacy policy'}
-            </Link>
-          </div>
+          <Link
+            to={`/${otherPage}`}
+            className="mt-8 inline-flex text-[12.5px] font-medium text-brand-strong transition-colors hover:text-brand-strong-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          >
+            {otherPage === 'terms' ? 'Terms of service' : 'Privacy policy'}
+          </Link>
         </nav>
 
         {/* Document */}
         <article className="min-w-0">
-          <header className="border-b border-border pb-6">
-            <h1 className="text-balance font-heading text-[30px] font-semibold leading-[1.12] tracking-[-0.03em] sm:text-[36px]">
+          <header className="border-b border-border pb-8">
+            <h1 className="m-0 text-balance font-heading text-[32px] font-medium leading-[1.12] tracking-[-0.025em] text-text sm:text-[38px]">
               {doc.title}
             </h1>
-            <p className="m-0 mt-2.5 font-mono text-[11px] uppercase tracking-[0.1em] text-text-tertiary">
-              {doc.updated}
-            </p>
           </header>
 
-          <div className="mt-8 flex flex-col gap-8">
-            {doc.sections.map((section) => {
-              const id = section.heading.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+          <div>
+            {doc.sections.map((section, index) => (
+              <section
+                key={section.heading}
+                id={sectionId(section.heading)}
+                className="scroll-mt-24 border-b border-border-secondary py-8 last:border-b-0"
+              >
+                <div className="grid gap-2 sm:grid-cols-[32px_minmax(0,1fr)] sm:gap-4">
+                  <span className="folio pt-1">
+                    {String(index + 1).padStart(2, '0')}
+                  </span>
 
-              return (
-                <section key={section.heading} id={id} className="scroll-mt-24">
-                  <h2 className="m-0 text-[17px] font-semibold leading-snug tracking-[-0.015em] text-text">
-                    {section.heading}
-                  </h2>
+                  <div className="min-w-0">
+                    <h2 className="m-0 font-heading text-[18px] font-medium leading-snug tracking-[-0.015em] text-text">
+                      {section.heading}
+                    </h2>
 
-                  {section.paragraphs.map((paragraph) => (
-                    <p
-                      key={paragraph}
-                      className="mt-2.5 text-[14px] leading-[1.8] text-text-secondary"
-                    >
-                      {paragraph}
-                    </p>
-                  ))}
-                </section>
-              );
-            })}
+                    {section.paragraphs.map((paragraph) => (
+                      <p
+                        key={paragraph}
+                        className="mt-3 text-[15px] leading-[1.8] text-text-secondary"
+                      >
+                        {paragraph}
+                      </p>
+                    ))}
+                  </div>
+                </div>
+              </section>
+            ))}
           </div>
         </article>
       </div>

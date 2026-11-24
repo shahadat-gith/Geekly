@@ -53,9 +53,7 @@ export default function PageSkeleton() {
           <Skeleton className="mt-5 h-4 w-full max-w-lg" />
           <Skeleton className="mt-2 h-4 w-3/4 max-w-md" />
 
-          <div className="mt-5 flex items-center gap-2">
-            <Skeleton className="h-6 w-28 rounded-full" />
-          </div>
+          <Skeleton className="mt-5 h-3 w-28" />
         </div>
 
         <div className="mt-9 max-w-3xl space-y-4 border-t border-border pt-8">
@@ -65,7 +63,7 @@ export default function PageSkeleton() {
           <Skeleton className="h-3.5 w-[97%]" />
           <Skeleton className="h-3.5 w-4/5" />
 
-          <Skeleton strong className="mt-6 h-52 w-full rounded-card sm:h-64" />
+          <Skeleton strong className="mt-6 h-52 w-full rounded-field sm:h-64" />
 
           <Skeleton className="mt-6 h-4 w-2/5" />
           <Skeleton className="h-3.5 w-full" />
@@ -93,9 +91,7 @@ export function ArticleSkeleton() {
       <Skeleton className="mt-5 h-4 w-full max-w-lg" />
       <Skeleton className="mt-2 h-4 w-3/4 max-w-md" />
 
-      <div className="mt-5 flex items-center gap-2">
-        <Skeleton className="h-6 w-28 rounded-full" />
-      </div>
+      <Skeleton className="mt-5 h-3 w-28" />
 
       <div className="mt-9 space-y-4 border-t border-border pt-8">
         <Skeleton className="h-4 w-1/3" />
@@ -104,7 +100,7 @@ export function ArticleSkeleton() {
         <Skeleton className="h-3.5 w-[97%]" />
         <Skeleton className="h-3.5 w-4/5" />
 
-        <Skeleton strong className="mt-6 h-52 w-full rounded-card sm:h-64" />
+        <Skeleton strong className="mt-6 h-52 w-full rounded-field sm:h-64" />
 
         <Skeleton className="mt-6 h-4 w-2/5" />
         <Skeleton className="h-3.5 w-full" />

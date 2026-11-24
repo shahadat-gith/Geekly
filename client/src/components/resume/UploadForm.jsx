@@ -39,21 +39,18 @@ function fileProblem(file, label) {
 /** Section header for one input step of the form. */
 function Step({ index, title, description, children, aside }) {
   return (
-    <section className="flex flex-col gap-4">
+    <section className="flex flex-col gap-5">
       <div className="flex flex-wrap items-start justify-between gap-3">
-        <div className="flex min-w-0 items-start gap-3">
-          <span
-            aria-hidden="true"
-            className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-md border border-border bg-surface-tertiary font-mono text-[11px] font-semibold text-text-secondary"
-          >
+        <div className="flex min-w-0 items-start gap-4">
+          <span aria-hidden="true" className="folio mt-1 w-5 shrink-0">
             {index}
           </span>
 
           <div className="min-w-0">
-            <h2 className="m-0 text-[14px] font-semibold tracking-[-0.01em] text-text">
+            <h2 className="m-0 font-heading text-[17px] font-medium leading-snug tracking-[-0.015em] text-text">
               {title}
             </h2>
-            <p className="m-0 mt-1 text-[12.5px] leading-relaxed text-text-secondary">
+            <p className="m-0 mt-2 max-w-[58ch] text-[13px] leading-[1.7] text-text-secondary">
               {description}
             </p>
           </div>
@@ -62,7 +59,7 @@ function Step({ index, title, description, children, aside }) {
         {aside}
       </div>
 
-      {children}
+      <div className="sm:pl-9">{children}</div>
     </section>
   );
 }
@@ -124,7 +121,7 @@ function DropZone({ label, file, onChoose, onClear, compact = false }) {
           onChoose(event.dataTransfer.files?.[0]);
         }}
         className={[
-          'flex flex-col items-center justify-center rounded-card border border-dashed px-5 text-center transition-colors',
+          'flex flex-col items-start justify-center rounded-field border border-dashed px-5 text-left transition-colors',
           compact ? 'min-h-[150px] py-6' : 'min-h-[180px] py-7',
           dragging
             ? 'border-brand bg-brand-soft'
@@ -133,14 +130,12 @@ function DropZone({ label, file, onChoose, onClear, compact = false }) {
       >
         {file ? (
           <>
-            <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-brand-soft">
-              <FaFileLines
-                aria-hidden="true"
-                className="text-[18px] text-brand-strong"
-              />
-            </div>
+            <FaFileLines
+              aria-hidden="true"
+              className="text-[18px] text-brand-strong"
+            />
 
-            <p className="mb-0 mt-3 max-w-full truncate text-[13.5px] font-semibold text-text">
+            <p className="mb-0 mt-3 max-w-full truncate text-[13.5px] font-medium text-text">
               {file.name}
             </p>
 
@@ -162,14 +157,12 @@ function DropZone({ label, file, onChoose, onClear, compact = false }) {
           </>
         ) : (
           <>
-            <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-brand-soft">
-              <FaArrowUpFromBracket
-                aria-hidden="true"
-                className="text-[18px] text-brand-strong"
-              />
-            </div>
+            <FaArrowUpFromBracket
+              aria-hidden="true"
+              className="text-[18px] text-brand-strong"
+            />
 
-            <p className="m-0 mt-3 text-[13.5px] font-semibold text-text">
+            <p className="m-0 mt-3 text-[13.5px] font-medium text-text">
               {dragging ? `Drop your ${label} here` : `Drag and drop your ${label}`}
             </p>
 
@@ -283,12 +276,12 @@ export function UploadForm() {
   }
 
   return (
-    <form onSubmit={onSubmit} className="flex flex-col gap-8">
+    <form onSubmit={onSubmit} className="flex flex-col gap-10">
       {/* Resume */}
       <Step
         index="01"
         title={<>Resume <span className="text-error">*</span></>}
-        description="Upload the resume you want to evaluate, or paste its text."
+        description="Upload the resume you want to evaluate, or paste its text"
         aside={
           <SourceSwitch
             label="Resume"
@@ -392,12 +385,12 @@ export function UploadForm() {
         title={
           <>
             Extra context
-            <span className="ml-2 rounded-full bg-surface-tertiary px-2 py-0.5 text-[10.5px] font-medium text-text-tertiary">
+            <span className="ml-2 text-[11px] font-normal text-text-tertiary">
               Optional
             </span>
           </>
         }
-        description="Company details and anything specific you want the review to weigh."
+        description="Company details and anything specific you want the review to weigh"
       >
         <div className="grid gap-4 sm:grid-cols-2">
           <Input
@@ -440,8 +433,8 @@ export function UploadForm() {
       {/* Submit */}
       <div className="flex flex-col gap-4 border-t border-border-secondary pt-5 sm:flex-row sm:items-center sm:justify-between">
         <p className="m-0 max-w-sm text-[11.5px] leading-relaxed text-text-tertiary">
-          Your report will review this resume against the role and give you the
-          exact lines to paste in.
+          Your report reviews this resume against the role and gives you the
+          exact lines to paste in
         </p>
 
         <Button

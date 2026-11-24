@@ -43,8 +43,8 @@ export default function ResetPassword() {
 
   return (
     <AuthLayout
-      title="Create a new password"
-      description="Choose a strong password to secure your Geekly account."
+      title="Choose a new password"
+      description="Use at least 8 characters"
       footer={
         <>
           Remembered your password?{' '}
@@ -65,7 +65,7 @@ export default function ResetPassword() {
       ) : done ? (
         <div className="flex flex-col gap-3">
           <Alert tone="success">
-            Your password has been updated successfully. You can now sign in using your new password.
+            Your password has been updated. Sign in with the new one.
           </Alert>
 
           <Button as={Link} to="/auth/login" className="w-full">

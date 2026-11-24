@@ -1,12 +1,12 @@
 import { Link } from 'react-router-dom';
-import { FaRegCalendar, FaBookOpen, FaChevronRight } from 'react-icons/fa6';
+import { FaChevronRight } from 'react-icons/fa6';
 
 import { ArticleBody } from './ArticleBody.jsx';
 import { formatDate } from '../../utils/format.js';
 
 function Breadcrumb({ topic, articleTitle }) {
   return (
-    <nav aria-label="Breadcrumb" className="mb-6">
+    <nav aria-label="Breadcrumb" className="mb-8">
       <ol className="m-0 flex flex-wrap items-center gap-1.5 list-none p-0 text-[12.5px]">
         <li>
           <Link
@@ -50,26 +50,29 @@ export default function Content({ article = null, topic }) {
         <header className="border-b border-border pb-6 sm:pb-8">
           <Breadcrumb topic={topic} articleTitle={article.title} />
 
+          <div className="flex items-center gap-3">
+            <span aria-hidden="true" className="h-1 w-1 shrink-0 rounded-full bg-brand" />
+            <p className="folio m-0">Article</p>
+            <span aria-hidden="true" className="h-px flex-1 bg-border" />
+          </div>
+
           {/* Title */}
-          <h1 className="max-w-3xl text-pretty font-heading text-[28px] font-semibold leading-[1.18] tracking-[-0.03em] text-text sm:text-[36px] lg:text-[38px]">
+          <h1 className="mt-5 max-w-3xl text-pretty font-heading text-[28px] font-medium leading-[1.18] tracking-[-0.03em] text-text sm:text-[36px] lg:text-[38px]">
             {article.title}
           </h1>
 
           {/* Subtitle */}
           {article.subtitle && (
-            <p className="mt-4 max-w-2xl text-[14px] leading-[1.8] text-text-secondary sm:text-[15px]">
+            <p className="mt-4 max-w-2xl text-[15px] leading-[1.8] text-text-secondary">
               {article.subtitle}
             </p>
           )}
 
           {/* Article metadata */}
           {article.publishedAt && (
-            <div className="mt-6 flex flex-wrap items-center gap-2">
-              <span className="inline-flex items-center gap-2 rounded-full border border-border bg-surface px-3 py-1.5 font-mono text-[11px] text-text-secondary">
-                <FaRegCalendar aria-hidden="true" className="text-[10px] text-text-tertiary" />
-                {formatDate(article.publishedAt)}
-              </span>
-            </div>
+            <p className="m-0 mt-6 font-mono text-[11px] tabular-nums text-text-tertiary">
+              {formatDate(article.publishedAt)}
+            </p>
           )}
         </header>
 
@@ -86,9 +89,13 @@ export default function Content({ article = null, topic }) {
       <header className="border-b border-border pb-8">
         <Breadcrumb topic={topic} />
 
-        <p className="eyebrow m-0">Learning topic</p>
+        <div className="flex items-center gap-3">
+          <span aria-hidden="true" className="h-1 w-1 shrink-0 rounded-full bg-brand" />
+          <p className="folio m-0">Topic</p>
+          <span aria-hidden="true" className="h-px flex-1 bg-border" />
+        </div>
 
-        <h1 className="mt-3 max-w-3xl text-pretty font-heading text-[28px] font-semibold leading-[1.18] tracking-[-0.03em] text-text sm:text-[36px] lg:text-[38px]">
+        <h1 className="mt-5 max-w-3xl text-pretty font-heading text-[28px] font-medium leading-[1.18] tracking-[-0.03em] text-text sm:text-[36px] lg:text-[38px]">
           {topic.name}
         </h1>
 
@@ -100,18 +107,13 @@ export default function Content({ article = null, topic }) {
       </header>
 
       {/* Empty state */}
-      <div className="mt-8 flex flex-col items-center rounded-panel border border-dashed border-border bg-surface px-6 py-12 text-center sm:py-16">
-        <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-brand-strong/15 bg-brand-soft text-brand-strong">
-          <FaBookOpen aria-hidden="true" className="text-lg" />
-        </div>
-
-        <h2 className="mt-5 text-[15px] font-semibold text-text">
+      <div className="mt-10 border-t border-border pt-8">
+        <h2 className="m-0 font-heading text-[18px] font-medium tracking-[-0.015em] text-text">
           Lessons are on the way
         </h2>
 
-        <p className="mt-2 max-w-sm text-[13px] leading-[1.75] text-text-secondary">
-          There are no published articles in this topic yet.
-          Check back soon for new learning resources.
+        <p className="mt-2 max-w-md text-[13.5px] leading-[1.75] text-text-secondary">
+          There are no published articles in this topic yet. Check back soon.
         </p>
       </div>
     </section>

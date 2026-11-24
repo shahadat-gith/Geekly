@@ -7,7 +7,7 @@ import {
   useState,
 } from 'react';
 import { createPortal } from 'react-dom';
-import { FaExpand, FaXmark } from 'react-icons/fa6';
+import { FaXmark } from 'react-icons/fa6';
 import hljs from 'highlight.js/lib/common';
 
 import { ArticleAnnotationHtml } from './ArticleAnnotationHtml.jsx';
@@ -58,7 +58,7 @@ function DiagramFullscreen({ diagram, onClose }) {
           flex max-h-full min-w-0 w-full max-w-7xl
           flex-col overflow-hidden
           rounded-panel border border-white/10
-          bg-ink-secondary shadow-2xl
+          bg-ink-secondary
           animate-fade-in
         "
       >
@@ -68,22 +68,13 @@ function DiagramFullscreen({ diagram, onClose }) {
           border-b border-white/10
           px-4 py-3 sm:px-5
         ">
-          <div className="flex min-w-0 items-center gap-3">
-            <div className="
-              flex h-8 w-8 shrink-0 items-center justify-center
-              rounded-button bg-white/10 text-white/75
-            ">
-              <FaExpand className="text-[12px]" />
-            </div>
-
-            <div className="min-w-0">
-              <p className="m-0 truncate text-[12.5px] font-semibold text-ink-text">
-                {diagram.alt || 'Diagram preview'}
-              </p>
-              <p className="m-0 mt-0.5 text-[10.5px] text-ink-muted">
-                Fullscreen diagram
-              </p>
-            </div>
+          <div className="min-w-0">
+            <p className="m-0 truncate text-[12.5px] font-medium text-ink-text">
+              {diagram.alt || 'Diagram preview'}
+            </p>
+            <p className="m-0 mt-0.5 text-[10.5px] text-ink-muted">
+              Fullscreen diagram
+            </p>
           </div>
 
           <button
@@ -96,7 +87,7 @@ function DiagramFullscreen({ diagram, onClose }) {
               items-center justify-center
               rounded-button border border-white/10
               bg-white/5 text-ink-muted
-              transition
+              transition-colors
               hover:border-white/20
               hover:bg-white/10 hover:text-white
               focus-visible:outline-none

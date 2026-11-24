@@ -1,13 +1,16 @@
 const TONES = {
-  neutral: 'bg-surface-tertiary text-text-secondary',
-  brand: 'bg-brand-soft text-brand-strong',
-  success: 'bg-success/10 text-success',
-  warning: 'bg-warning/10 text-warning',
-  error: 'bg-error/10 text-error',
-  info: 'bg-info/10 text-info',
+  neutral: 'text-text-secondary',
+  brand: 'text-brand-strong',
+  success: 'text-success',
+  warning: 'text-warning',
+  error: 'text-error',
+  info: 'text-info',
 };
 
-/** Small status pill. Use `dot` for a live-status indicator. */
+/**
+ * Quiet status text. A dot carries the live-state meaning; there is no pill,
+ * tinted background or shouty uppercase.
+ */
 export function Badge({
   tone = 'neutral',
   dot = false,
@@ -16,7 +19,7 @@ export function Badge({
 }) {
   return (
     <span
-      className={`inline-flex shrink-0 items-center gap-1.5 rounded-full px-2.5 py-1 text-[11.5px] font-semibold leading-none ${TONES[tone] ?? TONES.neutral} ${className}`}
+      className={`inline-flex shrink-0 items-center gap-1.5 text-[11.5px] font-medium leading-none ${TONES[tone] ?? TONES.neutral} ${className}`}
     >
       {dot && (
         <span

@@ -1,12 +1,7 @@
 import { useState } from 'react';
 import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import {
-  FaArrowUpRightFromSquare,
-  FaClockRotateLeft,
-  FaGlobe,
-  FaTrashCan,
-} from 'react-icons/fa6';
+import { FaArrowUpRightFromSquare, FaTrashCan } from 'react-icons/fa6';
 import {
   deleteProjectApi,
   getProjectApi,
@@ -75,13 +70,15 @@ export default function DeploymentDetail() {
 
   if (project.isPending) {
     return (
-      <div className="mx-auto w-full max-w-5xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8" aria-label="Loading site">
-        <Skeleton className="h-3 w-20" />
-        <Skeleton className="mt-4 h-8 w-64" />
-        <Skeleton className="mt-8 h-[92px] rounded-card" />
-        <div className="mt-8 space-y-2.5">
+      <div className="mx-auto w-full max-w-4xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8" aria-label="Loading site">
+        <Skeleton className="h-2.5 w-20" />
+        <Skeleton className="mt-6 h-8 w-56" />
+        <Skeleton className="mt-10 h-24 rounded-sm" />
+        <div className="mt-10 space-y-0">
           {[0, 1, 2].map((item) => (
-            <Skeleton key={item} className="h-[76px] rounded-card" />
+            <div key={item} className="border-b border-border-secondary py-5">
+              <Skeleton className="h-9 rounded-sm" />
+            </div>
           ))}
         </div>
       </div>
@@ -105,17 +102,21 @@ export default function DeploymentDetail() {
   const successCount = list.filter((d) => d.status === 'success').length;
 
   return (
-    <div className="mx-auto w-full max-w-5xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
-      <nav aria-label="Breadcrumb" className="mb-5 flex min-w-0 items-center gap-2 text-[12px]">
+    <div className="mx-auto w-full max-w-4xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8">
+      <nav aria-label="Breadcrumb" className="mb-6 flex min-w-0 items-center gap-2 text-[12px]">
         <Link to="/deployments" className="shrink-0 rounded-sm text-text-secondary transition-colors hover:text-brand-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">My sites</Link>
         <span aria-hidden="true" className="shrink-0 text-text-disabled">/</span>
         <span aria-current="page" className="truncate font-medium text-text">{site.name}</span>
       </nav>
 
       <PageHeader
-        eyebrow="Static hosting"
+        eyebrow="Sites"
         title={site.name}
-        description={siteHost(site.slug)}
+        description={
+          <span className="font-mono text-[13px] text-text-tertiary">
+            {siteHost(site.slug)}
+          </span>
+        }
         action={
           liveId && (
             <Button
@@ -133,122 +134,114 @@ export default function DeploymentDetail() {
       />
 
       {/* Live status */}
-      <section className="mt-7 grid gap-3 sm:grid-cols-[minmax(0,1fr)_200px]">
-        <div className="flex items-center gap-4 rounded-card border border-border bg-surface p-5 shadow-card">
-          <div
-            className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-lg ${liveId ? 'bg-brand-soft' : 'bg-surface-tertiary'}`}
-          >
-            <FaGlobe
-              aria-hidden="true"
-              className={`text-[18px] ${liveId ? 'text-brand-strong' : 'text-text-tertiary'}`}
-            />
-          </div>
+      <section className="mt-10 border-y border-border">
+        <div className="grid sm:grid-cols-[minmax(0,1fr)_168px]">
+          <div className="py-5 sm:pr-8">
+            <p className="m-0 flex items-center gap-2.5 text-[15px] font-medium text-text">
+              {liveId && (
+                <span aria-hidden="true" className="h-1.5 w-1.5 shrink-0 rounded-full bg-success" />
+              )}
+              {liveId ? 'Your site is live' : 'Not published yet'}
+            </p>
 
-          <div className="min-w-0 flex-1">
-            <div className="flex flex-wrap items-center gap-2.5">
-              <p className="m-0 text-[14.5px] font-semibold text-text">
-                {liveId ? 'Your site is live' : 'Not published yet'}
-              </p>
-
-              <Badge tone={liveId ? 'success' : 'neutral'} dot={liveId}>
-                {liveId ? 'Live' : 'Offline'}
-              </Badge>
-            </div>
-
-            <p className="m-0 mt-1 text-[12.5px] text-text-secondary">
+            <p className="m-0 mt-2 text-[12.5px] leading-[1.7] text-text-secondary">
               {liveId && liveDeployment
-                ? `Serving the version from ${formatDate(liveDeployment.createdAt)}.`
-                : 'Upload a version to publish this site.'}
+                ? `Serving the version from ${formatDate(liveDeployment.createdAt)}`
+                : 'Upload a version to publish this site'}
             </p>
           </div>
-        </div>
 
-        <div className="flex items-center justify-between gap-3 rounded-card border border-border bg-surface px-5 py-4 shadow-card sm:flex-col sm:items-start sm:justify-center">
-          <p className="m-0 font-mono text-[10px] uppercase tracking-[0.1em] text-text-tertiary">
-            Versions kept
-          </p>
-          <p className="m-0 text-[22px] font-semibold leading-none tabular-nums text-text">
-            {list.length}
-            <span className="ml-2 text-[12px] font-normal text-text-tertiary">
-              {successCount} published
-            </span>
-          </p>
+          <div className="flex items-center justify-between gap-4 border-t border-border py-4 sm:flex-col sm:items-start sm:justify-center sm:border-l sm:border-border sm:border-t-0 sm:pl-8">
+            <p className="folio m-0">Versions kept</p>
+            <p className="m-0 font-heading text-[28px] font-medium leading-none tabular-nums text-text">
+              {list.length}
+              <span className="ml-2 font-sans text-[11.5px] font-normal text-text-tertiary">
+                {successCount} published
+              </span>
+            </p>
+          </div>
         </div>
       </section>
 
       {/* Versions */}
-      <section className="mt-9">
+      <section className="mt-12">
         <div className="flex flex-wrap items-end justify-between gap-3 border-b border-border pb-3">
           <div>
-            <h2 className="m-0 text-[16px] font-semibold tracking-[-0.015em] text-text">
+            <h2 className="m-0 font-heading text-[20px] font-medium tracking-[-0.015em] text-text">
               Versions
             </h2>
             <p className="m-0 mt-1 text-[12.5px] text-text-secondary">
-              Make any earlier successful version live again without re-uploading.
+              Make any earlier successful version live again without re-uploading
             </p>
           </div>
 
-          <Button as={Link} to="/deployments/new" variant="secondary" size="xs">
+          <Button as={Link} to="/deployments/new" variant="secondary" size="sm">
             New site
           </Button>
         </div>
 
-        <div className="mt-4 flex flex-col gap-2.5">
+        <div className="flex flex-col">
           {(retry.isError || rollback.isError) && (
-            <Alert tone="error">
-              {actionError?.response?.data?.message || 'That action failed. Try again.'}
-            </Alert>
+            <div className="border-b border-border-secondary py-4">
+              <Alert tone="error">
+                {actionError?.response?.data?.message || 'That action failed. Try again.'}
+              </Alert>
+            </div>
           )}
 
           {deployments.isPending ? (
             [1, 2].map((item) => (
-              <Skeleton key={item} className="h-[72px] rounded-card" />
+              <div key={item} className="border-b border-border-secondary py-5">
+                <Skeleton className="h-8 rounded-sm" />
+              </div>
             ))
           ) : list.length === 0 ? (
-            <div className="rounded-card border border-dashed border-border bg-surface px-6 py-8 text-center text-[13px] text-text-secondary">
-              No versions yet.
+            <div className="border-b border-border py-8 text-[13px] text-text-secondary">
+              No versions yet
             </div>
           ) : (
-            list.map((d) => {
+            list.map((d, index) => {
               const isLive = d.status === 'success' && String(d.id) === liveId;
               const status = deploymentStatus(d.status);
 
               return (
                 <div
                   key={d.id}
-                  className={`flex min-w-0 flex-col gap-3 rounded-card border bg-surface px-4 py-3.5 shadow-card transition-[border-color,box-shadow] sm:flex-row sm:items-center sm:justify-between ${isLive ? 'border-brand-light shadow-card-hover' : 'border-border'}`}
+                  className={[
+                    'grid min-w-0 gap-3 border-b border-l-2 border-border-secondary py-4 pl-3 sm:grid-cols-[28px_minmax(0,1fr)_auto] sm:items-center sm:gap-5',
+                    isLive
+                      ? 'border-l-brand bg-surface'
+                      : 'border-l-transparent',
+                  ].join(' ')}
                 >
-                  <div className="flex min-w-0 items-center gap-3.5">
-                    <div
-                      className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${isLive ? 'bg-brand-soft' : 'bg-surface-tertiary'}`}
-                    >
-                      <FaClockRotateLeft
-                        aria-hidden="true"
-                        className={`text-[13px] ${isLive ? 'text-brand-strong' : 'text-text-secondary'}`}
-                      />
-                    </div>
+                  <span className="hidden font-mono text-[10px] tabular-nums text-text-tertiary sm:block">
+                    {String(index + 1).padStart(2, '0')}
+                  </span>
 
-                    <div className="min-w-0">
-                      <div className="flex flex-wrap items-center gap-2">
-                        <Badge tone={status.tone} dot={status.dot}>
-                          {status.label}
-                        </Badge>
-
-                        {isLive && (
-                          <span className="font-mono text-[10px] uppercase tracking-[0.1em] text-brand-strong">
-                            current
-                          </span>
-                        )}
-                      </div>
-
-                      <p className="m-0 mt-1.5 font-mono text-[11.5px] text-text-tertiary">
-                        {d.fileCount} file(s) · {formatDate(d.createdAt)}
+                  <div className="min-w-0">
+                    <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
+                      <p className="m-0 text-[14px] font-medium text-text">
+                        {formatDate(d.createdAt)}
                       </p>
 
-                      {d.errorMessage && (
-                        <p className="m-0 mt-1 text-[12px] text-error">{d.errorMessage}</p>
+                      <Badge tone={status.tone} dot={status.dot}>
+                        {d.status === 'success' && !isLive ? 'Published' : status.label}
+                      </Badge>
+
+                      {isLive && (
+                        <span className="font-mono text-[10px] text-brand-strong">
+                          Current
+                        </span>
                       )}
                     </div>
+
+                    <p className="m-0 mt-1 font-mono text-[11px] text-text-tertiary">
+                      {d.fileCount} file{d.fileCount === 1 ? '' : 's'}
+                    </p>
+
+                    {d.errorMessage && (
+                      <p className="m-0 mt-1 text-[12px] text-error">{d.errorMessage}</p>
+                    )}
                   </div>
 
                   <div className="flex shrink-0 gap-2">
@@ -281,11 +274,13 @@ export default function DeploymentDetail() {
         </div>
       </section>
 
-      {/* Danger zone */}
-      <section className="mt-12 rounded-card border border-error/25 bg-surface p-5 sm:p-6">
+      {/* Delete */}
+      <section className="mt-12 border-t border-border pt-6">
         <div className="flex flex-col gap-4 xs:flex-row xs:items-center xs:justify-between">
           <div className="min-w-0">
-            <h2 className="m-0 text-[14.5px] font-semibold text-error">Delete site</h2>
+            <h2 className="m-0 font-heading text-[16px] font-medium text-text">
+              Delete site
+            </h2>
             <p className="m-0 mt-1 text-[12.5px] leading-relaxed text-text-secondary">
               Removes {siteHost(site.slug)} and every version. This cannot be undone.
             </p>

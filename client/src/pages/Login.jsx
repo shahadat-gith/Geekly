@@ -37,8 +37,8 @@ export default function Login() {
 
   return (
     <AuthLayout
-      title="Welcome back"
-      description="Sign in to continue learning and growing with Geekly."
+      title="Sign in"
+      description="Topics, resume reviews and published sites, in one account"
       footer={
         <>
           New to Geekly?{' '}
@@ -71,7 +71,7 @@ export default function Login() {
         </Button>
       </div>
 
-      <Divider label="or continue with email" className="my-5" />
+      <Divider label="or use email" className="my-5" />
 
       <form onSubmit={onSubmit} className="flex flex-col gap-4">
         {error && <Alert>{error}</Alert>}
@@ -96,7 +96,7 @@ export default function Login() {
             minLength={8}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            placeholder="Enter your password"
+            placeholder="Your password"
             disabled={busy}
           />
 

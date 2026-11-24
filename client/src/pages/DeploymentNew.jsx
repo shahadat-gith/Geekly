@@ -31,26 +31,21 @@ function errorText(error, fallback) {
 
 function SectionCard({ step, title, description, children }) {
   return (
-    <section className="rounded-card border border-border bg-surface p-5 shadow-card sm:p-6">
-      <div className="flex items-start gap-3">
-        <span
-          aria-hidden="true"
-          className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-md border border-border bg-surface-tertiary font-mono text-[11px] font-semibold text-text-secondary"
-        >
-          {step}
-        </span>
+    <section className="border-t border-border py-8 first:border-t-0 first:pt-0">
+      <div className="flex items-start gap-4">
+        <span className="folio mt-1 w-5 shrink-0">{step}</span>
 
-        <div className="min-w-0">
-          <h2 className="m-0 text-[14.5px] font-semibold tracking-[-0.01em] text-text">
+        <div className="min-w-0 flex-1">
+          <h2 className="m-0 font-heading text-[18px] font-medium leading-snug tracking-[-0.015em] text-text">
             {title}
           </h2>
-          <p className="m-0 mt-1 text-[12.5px] leading-relaxed text-text-secondary">
+          <p className="m-0 mt-2 max-w-[58ch] text-[13.5px] leading-[1.7] text-text-secondary">
             {description}
           </p>
+
+          <div className="mt-6">{children}</div>
         </div>
       </div>
-
-      <div className="mt-5">{children}</div>
     </section>
   );
 }
@@ -187,24 +182,24 @@ export default function DeploymentNew() {
   const canSubmit = !busy && slugState.status === 'available' && files.length > 0;
 
   return (
-    <div className="mx-auto w-full max-w-3xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
-      <nav aria-label="Breadcrumb" className="mb-5 flex items-center gap-2 text-[12px]">
+    <div className="mx-auto w-full max-w-3xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8">
+      <nav aria-label="Breadcrumb" className="mb-6 flex items-center gap-2 text-[12px]">
         <Link to="/deployments" className="rounded-sm text-text-secondary transition-colors hover:text-brand-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">My sites</Link>
         <span aria-hidden="true" className="text-text-disabled">/</span>
         <span aria-current="page" className="font-medium text-text">New site</span>
       </nav>
 
       <PageHeader
-        eyebrow="Static hosting"
+        eyebrow="Sites"
         title="New site"
-        description="Pick a name and address, then choose the built folder of your website."
+        description="A name, an address, and the built folder"
       />
 
-      <form onSubmit={onSubmit} className="mt-7 flex flex-col gap-4">
+      <form onSubmit={onSubmit} className="mt-10 flex flex-col">
         <SectionCard
           step="01"
           title="Name and address"
-          description="The address becomes the public geekly.in hostname for this site."
+          description="The address becomes the public geekly.in hostname for this site"
         >
           <div className="flex flex-col gap-5">
             <Input
@@ -243,28 +238,28 @@ export default function DeploymentNew() {
         <SectionCard
           step="02"
           title="Site folder"
-          description="Choose the folder your build produced. It must contain an index.html at its top level."
+          description="Choose the built folder that contains an index.html at its top level"
         >
           <div className="flex flex-col gap-4">
             {folderSupported ? (
               <label
                 className={[
-                  'flex cursor-pointer flex-col items-center gap-2.5 rounded-card border border-dashed px-6 py-8 text-center transition-colors',
-                  'border-border bg-surface-secondary hover:border-brand-light',
+                  'flex cursor-pointer flex-col items-start gap-3 rounded-field border border-dashed px-6 py-8 text-left transition-colors',
+                  'border-border bg-surface-secondary/60 hover:border-brand-light',
                   busy ? 'cursor-not-allowed opacity-60' : '',
                   'has-[:focus-visible]:border-brand has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-ring',
                 ].join(' ')}
               >
-                <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-brand-soft">
-                  <FaFolderOpen aria-hidden="true" className="text-[17px] text-brand-strong" />
-                </div>
+                <FaFolderOpen aria-hidden="true" className="text-[18px] text-brand-strong" />
 
-                <span className="text-[13.5px] font-semibold text-text">
+                <span className="text-[14px] font-medium text-text">
                   {files.length > 0 ? 'Choose a different folder' : 'Choose a folder'}
                 </span>
 
                 <span className="font-mono text-[11px] text-text-tertiary">
-                  {files.length > 0 ? `${files.length} file(s) selected` : 'no folder selected'}
+                  {files.length > 0
+                    ? `${files.length} file${files.length === 1 ? '' : 's'} selected`
+                    : 'No folder selected'}
                 </span>
 
                 <input
@@ -302,10 +297,10 @@ export default function DeploymentNew() {
                   aria-valuemin={0}
                   aria-valuemax={100}
                   aria-label="Upload progress"
-                  className="h-1.5 w-full overflow-hidden rounded-full bg-surface-tertiary"
+                  className="h-1 w-full overflow-hidden rounded-[2px] bg-surface-tertiary"
                 >
                   <div
-                    className="h-full rounded-full bg-brand transition-[width] duration-300"
+                    className="h-full rounded-[2px] bg-brand transition-[width] duration-300"
                     style={{ width: `${progress}%` }}
                   />
                 </div>
@@ -316,9 +311,9 @@ export default function DeploymentNew() {
 
         {error && <Alert tone="error">{error}</Alert>}
 
-        <div className="flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <p className="m-0 font-mono text-[11px] text-text-tertiary">
-            first version goes live immediately
+        <div className="mt-2 flex flex-col-reverse gap-3 border-t border-border pt-6 sm:flex-row sm:items-center sm:justify-between">
+          <p className="m-0 text-[12px] text-text-tertiary">
+            First version goes live immediately
           </p>
 
           <div className="flex flex-col-reverse gap-3 xs:flex-row">

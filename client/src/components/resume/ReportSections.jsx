@@ -1,22 +1,14 @@
 import { useEffect, useRef, useState } from 'react';
-import {
-  FaCheck,
-  FaCopy,
-  FaLayerGroup,
-  FaCircleCheck,
-  FaTriangleExclamation,
-  FaCircleMinus,
-  FaWandMagicSparkles,
-} from 'react-icons/fa6';
+import { FaCheck, FaCopy } from 'react-icons/fa6';
 
 import { Badge } from '../ui/Badge.jsx';
 
 const TABS = [
-  { key: 'summary', label: 'Summary', Icon: FaLayerGroup },
-  { key: 'strengths', label: 'Strong points', Icon: FaCircleCheck },
-  { key: 'gaps', label: 'Weak points', Icon: FaTriangleExclamation },
-  { key: 'missing', label: 'Missing skills', Icon: FaCircleMinus },
-  { key: 'fixes', label: 'Fixes', Icon: FaWandMagicSparkles },
+  { key: 'summary', label: 'Summary' },
+  { key: 'strengths', label: 'Strong points' },
+  { key: 'gaps', label: 'Weak points' },
+  { key: 'missing', label: 'Missing skills' },
+  { key: 'fixes', label: 'Fixes' },
 ];
 
 const SEVERITY_TONE = {
@@ -33,8 +25,8 @@ const PRIORITY_LABEL = {
 
 function PanelHeading({ title, meta }) {
   return (
-    <div className="mb-5 border-b border-border-secondary pb-4">
-      <h2 className="m-0 text-[15px] font-semibold leading-snug tracking-[-0.01em] text-text">
+    <div className="mb-6 border-b border-border-secondary pb-4">
+      <h2 className="m-0 font-heading text-[18px] font-medium leading-snug tracking-[-0.015em] text-text">
         {title}
       </h2>
 
@@ -49,7 +41,7 @@ function PanelHeading({ title, meta }) {
 
 function EmptyNote({ children }) {
   return (
-    <p className="m-0 rounded-field border border-dashed border-border bg-surface-secondary px-4 py-5 text-[13px] leading-[1.7] text-text-secondary">
+    <p className="m-0 border-l-2 border-border py-1 pl-4 text-[13px] leading-[1.75] text-text-secondary">
       {children}
     </p>
   );
@@ -63,13 +55,13 @@ function NumberedPoints({ items }) {
           key={`${item.title}-${index}`}
           className={index ? 'border-t border-border-secondary pt-4' : ''}
         >
-          <div className="flex gap-3">
-            <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-success/10 font-mono text-[11px] font-semibold text-success">
-              {index + 1}
+          <div className="flex gap-4">
+            <span className="mt-0.5 w-5 shrink-0 font-mono text-[10px] tabular-nums text-text-tertiary">
+              {String(index + 1).padStart(2, '0')}
             </span>
 
             <div className="min-w-0">
-              <p className="m-0 text-[14px] font-semibold leading-snug text-text">
+              <p className="m-0 text-[14px] font-medium leading-snug text-text">
                 {item.title}
               </p>
 
@@ -131,7 +123,7 @@ function CopyButton({ label, copiedLabel, copied, onClick, disabled = false }) {
       type="button"
       onClick={onClick}
       disabled={disabled}
-      className="inline-flex min-h-7 shrink-0 items-center gap-1.5 rounded-button px-2 text-[11.5px] font-semibold text-brand-strong transition-colors hover:bg-brand-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+      className="inline-flex min-h-7 shrink-0 items-center gap-1.5 rounded-button px-2 text-[11.5px] font-medium text-brand-strong transition-colors hover:bg-brand-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
     >
       {copied ? (
         <FaCheck aria-hidden="true" className="text-[11px]" />
@@ -171,7 +163,7 @@ function Fixes({ edits }) {
 
   return (
     <div className="flex flex-col gap-5">
-      <div className="flex flex-wrap items-center justify-between gap-3 rounded-field border border-border bg-surface-secondary px-4 py-3">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-y border-border py-3">
         <p className="m-0 text-[12.5px] leading-[1.6] text-text-secondary">
           Each fix is finished text. Copy it into the section named above it.
         </p>
@@ -192,17 +184,20 @@ function Fixes({ edits }) {
           >
             <div className="flex flex-wrap items-start justify-between gap-2">
               <div className="min-w-0">
-                <p className="m-0 font-mono text-[10.5px] uppercase tracking-[0.1em] text-text-tertiary">
+                <p className="folio m-0">
                   {edit.section}
                 </p>
 
-                <p className="m-0 mt-1 text-[14px] font-semibold leading-snug text-text">
+                <p className="m-0 mt-1 text-[14px] font-medium leading-snug text-text">
                   {edit.target}
                 </p>
               </div>
 
               <div className="flex flex-wrap items-center gap-2">
                 <Badge tone="neutral">{edit.action}</Badge>
+                <span aria-hidden="true" className="text-[11px] text-text-disabled">
+                  ·
+                </span>
                 <Badge tone={SEVERITY_TONE[edit.priority] ?? 'warning'}>
                   {edit.priority}
                 </Badge>
@@ -211,14 +206,14 @@ function Fixes({ edits }) {
 
             {edit.before && (
               <p className="m-0 mt-2 border-l-2 border-border pl-3 text-[13px] leading-[1.7] text-text-tertiary">
-                <span className="font-semibold text-text-secondary">Now: </span>
+                <span className="font-medium text-text-secondary">Now: </span>
                 {edit.before}
               </p>
             )}
 
-            <div className="mt-2 overflow-hidden rounded-field border border-border bg-surface-secondary">
-              <div className="flex items-center justify-between gap-3 border-b border-border px-3 py-1.5">
-                <span className="font-mono text-[10px] uppercase tracking-[0.1em] text-text-tertiary">
+            <div className="mt-2 overflow-hidden rounded-field border border-border">
+              <div className="flex items-center justify-between gap-3 border-b border-border bg-surface-secondary/50 px-3 py-1.5">
+                <span className="text-[11px] font-medium text-text-tertiary">
                   Paste this
                 </span>
 
@@ -237,7 +232,7 @@ function Fixes({ edits }) {
 
             {edit.reason && (
               <p className="m-0 mt-2 text-[13px] leading-[1.7] text-text-secondary">
-                <span className="font-semibold text-text">Why: </span>
+                <span className="font-medium text-text">Why: </span>
                 {edit.reason}
               </p>
             )}
@@ -289,9 +284,9 @@ export function ReportSections({ analysis }) {
   }
 
   return (
-    <div className="overflow-hidden rounded-card border border-border bg-surface shadow-card lg:grid lg:grid-cols-[232px_minmax(0,1fr)]">
+    <div className="overflow-hidden rounded-card border border-border bg-surface lg:grid lg:grid-cols-[216px_minmax(0,1fr)]">
       {/* Section navigation */}
-      <div className="border-b border-border-secondary bg-surface-secondary/60 p-2 lg:border-b-0 lg:border-r lg:p-3">
+      <div className="border-b border-border-secondary bg-surface-secondary/40 p-2 lg:border-b-0 lg:border-r lg:p-3">
         <div
           role="tablist"
           aria-label="Resume report sections"
@@ -302,7 +297,6 @@ export function ReportSections({ analysis }) {
           {TABS.map((tab) => {
             const count = counts[tab.key];
             const selected = active === tab.key;
-            const Icon = tab.Icon;
 
             return (
               <button
@@ -317,22 +311,17 @@ export function ReportSections({ analysis }) {
                 aria-controls={`report-panel-${tab.key}`}
                 tabIndex={selected ? 0 : -1}
                 onClick={() => setActive(tab.key)}
-                className={`inline-flex min-h-9 shrink-0 items-center gap-2 rounded-button px-3 text-[13px] font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring lg:w-full ${
+                className={`inline-flex min-h-9 shrink-0 items-center gap-2 border-b-2 border-transparent px-3 text-[13px] font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring lg:w-full lg:border-b-0 lg:border-l-2 lg:py-2.5 ${
                   selected
-                    ? 'bg-surface text-text shadow-card'
+                    ? 'border-brand bg-brand-soft/40 text-text'
                     : 'text-text-secondary hover:bg-surface hover:text-text'
                 }`}
               >
-                <Icon
-                  aria-hidden="true"
-                  className={`text-[12px] ${selected ? 'text-brand-strong' : 'text-text-tertiary'}`}
-                />
-
                 <span className="whitespace-nowrap">{tab.label}</span>
 
                 {count > 0 && (
                   <span
-                    className={`ml-auto hidden rounded-full px-1.5 py-0.5 font-mono text-[10.5px] font-semibold leading-none lg:inline ${selected ? 'bg-brand-soft text-brand-strong' : 'bg-surface-tertiary text-text-tertiary'}`}
+                    className={`ml-auto hidden font-mono text-[10.5px] tabular-nums leading-none lg:inline ${selected ? 'text-brand-strong' : 'text-text-tertiary'}`}
                   >
                     {count}
                   </span>
@@ -349,7 +338,7 @@ export function ReportSections({ analysis }) {
         id={`report-panel-${active}`}
         aria-labelledby={`report-tab-${active}`}
         tabIndex={0}
-        className="min-w-0 px-5 py-5 focus-visible:outline-none sm:px-6 sm:py-6"
+        className="min-w-0 px-5 py-6 focus-visible:outline-none sm:px-8 sm:py-8"
       >
         {active === 'summary' && (
           <>
@@ -403,7 +392,7 @@ export function ReportSections({ analysis }) {
                 {gaps.map((item, index) => (
                   <li key={`${item.title}-${index}`} className="py-4 first:pt-0 last:pb-0">
                     <div className="flex flex-wrap items-start justify-between gap-2">
-                      <p className="m-0 text-[14px] font-semibold leading-snug text-text">
+                      <p className="m-0 text-[14px] font-medium leading-snug text-text">
                         {item.title}
                       </p>
 
@@ -442,7 +431,7 @@ export function ReportSections({ analysis }) {
                 {missingSkills.map((item, index) => (
                   <li key={`${item.skill}-${index}`} className="py-4 first:pt-0 last:pb-0">
                     <div className="flex flex-wrap items-start justify-between gap-2">
-                      <p className="m-0 text-[14px] font-semibold leading-snug text-text">
+                      <p className="m-0 text-[14px] font-medium leading-snug text-text">
                         {item.skill}
                       </p>
 

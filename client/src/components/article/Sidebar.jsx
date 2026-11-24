@@ -13,7 +13,7 @@ function ArticleLink({ to, title, active, onNavigate, number }) {
         'group flex min-h-9 min-w-0 items-start gap-2.5 rounded-button px-2.5 py-2 text-[12.5px] leading-snug transition-colors duration-150',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
         active
-          ? 'bg-brand-soft font-medium text-brand-strong'
+          ? 'bg-brand-soft/50 font-medium text-brand-strong'
           : 'text-text-secondary hover:bg-surface-secondary hover:text-text',
       ].join(' ')}
     >
@@ -32,7 +32,7 @@ function ArticleLink({ to, title, active, onNavigate, number }) {
 
 function SectionLabel({ children }) {
   return (
-    <p className="mb-1 mt-5 px-2.5 font-mono text-[9.5px] font-semibold uppercase tracking-[0.12em] text-text-tertiary first:mt-0">
+    <p className="mb-1 mt-5 px-2.5 text-[11px] font-medium text-text-tertiary first:mt-0">
       {children}
     </p>
   );
@@ -60,7 +60,7 @@ export default function Sidebar({
         onClick={onNavigate}
         aria-current={activePath === `/${topic.slug}` ? 'page' : undefined}
         className={[
-          'block rounded-button px-2.5 py-1.5 text-[13.5px] font-semibold tracking-[-0.01em] transition-colors',
+          'block rounded-button px-2.5 py-1.5 text-[13.5px] font-medium tracking-[-0.01em] transition-colors',
           activePath === `/${topic.slug}`
             ? 'text-brand-strong'
             : 'text-text hover:text-brand-strong',

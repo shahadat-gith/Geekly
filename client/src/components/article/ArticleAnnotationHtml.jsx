@@ -115,13 +115,7 @@ function AnnotationPopover({
     >
       {/* Header */}
       <div className="flex shrink-0 items-center justify-between gap-3">
-        <span className="
-          inline-flex items-center gap-2
-          rounded-full border border-accent/25
-          bg-accent-soft px-2.5 py-1
-          text-[10.5px] font-semibold
-          tracking-wide text-warning
-        ">
+        <span className="inline-flex items-center gap-2 text-[11px] font-medium text-warning">
           <span
             aria-hidden="true"
             className="h-1.5 w-1.5 rounded-full bg-accent"

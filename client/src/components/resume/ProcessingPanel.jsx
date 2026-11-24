@@ -4,7 +4,7 @@
  */
 export function ProcessingPanel({ title, stage, note }) {
   return (
-    <div className="rounded-card border border-border bg-surface p-6 shadow-card sm:p-8">
+    <div className="border-y border-border py-6 sm:py-8">
       <div className="flex items-start gap-4">
         <span
           role="status"
@@ -13,7 +13,7 @@ export function ProcessingPanel({ title, stage, note }) {
         />
 
         <div className="min-w-0 flex-1">
-          <h2 className="m-0 text-[15px] font-semibold leading-snug tracking-[-0.01em] text-text">
+          <h2 className="m-0 font-heading text-[18px] font-medium leading-snug tracking-[-0.015em] text-text">
             {title}
           </h2>
 

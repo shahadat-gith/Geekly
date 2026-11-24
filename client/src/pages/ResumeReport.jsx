@@ -16,18 +16,24 @@ import { formatDate } from '../utils/format.js';
 function ReportSkeleton() {
   return (
     <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8" aria-hidden="true">
-      <Skeleton className="h-3 w-20" />
-      <Skeleton className="mt-4 h-8 w-64 max-w-full" />
+      <Skeleton className="h-2.5 w-24" />
+      <Skeleton className="mt-5 h-8 w-64 max-w-full" />
       <Skeleton className="mt-3 h-3.5 w-80 max-w-full" />
 
-      <div className="mt-8 grid gap-3 sm:grid-cols-4">
+      <div className="mt-8 grid grid-cols-2 border-y border-border sm:grid-cols-4">
         {[0, 1, 2, 3].map((index) => (
-          <Skeleton key={index} className="h-[74px] rounded-card" />
+          <div
+            key={index}
+            className="border-b border-border-secondary px-4 py-5 last:border-b-0 sm:border-b-0 sm:border-r sm:border-border-secondary sm:last:border-r-0"
+          >
+            <Skeleton className="h-2.5 w-16" />
+            <Skeleton className="mt-3 h-7 w-10" />
+          </div>
         ))}
       </div>
 
-      <div className="mt-5 min-w-0 overflow-hidden rounded-card border border-border bg-surface shadow-card lg:grid lg:grid-cols-[220px_minmax(0,1fr)]">
-        <div className="border-b border-border-secondary bg-surface-secondary/60 p-3 lg:border-b-0 lg:border-r">
+      <div className="mt-8 min-w-0 border border-border bg-surface lg:grid lg:grid-cols-[216px_minmax(0,1fr)]">
+        <div className="border-b border-border-secondary bg-surface-secondary/40 p-3 lg:border-b-0 lg:border-r">
           {[0, 1, 2, 3, 4].map((index) => (
             <Skeleton key={index} className="mb-1.5 h-9 w-full" />
           ))}
@@ -49,23 +55,30 @@ function ReportSkeleton() {
 /** At-a-glance counts pulled straight from the report. */
 function ReportStats({ report }) {
   const stats = [
-    { label: 'Strong points', value: report.strengths?.length ?? 0, tone: 'text-success' },
-    { label: 'Weak points', value: report.gaps?.length ?? 0, tone: 'text-warning' },
-    { label: 'Missing skills', value: report.missingSkills?.length ?? 0, tone: 'text-text' },
-    { label: 'Fixes', value: report.edits?.length ?? 0, tone: 'text-brand-strong' },
+    { label: 'Strong points', value: report.strengths?.length ?? 0 },
+    { label: 'Weak points', value: report.gaps?.length ?? 0 },
+    { label: 'Missing skills', value: report.missingSkills?.length ?? 0 },
+    { label: 'Fixes', value: report.edits?.length ?? 0, accent: true },
   ];
 
   return (
-    <dl className="m-0 grid grid-cols-2 gap-3 sm:grid-cols-4">
-      {stats.map((stat) => (
+    <dl className="m-0 grid grid-cols-2 border-y border-border sm:grid-cols-4">
+      {stats.map((stat, index) => (
         <div
           key={stat.label}
-          className="rounded-card border border-border bg-surface px-4 py-3.5 shadow-card"
+          className={[
+            'px-4 py-5 sm:px-6',
+            index < 2 ? 'border-b border-border-secondary sm:border-b-0' : '',
+            index % 2 === 1 ? 'border-l border-border-secondary' : '',
+            'sm:border-l sm:border-border-secondary sm:first:border-l-0',
+          ].join(' ')}
         >
-          <dt className="m-0 font-mono text-[10px] uppercase tracking-[0.1em] text-text-tertiary">
+          <dt className="m-0 text-[12px] text-text-secondary">
             {stat.label}
           </dt>
-          <dd className={`m-0 mt-1.5 text-[24px] font-semibold leading-none tabular-nums ${stat.tone}`}>
+          <dd
+            className={`m-0 mt-2 font-heading text-[28px] font-medium leading-none tabular-nums ${stat.accent ? 'text-brand-strong' : 'text-text'}`}
+          >
             {stat.value}
           </dd>
         </div>
@@ -125,17 +138,23 @@ export default function ResumeReport() {
   ].filter(Boolean);
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
-      <nav aria-label="Breadcrumb" className="mb-5 flex items-center gap-2 text-[12px]">
+    <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8">
+      <nav aria-label="Breadcrumb" className="mb-6 flex items-center gap-2 text-[12px]">
         <Link to="/profile" className="rounded-sm text-text-secondary transition-colors hover:text-brand-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">Your profile</Link>
         <span aria-hidden="true" className="text-text-disabled">/</span>
         <span aria-current="page" className="font-medium text-text">Resume report</span>
       </nav>
 
       <PageHeader
-        eyebrow="Resume intelligence"
-        title="Resume analysis"
-        description={meta.join(' · ')}
+        eyebrow="Resume review"
+        title="Resume report"
+        description={
+          meta.length > 0 ? (
+            <span className="font-mono text-[12.5px] text-text-tertiary">
+              {meta.join(' · ')}
+            </span>
+          ) : undefined
+        }
         action={<StatusChip status={analysis.status} />}
       />
 
@@ -182,7 +201,7 @@ export default function ResumeReport() {
 
       {/* Completed report */}
       {completed && (
-        <div className="mt-7 flex flex-col gap-5">
+        <div className="mt-8 flex flex-col gap-8">
           <ReportStats report={report} />
           <ReportSections analysis={report} />
         </div>

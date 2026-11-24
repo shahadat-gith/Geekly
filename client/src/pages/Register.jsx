@@ -46,7 +46,7 @@ export default function Register() {
   return (
     <AuthLayout
       title="Create your account"
-      description="One account for topics, resume reviews and your published sites."
+      description="One account for topics, resume reviews and your published sites"
       footer={
         <>
           Already have an account?{' '}
@@ -79,7 +79,7 @@ export default function Register() {
         </Button>
       </div>
 
-      <Divider label="or sign up with email" className="my-5" />
+      <Divider label="or use email" className="my-5" />
 
       <form onSubmit={onSubmit} className="flex flex-col gap-4">
         {error && <Alert>{error}</Alert>}
@@ -91,7 +91,7 @@ export default function Register() {
           required
           value={fullname}
           onChange={(e) => setFullname(e.target.value)}
-          placeholder="Enter your full name"
+          placeholder="Your full name"
           disabled={busy}
         />
 
@@ -144,7 +144,6 @@ export default function Register() {
           >
             Privacy Policy
           </Link>
-          .
         </p>
       </form>
     </AuthLayout>

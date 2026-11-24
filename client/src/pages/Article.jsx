@@ -111,7 +111,7 @@ export default function Article() {
     <div
       className={[
         'mx-auto grid w-full min-w-0 grid-cols-1 gap-6',
-        'max-w-[1400px] px-4 py-6 sm:gap-8 sm:px-6 sm:py-8 lg:px-8 lg:py-9',
+        'max-w-[1400px] px-4 py-8 sm:gap-8 sm:px-6 sm:py-10 lg:px-8 lg:py-12',
         'lg:grid-cols-[248px_minmax(0,1fr)]',
         hasVideos ? 'xl:grid-cols-[256px_minmax(0,1fr)_240px]' : '',
       ]
@@ -136,7 +136,7 @@ export default function Article() {
         <div className="mb-5 flex flex-wrap items-center justify-between gap-3 border-b border-border pb-3 lg:hidden">
           <Link
             to={`/${topic.slug}`}
-            className="min-w-0 truncate font-mono text-[11px] uppercase tracking-[0.1em] text-text-tertiary transition-colors hover:text-text"
+            className="min-w-0 truncate font-mono text-[11px] text-text-tertiary transition-colors hover:text-text"
           >
             {topic.name}
           </Link>
@@ -197,10 +197,10 @@ export default function Article() {
             {/* Drawer header */}
             <div className="flex shrink-0 items-center justify-between gap-3 border-b border-border px-4 py-3.5">
               <div className="min-w-0">
-                <p className="m-0 font-mono text-[9.5px] uppercase tracking-[0.12em] text-text-tertiary">
+                <p className="folio m-0">
                   Contents
                 </p>
-                <p className="m-0 mt-1 truncate text-sm font-semibold text-text">
+                <p className="m-0 mt-1 truncate text-[15px] font-medium text-text">
                   {topic.name}
                 </p>
               </div>

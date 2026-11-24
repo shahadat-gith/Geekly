@@ -1,6 +1,7 @@
 /**
- * Consistent page header: eyebrow, title, description, and an
- * optional trailing action slot.
+ * Page header for the signed-in and utility routes.
+ * A small pine tick, a mono folio label and a hairline rule establish the
+ * page before the title. The home route does not use this header.
  */
 export function PageHeader({
   eyebrow,
@@ -11,18 +12,22 @@ export function PageHeader({
 }) {
   return (
     <header className={className}>
-      <div className="flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
-        <div className="min-w-0">
-          {eyebrow && (
-            <p className="eyebrow m-0">{eyebrow}</p>
-          )}
+      <div className="flex items-center gap-3">
+        <span aria-hidden="true" className="h-1 w-1 shrink-0 rounded-full bg-brand" />
 
-          <h1 className="m-0 mt-2 text-balance font-heading text-[28px] font-semibold leading-[1.18] tracking-[-0.03em] text-text sm:text-[32px]">
+        {eyebrow && <p className="folio m-0">{eyebrow}</p>}
+
+        <span aria-hidden="true" className="h-px min-w-4 flex-1 bg-border" />
+      </div>
+
+      <div className="mt-5 flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
+        <div className="min-w-0">
+          <h1 className="m-0 text-balance font-heading text-[30px] font-medium leading-[1.12] tracking-[-0.025em] text-text sm:text-[34px]">
             {title}
           </h1>
 
           {description && (
-            <p className="m-0 mt-2 max-w-2xl text-[13.5px] leading-[1.75] text-text-secondary sm:text-[14px]">
+            <p className="m-0 mt-3 max-w-[62ch] text-[14px] leading-[1.75] text-text-secondary">
               {description}
             </p>
           )}

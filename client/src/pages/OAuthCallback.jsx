@@ -43,8 +43,8 @@ export default function OAuthCallback() {
   if (!error) {
     return (
       <AuthLayout
-        title="Signing you in"
-        description="Just a moment while we securely connect your account."
+        title="Signing in"
+        description="This takes a moment"
       >
         <div
           role="status"
@@ -66,8 +66,8 @@ export default function OAuthCallback() {
 
   return (
     <AuthLayout
-      title="Unable to sign you in"
-      description="Something went wrong while connecting your account."
+      title="Could not sign you in"
+      description="Something went wrong while connecting your account"
       footer={
         <>
           Having trouble?{' '}

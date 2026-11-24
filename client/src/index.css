@@ -114,14 +114,13 @@ body {
   text-rendering: optimizeLegibility;
 }
 
-/* Mono eyebrow label used for section kickers and technical meta. */
-.eyebrow {
+/* Folio line: the quiet mono label that opens every inner page. */
+.folio {
   font-family: var(--font-mono);
   font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--color-brand);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: var(--color-text-secondary);
 }
 
 /* Visible keyboard focus everywhere. */
@@ -314,7 +313,7 @@ input[type="radio"] {
   margin: 1.9em 0 0.5em;
   font-family: var(--font-heading);
   font-size: 1.7rem;
-  font-weight: 600;
+  font-weight: 500;
   line-height: 1.25;
   letter-spacing: -0.02em;
 }
@@ -323,7 +322,7 @@ input[type="radio"] {
   margin: 1.9em 0 0.55em;
   font-family: var(--font-heading);
   font-size: 1.95rem;
-  font-weight: 600;
+  font-weight: 500;
   line-height: 1.2;
   letter-spacing: -0.02em;
 }
@@ -331,7 +330,7 @@ input[type="radio"] {
 .article-prose h3 {
   margin: 1.7em 0 0.45em;
   font-size: 1.02rem;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: -0.01em;
   line-height: 1.4;
 }
@@ -339,7 +338,7 @@ input[type="radio"] {
 .article-prose h4 {
   margin: 1.65em 0 0.42em;
   font-size: 0.98rem;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: -0.01em;
   line-height: 1.45;
 }
@@ -347,18 +346,17 @@ input[type="radio"] {
 .article-prose h5 {
   margin: 1.55em 0 0.4em;
   font-size: 0.9rem;
-  font-weight: 700;
+  font-weight: 600;
   line-height: 1.5;
 }
 
 .article-prose h6 {
   margin: 1.5em 0 0.4em;
   color: var(--color-text-secondary);
-  font-size: 0.76rem;
-  font-weight: 700;
-  letter-spacing: 0.09em;
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0;
   line-height: 1.5;
-  text-transform: uppercase;
 }
 
 .article-prose ul,
@@ -462,7 +460,7 @@ input[type="radio"] {
 
 .article-prose th {
   background: var(--color-surface-secondary);
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .article-prose th p,
@@ -501,11 +499,10 @@ input[type="radio"] {
   margin: 0 0 0.35em;
   color: var(--callout-color);
   font-family: var(--font-mono);
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
   line-height: 1.4;
-  text-transform: uppercase;
 }
 
 .article-prose .article-callout>*:last-child {

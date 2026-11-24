@@ -34,8 +34,8 @@ export default function ForgotPassword() {
 
   return (
     <AuthLayout
-      title="Reset your password"
-      description="No worries. Enter the email associated with your account and we'll help you get back in."
+      title="Reset password"
+      description="Enter the email on your account and we will send a reset link"
       footer={
         <>
           Remembered your password?{' '}
@@ -48,8 +48,8 @@ export default function ForgotPassword() {
       {done ? (
         <div className="flex flex-col gap-3">
           <Alert tone="success">
-            If an account exists for that email, a password reset link is on its way.
-            The link expires in 1 hour.
+            If an account exists for that email, a reset link is on its way.
+            It expires in one hour.
           </Alert>
 
           {devToken && (
@@ -61,7 +61,7 @@ export default function ForgotPassword() {
 
                 <Link
                   to={`/auth/reset-password?token=${encodeURIComponent(devToken)}`}
-                  className="w-fit text-[12px] font-semibold text-brand-strong underline underline-offset-4 transition-colors hover:text-brand-strong-hover"
+                  className="w-fit text-[12px] font-medium text-brand-strong underline underline-offset-4 transition-colors hover:text-brand-strong-hover"
                 >
                   Open the reset page
                 </Link>
