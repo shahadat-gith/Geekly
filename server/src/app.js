@@ -12,7 +12,6 @@ import topicRoutes from "./features/public/topics/routes.js"
 import articleRoutes from "./features/public/articles/routes.js"
 
 import adminRoutes from "./features/admin/routes.js"
-import hostingRoutes from "./features/hosting/hosting.routes.js"
 import resumeRoutes from "./features/resume/resume.routes.js"
 
 import { errorHandler } from "./shared/errorHandler.js"
@@ -74,7 +73,6 @@ app.use("/api/topics", topicRoutes)
 app.use("/api/articles", articleRoutes)
 app.use("/api/resume-analysis", resumeRoutes)
 app.use("/api/admin", adminRoutes)
-app.use("/api/deployments", hostingRoutes)
 
 // 404 handler
 app.use((req, res) => {

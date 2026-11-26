@@ -8,7 +8,6 @@ const LEARN = [
 
 const TOOLS = [
   { label: 'Resume analysis', to: '/resume-analysis' },
-  { label: 'My sites', to: '/deployments' },
   { label: 'Profile', to: '/profile' },
 ];
 

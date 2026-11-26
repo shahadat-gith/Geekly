@@ -4,7 +4,6 @@
  * page before the title. The home route does not use this header.
  */
 export function PageHeader({
-  eyebrow,
   title,
   description,
   action,
@@ -12,14 +11,6 @@ export function PageHeader({
 }) {
   return (
     <header className={className}>
-      <div className="flex items-center gap-3">
-        <span aria-hidden="true" className="h-1 w-1 shrink-0 rounded-full bg-brand" />
-
-        {eyebrow && <p className="folio m-0">{eyebrow}</p>}
-
-        <span aria-hidden="true" className="h-px min-w-4 flex-1 bg-border" />
-      </div>
-
       <div className="mt-5 flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
         <div className="min-w-0">
           <h1 className="m-0 text-balance font-heading text-[30px] font-medium leading-[1.12] tracking-[-0.025em] text-text sm:text-[34px]">

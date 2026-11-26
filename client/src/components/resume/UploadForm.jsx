@@ -1,3 +1,4 @@
+
 import { useId, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -36,34 +37,6 @@ function fileProblem(file, label) {
   return '';
 }
 
-/** Section header for one input step of the form. */
-function Step({ index, title, description, children, aside }) {
-  return (
-    <section className="flex flex-col gap-5">
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <div className="flex min-w-0 items-start gap-4">
-          <span aria-hidden="true" className="folio mt-1 w-5 shrink-0">
-            {index}
-          </span>
-
-          <div className="min-w-0">
-            <h2 className="m-0 font-heading text-[17px] font-medium leading-snug tracking-[-0.015em] text-text">
-              {title}
-            </h2>
-            <p className="m-0 mt-2 max-w-[58ch] text-[13px] leading-[1.7] text-text-secondary">
-              {description}
-            </p>
-          </div>
-        </div>
-
-        {aside}
-      </div>
-
-      <div className="sm:pl-9">{children}</div>
-    </section>
-  );
-}
-
 function SourceSwitch({ label, value, onChange }) {
   const options = [
     { key: 'file', label: 'Upload file' },
@@ -74,7 +47,7 @@ function SourceSwitch({ label, value, onChange }) {
     <div
       role="group"
       aria-label={`${label} input type`}
-      className="inline-flex shrink-0 rounded-button border border-border bg-surface-tertiary p-0.5"
+      className="inline-flex shrink-0 rounded-button border border-border bg-surface-secondary p-0.5"
     >
       {options.map((option) => {
         const active = option.key === value;
@@ -85,11 +58,10 @@ function SourceSwitch({ label, value, onChange }) {
             type="button"
             aria-pressed={active}
             onClick={() => onChange(option.key)}
-            className={`rounded-[6px] px-3 py-1.5 text-[12px] font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
-              active
-                ? 'bg-surface text-text shadow-card'
-                : 'text-text-tertiary hover:text-text-secondary'
-            }`}
+            className={`rounded-[6px] px-3 py-1.5 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${active
+              ? 'bg-surface text-text shadow-card'
+              : 'text-text-tertiary hover:text-text-secondary'
+              }`}
           >
             {option.label}
           </button>
@@ -99,7 +71,7 @@ function SourceSwitch({ label, value, onChange }) {
   );
 }
 
-function DropZone({ label, file, onChoose, onClear, compact = false }) {
+function DropZone({ label, file, onChoose, onClear }) {
   const inputRef = useRef(null);
   const [dragging, setDragging] = useState(false);
 
@@ -120,26 +92,23 @@ function DropZone({ label, file, onChoose, onClear, compact = false }) {
           setDragging(false);
           onChoose(event.dataTransfer.files?.[0]);
         }}
-        className={[
-          'flex flex-col items-start justify-center rounded-field border border-dashed px-5 text-left transition-colors',
-          compact ? 'min-h-[150px] py-6' : 'min-h-[180px] py-7',
-          dragging
-            ? 'border-brand bg-brand-soft'
-            : 'border-border bg-surface-secondary hover:border-brand-light',
-        ].join(' ')}
+        className={`flex min-h-[140px] flex-col items-center justify-center rounded-field border px-5 py-6 text-center transition-colors ${dragging
+          ? 'border-brand bg-brand-soft'
+          : 'border-border bg-surface-secondary hover:border-brand-light'
+          }`}
       >
         {file ? (
           <>
             <FaFileLines
               aria-hidden="true"
-              className="text-[18px] text-brand-strong"
+              className="text-lg text-brand"
             />
 
-            <p className="mb-0 mt-3 max-w-full truncate text-[13.5px] font-medium text-text">
+            <p className="mb-0 mt-3 max-w-full truncate text-sm font-medium text-text">
               {file.name}
             </p>
 
-            <p className="m-0 mt-1 font-mono text-[11px] text-text-tertiary">
+            <p className="m-0 mt-1 text-xs text-text-tertiary">
               {formatFileSize(file.size)}
             </p>
 
@@ -149,9 +118,9 @@ function DropZone({ label, file, onChoose, onClear, compact = false }) {
                 onClear();
                 if (inputRef.current) inputRef.current.value = '';
               }}
-              className="mt-3 inline-flex items-center gap-1.5 rounded-button px-3 py-1.5 text-[12px] font-medium text-text-secondary transition-colors hover:bg-surface-tertiary hover:text-error focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              className="mt-3 inline-flex items-center gap-1.5 rounded-button px-2 py-1 text-xs text-text-secondary transition-colors hover:text-error focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             >
-              <FaXmark aria-hidden="true" className="text-[11px]" />
+              <FaXmark aria-hidden="true" />
               Remove file
             </button>
           </>
@@ -159,22 +128,24 @@ function DropZone({ label, file, onChoose, onClear, compact = false }) {
           <>
             <FaArrowUpFromBracket
               aria-hidden="true"
-              className="text-[18px] text-brand-strong"
+              className="text-lg text-text-secondary"
             />
 
-            <p className="m-0 mt-3 text-[13.5px] font-medium text-text">
-              {dragging ? `Drop your ${label} here` : `Drag and drop your ${label}`}
+            <p className="m-0 mt-3 text-sm font-medium text-text">
+              {dragging
+                ? `Drop your ${label} here`
+                : `Drag and drop your ${label}`}
             </p>
 
-            <p className="m-0 mt-1 text-[11.5px] text-text-tertiary">
-              PDF or DOCX · Maximum file size 10 MB
+            <p className="m-0 mt-1 text-xs text-text-tertiary">
+              PDF or DOCX · Maximum 10 MB
             </p>
 
             <Button
               type="button"
               variant="secondary"
               size="sm"
-              className="mt-4"
+              className="mt-3"
               onClick={() => inputRef.current?.click()}
             >
               Browse files
@@ -198,6 +169,31 @@ function DropZone({ label, file, onChoose, onClear, compact = false }) {
   );
 }
 
+function FormSection({ title, description, required, aside, children }) {
+  return (
+    <section className="flex flex-col gap-3">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="min-w-0">
+          <h2 className="m-0 text-sm font-semibold text-text">
+            {title}
+            {required && <span className="ml-1 text-error">*</span>}
+          </h2>
+
+          {description && (
+            <p className="m-0 mt-1 text-xs leading-relaxed text-text-secondary">
+              {description}
+            </p>
+          )}
+        </div>
+
+        {aside}
+      </div>
+
+      {children}
+    </section>
+  );
+}
+
 export function UploadForm() {
   const navigate = useNavigate();
   const create = useCreateResume();
@@ -207,7 +203,7 @@ export function UploadForm() {
   const [file, setFile] = useState(null);
   const [resumeText, setResumeText] = useState('');
 
-  const [jdSource, setJdSource] = useState('text');
+  const [jdSource, setJdSource] = useState('file');
   const [jobDescription, setJobDescription] = useState('');
   const [jdFile, setJdFile] = useState(null);
 
@@ -236,7 +232,10 @@ export function UploadForm() {
       return;
     }
 
-    if (resumeSource === 'text' && resumeText.trim().length < MIN_RESUME_CHARACTERS) {
+    if (
+      resumeSource === 'text' &&
+      resumeText.trim().length < MIN_RESUME_CHARACTERS
+    ) {
       setError('Paste your full resume text so there is something to review.');
       return;
     }
@@ -276,12 +275,11 @@ export function UploadForm() {
   }
 
   return (
-    <form onSubmit={onSubmit} className="flex flex-col gap-10">
-      {/* Resume */}
-      <Step
-        index="01"
-        title={<>Resume <span className="text-error">*</span></>}
-        description="Upload the resume you want to evaluate, or paste its text"
+    <form onSubmit={onSubmit} className="flex flex-col gap-8">
+      <FormSection
+        title="Resume"
+        description="Upload your resume or paste its text."
+        required
         aside={
           <SourceSwitch
             label="Resume"
@@ -302,9 +300,9 @@ export function UploadForm() {
               }}
             />
 
-            <p className="m-0 text-[11.5px] leading-relaxed text-text-tertiary">
-              Your file is read to extract its text and then discarded. Only the
-              extracted text is retained.
+            <p className="m-0 text-xs leading-relaxed text-text-tertiary">
+              Your file is read to extract its text and then discarded. Only
+              the extracted text is retained.
             </p>
           </>
         ) : (
@@ -314,25 +312,22 @@ export function UploadForm() {
               onChange={(event) =>
                 setResumeText(event.target.value.slice(0, MAX_RESUME_TEXT))
               }
-              placeholder="Paste your resume here — summary, experience, projects, skills, education..."
+              placeholder="Paste your resume here..."
               aria-label="Resume text"
-              className="min-h-[260px] font-mono text-[12.5px]"
+              className="min-h-[240px]"
             />
 
-            <p className="m-0 text-right font-mono text-[11px] tabular-nums text-text-tertiary">
+            <p className="m-0 text-right text-xs tabular-nums text-text-tertiary">
               {resumeText.length.toLocaleString()} / {MAX_RESUME_TEXT.toLocaleString()}
             </p>
           </>
         )}
-      </Step>
+      </FormSection>
 
-      <div className="h-px bg-border-secondary" />
-
-      {/* Job description */}
-      <Step
-        index="02"
-        title={<>Job description <span className="text-error">*</span></>}
-        description="Paste the posting, or upload it as a file. Include the responsibilities, qualifications and required skills."
+      <FormSection
+        title="Job description"
+        description="Include the responsibilities, qualifications, and required skills."
+        required
         aside={
           <SourceSwitch
             label="Job description"
@@ -347,18 +342,20 @@ export function UploadForm() {
               id={jdId}
               value={jobDescription}
               onChange={(event) =>
-                setJobDescription(event.target.value.slice(0, MAX_JOB_DESCRIPTION))
+                setJobDescription(
+                  event.target.value.slice(0, MAX_JOB_DESCRIPTION)
+                )
               }
               placeholder="Paste the full job description here..."
-              className="min-h-[220px]"
+              className="min-h-[200px]"
             />
 
             <div className="flex items-center justify-between gap-3">
-              <p className="m-0 text-[11.5px] text-text-tertiary">
+              <p className="m-0 text-xs text-text-tertiary">
                 At least {MIN_JOB_DESCRIPTION} characters required
               </p>
 
-              <p className="m-0 shrink-0 font-mono text-[11px] tabular-nums text-text-tertiary">
+              <p className="m-0 shrink-0 text-xs tabular-nums text-text-tertiary">
                 {jobDescription.length.toLocaleString()} / {MAX_JOB_DESCRIPTION.toLocaleString()}
               </p>
             </div>
@@ -366,31 +363,21 @@ export function UploadForm() {
         ) : (
           <DropZone
             label="job description"
-            compact
             file={jdFile}
-            onChoose={(next) => chooseFile(next, 'job description', setJdFile)}
+            onChoose={(next) =>
+              chooseFile(next, 'job description', setJdFile)
+            }
             onClear={() => {
               setJdFile(null);
               setError('');
             }}
           />
         )}
-      </Step>
+      </FormSection>
 
-      <div className="h-px bg-border-secondary" />
-
-      {/* Optional context */}
-      <Step
-        index="03"
-        title={
-          <>
-            Extra context
-            <span className="ml-2 text-[11px] font-normal text-text-tertiary">
-              Optional
-            </span>
-          </>
-        }
-        description="Company details and anything specific you want the review to weigh"
+      <FormSection
+        title="Additional details"
+        description="Optional company information and instructions."
       >
         <div className="grid gap-4 sm:grid-cols-2">
           <Input
@@ -418,33 +405,24 @@ export function UploadForm() {
               event.target.value.slice(0, MAX_CUSTOM_INSTRUCTIONS)
             )
           }
-          placeholder="For example: I'm targeting backend roles and my resume has no metrics. I want the strongest lines to fix first."
-          className="min-h-[110px]"
+          placeholder="What should the review focus on?"
+          className="min-h-[100px]"
         />
 
-        <p className="m-0 text-right font-mono text-[11px] tabular-nums text-text-tertiary">
+        <p className="m-0 text-right text-xs tabular-nums text-text-tertiary">
           {customInstructions.length.toLocaleString()} / {MAX_CUSTOM_INSTRUCTIONS.toLocaleString()}
         </p>
-      </Step>
+      </FormSection>
 
-      {/* Form feedback */}
       {error && <Alert>{error}</Alert>}
 
-      {/* Submit */}
-      <div className="flex flex-col gap-4 border-t border-border-secondary pt-5 sm:flex-row sm:items-center sm:justify-between">
-        <p className="m-0 max-w-sm text-[11.5px] leading-relaxed text-text-tertiary">
-          Your report reviews this resume against the role and gives you the
-          exact lines to paste in
-        </p>
-
-        <Button
-          type="submit"
-          loading={create.isPending}
-          className="w-full shrink-0 sm:w-auto"
-        >
-          {create.isPending ? 'Analysing…' : 'Analyse my resume'}
-        </Button>
-      </div>
+      <Button
+        type="submit"
+        loading={create.isPending}
+        className="w-full shrink-0 sm:w-auto"
+      >
+        {create.isPending ? 'Analysing…' : 'Analyse my resume'}
+      </Button>
     </form>
   );
 }

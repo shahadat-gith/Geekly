@@ -147,15 +147,6 @@ function ProfileMenu({ user, onLogout }) {
               Resume analysis
             </Link>
 
-            <Link
-              to="/deployments"
-              role="menuitem"
-              onClick={() => setOpen(false)}
-              className="flex w-full items-center rounded-lg px-3 py-2.5 text-sm font-medium text-text-secondary transition-colors hover:bg-surface-secondary hover:text-text focus-visible:bg-surface-secondary focus-visible:outline-none"
-            >
-              My sites
-            </Link>
-
             <button
               type="button"
               role="menuitem"

@@ -15,9 +15,6 @@ import LegalPage from './pages/LegalPage.jsx';
 import Article from './pages/Article.jsx';
 import ResumeAnalysis from './pages/ResumeAnalysis.jsx';
 import ResumeReport from './pages/ResumeReport.jsx';
-import Deployments from './pages/Deployments.jsx';
-import DeploymentNew from './pages/DeploymentNew.jsx';
-import DeploymentDetail from './pages/DeploymentDetail.jsx';
 import Profile from './pages/Profile.jsx';
 import { RequireAuth } from './components/auth/RequireAuth.jsx';
 
@@ -32,9 +29,6 @@ const TITLES = [
   [/^\/resume-analysis\/new$/, 'Resume analysis — Geekly'],
   [/^\/resume-analysis$/, 'Resume analysis — Geekly'],
   [/^\/resume-analysis\/[^/]+$/, 'Resume report — Geekly'],
-  [/^\/deployments$/, 'My sites — Geekly'],
-  [/^\/deployments\/new$/, 'New site — Geekly'],
-  [/^\/deployments\/[^/]+$/, 'Site versions — Geekly'],
   [/^\/terms$/, 'Terms and conditions — Geekly'],
   [/^\/privacy$/, 'Privacy policy — Geekly'],
 ];
@@ -111,10 +105,6 @@ function AnimatedRoutes() {
             </RequireAuth>
           }
         />
-        {/* Static site hosting is private to the signed-in account. */}
-        <Route path="/deployments" element={<RequireAuth><Deployments /></RequireAuth>} />
-        <Route path="/deployments/new" element={<RequireAuth><DeploymentNew /></RequireAuth>} />
-        <Route path="/deployments/:projectId" element={<RequireAuth><DeploymentDetail /></RequireAuth>} />
         {/* Old resume-intelligence URLs keep working. */}
         <Route
           path="/resume-intelligence"

@@ -50,11 +50,6 @@ export default function Content({ article = null, topic }) {
         <header className="border-b border-border pb-6 sm:pb-8">
           <Breadcrumb topic={topic} articleTitle={article.title} />
 
-          <div className="flex items-center gap-3">
-            <span aria-hidden="true" className="h-1 w-1 shrink-0 rounded-full bg-brand" />
-            <p className="folio m-0">Article</p>
-            <span aria-hidden="true" className="h-px flex-1 bg-border" />
-          </div>
 
           {/* Title */}
           <h1 className="mt-5 max-w-3xl text-pretty font-heading text-[28px] font-medium leading-[1.18] tracking-[-0.03em] text-text sm:text-[36px] lg:text-[38px]">

@@ -1,15 +1,12 @@
 import { useState } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
-import { FaTrashCan } from 'react-icons/fa6';
-import { useDeleteResume, useResume, useRetryResume } from '../hooks/useResume.js';
+import { Link, useParams } from 'react-router-dom';
+import { useResume, useRetryResume } from '../hooks/useResume.js';
 import { Alert } from '../components/ui/Alert.jsx';
 import { Button } from '../components/ui/Button.jsx';
-import { ConfirmDialog } from '../components/ui/ConfirmDialog.jsx';
 import { PageHeader } from '../components/ui/PageHeader.jsx';
 import { Skeleton } from '../components/ui/Skeleton.jsx';
 import { ProcessingPanel } from '../components/resume/ProcessingPanel.jsx';
 import { ReportSections } from '../components/resume/ReportSections.jsx';
-import { StatusChip } from '../components/resume/ResumeStatus.jsx';
 import { statusIsWorking } from '../components/resume/status.js';
 import { formatDate } from '../utils/format.js';
 
@@ -52,50 +49,11 @@ function ReportSkeleton() {
   );
 }
 
-/** At-a-glance counts pulled straight from the report. */
-function ReportStats({ report }) {
-  const stats = [
-    { label: 'Strong points', value: report.strengths?.length ?? 0 },
-    { label: 'Weak points', value: report.gaps?.length ?? 0 },
-    { label: 'Missing skills', value: report.missingSkills?.length ?? 0 },
-    { label: 'Fixes', value: report.edits?.length ?? 0, accent: true },
-  ];
-
-  return (
-    <dl className="m-0 grid grid-cols-2 border-y border-border sm:grid-cols-4">
-      {stats.map((stat, index) => (
-        <div
-          key={stat.label}
-          className={[
-            'px-4 py-5 sm:px-6',
-            index < 2 ? 'border-b border-border-secondary sm:border-b-0' : '',
-            index % 2 === 1 ? 'border-l border-border-secondary' : '',
-            'sm:border-l sm:border-border-secondary sm:first:border-l-0',
-          ].join(' ')}
-        >
-          <dt className="m-0 text-[12px] text-text-secondary">
-            {stat.label}
-          </dt>
-          <dd
-            className={`m-0 mt-2 font-heading text-[28px] font-medium leading-none tabular-nums ${stat.accent ? 'text-brand-strong' : 'text-text'}`}
-          >
-            {stat.value}
-          </dd>
-        </div>
-      ))}
-    </dl>
-  );
-}
-
 export default function ResumeReport() {
   const { id } = useParams();
-  const navigate = useNavigate();
   const { data: analysis, isPending, error } = useResume(id);
   const retry = useRetryResume(id);
-  const remove = useDeleteResume();
 
-  const [confirmingDelete, setConfirmingDelete] = useState(false);
-  const [deleteError, setDeleteError] = useState('');
 
   if (isPending) return <ReportSkeleton />;
 
@@ -115,17 +73,6 @@ export default function ResumeReport() {
     );
   }
 
-  async function onDelete() {
-    setDeleteError('');
-
-    try {
-      await remove.mutateAsync(id);
-      navigate('/profile');
-    } catch (err) {
-      setDeleteError(err.message);
-      setConfirmingDelete(false);
-    }
-  }
 
   const report = analysis.analysis;
   const completed = analysis.status === 'COMPLETED' && report;
@@ -155,7 +102,6 @@ export default function ResumeReport() {
             </span>
           ) : undefined
         }
-        action={<StatusChip status={analysis.status} />}
       />
 
       {/* Processing state */}
@@ -202,44 +148,9 @@ export default function ResumeReport() {
       {/* Completed report */}
       {completed && (
         <div className="mt-8 flex flex-col gap-8">
-          <ReportStats report={report} />
           <ReportSections analysis={report} />
         </div>
       )}
-
-      {/* Footer actions */}
-      {(completed || analysis.status === 'FAILED') && (
-        <div className="mt-10 flex flex-wrap items-center justify-between gap-4 border-t border-border pt-6">
-          <Button as={Link} to="/profile" variant="secondary" size="sm">
-            All analyses
-          </Button>
-
-          <button
-            type="button"
-            onClick={() => setConfirmingDelete(true)}
-            className="inline-flex min-h-9 items-center gap-2 rounded-button px-3 text-[13px] font-medium text-text-tertiary transition-colors hover:bg-error/5 hover:text-error focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-          >
-            <FaTrashCan aria-hidden="true" className="text-[12px]" />
-            Delete analysis
-          </button>
-        </div>
-      )}
-
-      {deleteError && (
-        <div className="mt-4">
-          <Alert>{deleteError}</Alert>
-        </div>
-      )}
-
-      <ConfirmDialog
-        open={confirmingDelete}
-        title="Delete this analysis?"
-        message="The report and the documents used to create it will be removed. This cannot be undone."
-        confirmLabel="Delete analysis"
-        loading={remove.isPending}
-        onConfirm={onDelete}
-        onCancel={() => setConfirmingDelete(false)}
-      />
     </div>
   );
 }

@@ -39,22 +39,17 @@ export const keys = {
     redis: {
         url: (process.env.REDIS_URL || "").trim() || undefined
     },
-    // Cloudflare: one account, one R2 credential pair, and every bucket and KV
-    // namespace listed once. Hosting reads its buckets and KV from here too.
+    // Cloudflare: one account, one R2 credential pair, and the public assets
+    // bucket that article images and topic banners are written to.
     cloudflare: {
         accountId: (process.env.CLOUDFLARE_ACCOUNT_ID || "").trim() || undefined,
-        apiToken: (process.env.CLOUDFLARE_API_TOKEN || "").trim() || undefined,
         r2: {
             accessKeyId: (process.env.CLOUDFLARE_R2_ACCESS_KEY_ID || "").trim() || undefined,
             secretAccessKey: (process.env.CLOUDFLARE_R2_SECRET_ACCESS_KEY || "").trim() || undefined,
             publicUrl: (process.env.CLOUDFLARE_R2_PUBLIC_URL || "").trim().replace(/\/$/, "") || undefined,
             buckets: {
-                assets: (process.env.CLOUDFLARE_R2_ASSETS_BUCKET || "").trim() || undefined,
-                deployments: (process.env.CLOUDFLARE_R2_DEPLOYMENTS_BUCKET || "geekly-deployments").trim()
+                assets: (process.env.CLOUDFLARE_R2_ASSETS_BUCKET || "").trim() || undefined
             }
-        },
-        kv: {
-            namespaceId: (process.env.CLOUDFLARE_KV_NAMESPACE_ID || "").trim() || undefined
         }
     },
     auth: {
@@ -96,14 +91,6 @@ const OPTIONAL = [
         configured: () => Boolean(keys.admin.email && keys.admin.password)
     },
     { name: "Redis queue (BullMQ)", configured: () => Boolean(keys.redis.url) },
-    {
-        name: "Static site hosting",
-        configured: () => Boolean(
-            keys.cloudflare.accountId && keys.cloudflare.apiToken &&
-            keys.cloudflare.kv.namespaceId && keys.cloudflare.r2.accessKeyId &&
-            keys.cloudflare.r2.secretAccessKey
-        )
-    },
     {
         name: "OAuth login",
         configured: () => Boolean(

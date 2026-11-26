@@ -11,7 +11,6 @@ import { ApiError } from '../../shared/errors.js';
 
 export const QUEUE_NAMES = {
   resume: 'resume-analysis',
-  deployment: 'site-deployment',
 };
 
 let connection = null;

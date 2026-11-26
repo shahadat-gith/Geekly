@@ -2,7 +2,6 @@ import mongoose from "mongoose"
 import { assertConfig, keys } from "./config/env.js"
 import { connectToDB } from "./config/database.js"
 import { startResumeWorker, stopResumeWorker } from "./jobs/resume/worker.js"
-import { startDeploymentWorker, stopDeploymentWorker } from "./jobs/deployment/worker.js"
 import app from "./app.js"
 
 const port = Number(keys.server.port)
@@ -17,7 +16,6 @@ async function start() {
     // Resume reviews are consumed by a BullMQ worker. Running it in-process
     // keeps a single deployment simple; `npm run worker` can host it instead.
     await startResumeWorker()
-    await startDeploymentWorker()
 
     const server = app.listen(port, () => {
         console.log(`Server running on port ${port} (${keys.server.environment})`)
@@ -29,7 +27,7 @@ async function start() {
         closing = true
         console.log(`${reason} received, shutting down`)
         server.close(() => {
-            Promise.all([stopResumeWorker(), stopDeploymentWorker()])
+            Promise.all([stopResumeWorker()])
                 .catch(() => {})
                 .then(() => mongoose.connection.close())
                 .finally(() => process.exit(code))
